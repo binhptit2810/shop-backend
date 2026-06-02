@@ -62,4 +62,13 @@ public class OrderController {
         OrderResponse response = orderService.updateOrderStatus(id, status);
         return ResponseEntity.ok(response);
     }
+
+    @PutMapping("/{id}/cancel")
+    @Operation(summary = "Khách hàng tự hủy đơn hàng (Khi đang ở trạng thái PENDING)")
+    public ResponseEntity<OrderResponse> cancelOrder(
+            @AuthenticationPrincipal User user,
+            @PathVariable Long id) {
+        OrderResponse response = orderService.cancelOrder(user, id);
+        return ResponseEntity.ok(response);
+    }
 }

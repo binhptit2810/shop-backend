@@ -32,4 +32,9 @@ public interface OrderService {
      * Cập nhật trạng thái đơn hàng (Chỉ dành cho ADMIN)
      */
     OrderResponse updateOrderStatus(Long orderId, String status);
+
+    /**
+     * Khách hàng tự hủy đơn hàng của mình khi đơn đang ở trạng thái PENDING
+     */
+    OrderResponse cancelOrder(User user, Long orderId);
 }

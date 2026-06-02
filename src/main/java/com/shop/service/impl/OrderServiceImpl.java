@@ -53,7 +53,8 @@ public class OrderServiceImpl implements OrderService {
 
         // 3. Duyệt qua từng sản phẩm trong giỏ hàng, xác minh tồn kho, trừ tồn kho và tính tổng tiền
         for (CartItem cartItem : cart.getCartItems()) {
-            Product product = cartItem.getProduct();
+            Product product = productRepository.findByIdForUpdate(cartItem.getProduct().getId())
+                    .orElseThrow(() -> new BadRequestException("Sản phẩm '" + cartItem.getProduct().getName() + "' không tồn tại hoặc đã bị xóa."));
 
             // Kiểm tra số lượng tồn kho thực tế
             if (product.getQuantity() < cartItem.getQuantity()) {
@@ -140,8 +141,48 @@ public class OrderServiceImpl implements OrderService {
         }
 
         order.setStatus(newStatus);
+        if (newStatus == OrderStatus.CANCELLED && currentStatus != OrderStatus.CANCELLED) {
+            rollbackStock(order);
+        }
         Order updatedOrder = orderRepository.save(order);
         return OrderMapper.toResponse(updatedOrder);
+    }
+
+    @Override
+    @Transactional
+    public OrderResponse cancelOrder(User user, Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy đơn hàng với ID: " + orderId));
+
+        // Bảo mật: Người dùng thông thường chỉ được hủy đơn hàng của chính họ
+        if (!order.getUser().getId().equals(user.getId())) {
+            throw new BadRequestException("Bạn không có quyền hủy đơn hàng này.");
+        }
+
+        // Nghiệp vụ: Chỉ được hủy đơn khi trạng thái là PENDING
+        if (order.getStatus() != OrderStatus.PENDING) {
+            throw new BadRequestException("Chỉ có thể hủy đơn hàng khi đơn hàng đang ở trạng thái PENDING.");
+        }
+
+        order.setStatus(OrderStatus.CANCELLED);
+        rollbackStock(order);
+
+        Order savedOrder = orderRepository.save(order);
+        return OrderMapper.toResponse(savedOrder);
+    }
+
+    private void rollbackStock(Order order) {
+        if (order.getOrderItems() != null) {
+            for (OrderItem item : order.getOrderItems()) {
+                if (item.getProduct() != null) {
+                    try {
+                        productRepository.restoreStock(item.getProduct().getId(), item.getQuantity());
+                    } catch (Exception e) {
+                        // Bỏ qua lỗi nếu sản phẩm bị xóa hoàn toàn khỏi DB
+                    }
+                }
+            }
+        }
     }
 
     private boolean isValidTransition(OrderStatus current, OrderStatus next) {

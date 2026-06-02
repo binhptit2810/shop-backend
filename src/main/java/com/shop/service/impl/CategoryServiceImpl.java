@@ -7,6 +7,7 @@ import com.shop.exception.BadRequestException;
 import com.shop.exception.ResourceNotFoundException;
 import com.shop.mapper.CategoryMapper;
 import com.shop.repository.CategoryRepository;
+import com.shop.repository.ProductRepository;
 import com.shop.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final ProductRepository productRepository;
 
     @Override
     @Transactional
@@ -69,6 +71,9 @@ public class CategoryServiceImpl implements CategoryService {
     public void delete(Long id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy danh mục với ID: " + id));
+        if (productRepository.existsByCategoryId(id)) {
+            throw new BadRequestException("Không thể xóa danh mục này vì vẫn còn sản phẩm thuộc danh mục!");
+        }
         categoryRepository.delete(category);
     }
 }
