@@ -1,0 +1,13 @@
+# Ignore frontend folder since it is deployed separately on Vercel
+frontend/
+node_modules/
+
+# Ignore gradle and local build artifacts
+.gradle/
+build/
+.idea/
+.git/
+.env
+.env.example
+*.log
+uploads/
