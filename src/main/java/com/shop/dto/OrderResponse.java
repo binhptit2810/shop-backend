@@ -24,6 +24,8 @@ public class OrderResponse {
     private String username;
     private String status;
     private String orderStatus;
+    private String voucherCode;
+    private BigDecimal discountAmount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

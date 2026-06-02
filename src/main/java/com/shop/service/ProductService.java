@@ -41,4 +41,14 @@ public interface ProductService {
      * Tải lên hình ảnh cho sản phẩm và cập nhật imageUrl
      */
     ProductResponse uploadImage(Long id, org.springframework.web.multipart.MultipartFile file);
+
+    /**
+     * Tìm kiếm nâng cao sản phẩm (lọc theo tên, danh mục, khoảng giá, sắp xếp và phân trang)
+     */
+    List<ProductResponse> searchProducts(String name, Long categoryId, java.math.BigDecimal minPrice, java.math.BigDecimal maxPrice, String sortBy, int page, int size);
+
+    /**
+     * Gợi ý từ khóa tìm kiếm liên quan
+     */
+    List<String> getSearchSuggestions(String query);
 }

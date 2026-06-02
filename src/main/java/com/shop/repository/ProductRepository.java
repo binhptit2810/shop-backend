@@ -29,4 +29,19 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Modifying
     @Query("UPDATE Product p SET p.quantity = p.quantity + :qty WHERE p.id = :id")
     void restoreStock(@Param("id") Long id, @Param("qty") Integer qty);
+
+    @Query("SELECT p FROM Product p WHERE " +
+           "(:name IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%'))) AND " +
+           "(:categoryId IS NULL OR p.category.id = :categoryId) AND " +
+           "(:minPrice IS NULL OR p.price >= :minPrice) AND " +
+           "(:maxPrice IS NULL OR p.price <= :maxPrice)")
+    List<Product> searchProducts(
+            @Param("name") String name,
+            @Param("categoryId") Long categoryId,
+            @Param("minPrice") java.math.BigDecimal minPrice,
+            @Param("maxPrice") java.math.BigDecimal maxPrice,
+            org.springframework.data.domain.Pageable pageable);
+
+    @Query("SELECT DISTINCT p.name FROM Product p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :query, '%'))")
+    List<String> findNamesByQuery(@Param("query") String query, org.springframework.data.domain.Pageable pageable);
 }

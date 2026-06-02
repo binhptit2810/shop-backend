@@ -43,6 +43,13 @@ public class Order {
     @Column(name = "phone_number", nullable = false, length = 20)
     private String phoneNumber;
 
+    @Column(name = "voucher_code", length = 50)
+    private String voucherCode;
+
+    @Column(name = "discount_amount", nullable = false, precision = 15, scale = 2)
+    @Builder.Default
+    private BigDecimal discountAmount = BigDecimal.ZERO;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
     private OrderStatus status;

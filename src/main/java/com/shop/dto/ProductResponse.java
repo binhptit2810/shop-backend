@@ -22,6 +22,11 @@ public class ProductResponse {
     private String imageUrl;
     private Long categoryId;
     private String categoryName;
+    private BigDecimal discountPrice;
+    private String colors;
+    private String sizes;
+    private Integer soldQuantity;
+    private boolean isFlashSale;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

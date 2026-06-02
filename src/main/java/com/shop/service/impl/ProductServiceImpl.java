@@ -116,4 +116,43 @@ public class ProductServiceImpl implements ProductService {
 
         return ProductMapper.toResponse(updatedProduct);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ProductResponse> searchProducts(String name, Long categoryId, java.math.BigDecimal minPrice, java.math.BigDecimal maxPrice, String sortBy, int page, int size) {
+        org.springframework.data.domain.Sort sort = org.springframework.data.domain.Sort.unsorted();
+        if (sortBy != null && !sortBy.isEmpty()) {
+            switch (sortBy.toLowerCase()) {
+                case "newest":
+                    sort = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "createdAt");
+                    break;
+                case "price_asc":
+                    sort = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.ASC, "price");
+                    break;
+                case "price_desc":
+                    sort = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "price");
+                    break;
+                case "sold_desc":
+                    sort = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "soldQuantity");
+                    break;
+                default:
+                    sort = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "createdAt");
+                    break;
+            }
+        }
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size, sort);
+        return productRepository.searchProducts(name, categoryId, minPrice, maxPrice, pageable).stream()
+                .map(ProductMapper::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<String> getSearchSuggestions(String query) {
+        if (query == null || query.trim().isEmpty()) {
+            return java.util.Collections.emptyList();
+        }
+        org.springframework.data.domain.Pageable limit = org.springframework.data.domain.PageRequest.of(0, 10);
+        return productRepository.findNamesByQuery(query.trim(), limit);
+    }
 }

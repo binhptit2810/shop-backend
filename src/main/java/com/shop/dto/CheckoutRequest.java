@@ -20,4 +20,6 @@ public class CheckoutRequest {
     @NotBlank(message = "Số điện thoại liên hệ không được để trống")
     @Size(max = 20, message = "Số điện thoại không vượt quá 20 ký tự")
     private String phoneNumber;
+
+    private String voucherCode;
 }

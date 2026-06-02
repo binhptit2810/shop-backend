@@ -38,4 +38,9 @@ public class ProductRequest {
 
     @NotNull(message = "ID danh mục không được để trống")
     private Long categoryId;
+
+    private BigDecimal discountPrice;
+    private String colors;
+    private String sizes;
+    private boolean isFlashSale;
 }

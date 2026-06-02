@@ -45,6 +45,23 @@ public class Product {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
+    @Column(name = "discount_price", precision = 15, scale = 2)
+    private BigDecimal discountPrice;
+
+    @Column(name = "colors", length = 255)
+    private String colors;
+
+    @Column(name = "sizes", length = 255)
+    private String sizes;
+
+    @Column(name = "sold_quantity", nullable = false)
+    @Builder.Default
+    private Integer soldQuantity = 0;
+
+    @Column(name = "is_flash_sale", nullable = false)
+    @Builder.Default
+    private boolean isFlashSale = false;
+
     @Column(name = "is_deleted", nullable = false)
     @Builder.Default
     private boolean isDeleted = false;

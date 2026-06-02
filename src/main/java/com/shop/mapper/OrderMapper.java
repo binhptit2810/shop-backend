@@ -38,6 +38,8 @@ public class OrderMapper {
                 .phoneNumber(order.getPhoneNumber())
                 .status(statusStr)
                 .orderStatus(statusStr)
+                .voucherCode(order.getVoucherCode())
+                .discountAmount(order.getDiscountAmount())
                 .createdAt(order.getCreatedAt())
                 .updatedAt(order.getUpdatedAt())
                 .build();

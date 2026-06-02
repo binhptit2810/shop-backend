@@ -75,4 +75,23 @@ public class ProductController {
         ProductResponse response = productService.uploadImage(id, file);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/search")
+    @Operation(summary = "Tìm kiếm nâng cao sản phẩm")
+    public ResponseEntity<List<ProductResponse>> searchProducts(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) java.math.BigDecimal minPrice,
+            @RequestParam(required = false) java.math.BigDecimal maxPrice,
+            @RequestParam(required = false, defaultValue = "newest") String sortBy,
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "20") int size) {
+        return ResponseEntity.ok(productService.searchProducts(name, categoryId, minPrice, maxPrice, sortBy, page, size));
+    }
+
+    @GetMapping("/search/suggest")
+    @Operation(summary = "Gợi ý từ khóa tìm kiếm liên quan")
+    public ResponseEntity<List<String>> getSearchSuggestions(@RequestParam String query) {
+        return ResponseEntity.ok(productService.getSearchSuggestions(query));
+    }
 }

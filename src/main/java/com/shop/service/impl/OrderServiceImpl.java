@@ -11,6 +11,8 @@ import com.shop.repository.OrderRepository;
 import com.shop.repository.ProductRepository;
 import com.shop.service.CartService;
 import com.shop.service.OrderService;
+import com.shop.service.VoucherService;
+import com.shop.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +30,8 @@ public class OrderServiceImpl implements OrderService {
     private final CartRepository cartRepository;
     private final ProductRepository productRepository;
     private final CartService cartService;
+    private final VoucherService voucherService;
+    private final NotificationService notificationService;
 
     @Override
     @Transactional
@@ -63,28 +67,55 @@ public class OrderServiceImpl implements OrderService {
 
             // Trừ số lượng tồn kho của sản phẩm trực tiếp ở DB
             product.setQuantity(product.getQuantity() - cartItem.getQuantity());
+            product.setSoldQuantity(product.getSoldQuantity() + cartItem.getQuantity());
             productRepository.save(product);
 
+            BigDecimal activePrice = product.getDiscountPrice() != null ? product.getDiscountPrice() : product.getPrice();
             // Tạo chi tiết đơn hàng (lưu lại giá bán ở thời điểm giao dịch)
             OrderItem orderItem = OrderItem.builder()
                     .order(order)
                     .product(product)
                     .quantity(cartItem.getQuantity())
-                    .price(product.getPrice())
+                    .price(activePrice)
                     .build();
 
             orderItems.add(orderItem);
 
             // Cộng dồn tổng giá trị hóa đơn
-            BigDecimal itemTotalPrice = product.getPrice().multiply(BigDecimal.valueOf(cartItem.getQuantity()));
+            BigDecimal itemTotalPrice = activePrice.multiply(BigDecimal.valueOf(cartItem.getQuantity()));
             totalPrice = totalPrice.add(itemTotalPrice);
         }
 
         order.setOrderItems(orderItems);
-        order.setTotalPrice(totalPrice);
+        
+        // Tính toán giảm giá từ Voucher
+        BigDecimal discount = BigDecimal.ZERO;
+        if (request.getVoucherCode() != null && !request.getVoucherCode().trim().isEmpty()) {
+            try {
+                discount = voucherService.calculateDiscount(request.getVoucherCode(), totalPrice);
+                order.setVoucherCode(request.getVoucherCode().toUpperCase());
+                order.setDiscountAmount(discount);
+            } catch (Exception e) {
+                throw new BadRequestException("Không thể áp dụng mã giảm giá: " + e.getMessage());
+            }
+        }
+        
+        BigDecimal finalPrice = totalPrice.subtract(discount);
+        if (finalPrice.compareTo(BigDecimal.ZERO) < 0) {
+            finalPrice = BigDecimal.ZERO;
+        }
+        order.setTotalPrice(finalPrice);
 
         // 4. Lưu đơn hàng vào cơ sở dữ liệu
         Order savedOrder = orderRepository.save(order);
+
+        // Tạo thông báo đặt hàng thành công
+        notificationService.createNotification(
+                user,
+                "Đặt hàng thành công",
+                "Đơn hàng #" + savedOrder.getId() + " trị giá " + new java.text.DecimalFormat("#,###").format(savedOrder.getTotalPrice()) + "đ đã được khởi tạo thành công.",
+                "ORDER_SUCCESS"
+        );
 
         // 5. Dọn sạch giỏ hàng hiện tại sau khi đặt hàng thành công
         cartService.clearCart(user);
@@ -143,6 +174,33 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(newStatus);
         if (newStatus == OrderStatus.CANCELLED && currentStatus != OrderStatus.CANCELLED) {
             rollbackStock(order);
+            notificationService.createNotification(
+                    order.getUser(),
+                    "Đơn hàng đã hủy",
+                    "Đơn hàng #" + order.getId() + " đã bị hủy bỏ bởi hệ thống/admin.",
+                    "ORDER_CANCELLED"
+            );
+        } else if (newStatus == OrderStatus.CONFIRMED && currentStatus != OrderStatus.CONFIRMED) {
+            notificationService.createNotification(
+                    order.getUser(),
+                    "Đơn hàng được xác nhận",
+                    "Đơn hàng #" + order.getId() + " của bạn đã được xác nhận thành công.",
+                    "ORDER_CONFIRMED"
+            );
+        } else if (newStatus == OrderStatus.SHIPPING && currentStatus != OrderStatus.SHIPPING) {
+            notificationService.createNotification(
+                    order.getUser(),
+                    "Đơn hàng đang giao",
+                    "Đơn hàng #" + order.getId() + " đã được bàn giao cho đơn vị vận chuyển.",
+                    "ORDER_SHIPPING"
+            );
+        } else if (newStatus == OrderStatus.DELIVERED && currentStatus != OrderStatus.DELIVERED) {
+            notificationService.createNotification(
+                    order.getUser(),
+                    "Đơn hàng đã giao thành công",
+                    "Đơn hàng #" + order.getId() + " đã giao thành công đến bạn.",
+                    "ORDER_DELIVERED"
+            );
         }
         Order updatedOrder = orderRepository.save(order);
         return OrderMapper.toResponse(updatedOrder);
@@ -166,6 +224,13 @@ public class OrderServiceImpl implements OrderService {
 
         order.setStatus(OrderStatus.CANCELLED);
         rollbackStock(order);
+
+        notificationService.createNotification(
+                user,
+                "Đơn hàng đã hủy thành công",
+                "Đơn hàng #" + order.getId() + " đã được bạn chủ động hủy bỏ.",
+                "ORDER_CANCELLED"
+        );
 
         Order savedOrder = orderRepository.save(order);
         return OrderMapper.toResponse(savedOrder);

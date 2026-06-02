@@ -30,6 +30,11 @@ public class ProductMapper {
                 .imageUrl(product.getImageUrl())
                 .categoryId(categoryId)
                 .categoryName(categoryName)
+                .discountPrice(product.getDiscountPrice())
+                .colors(product.getColors())
+                .sizes(product.getSizes())
+                .soldQuantity(product.getSoldQuantity())
+                .isFlashSale(product.isFlashSale())
                 .createdAt(product.getCreatedAt())
                 .updatedAt(product.getUpdatedAt())
                 .build();
@@ -48,6 +53,11 @@ public class ProductMapper {
                 .price(request.getPrice())
                 .quantity(request.getQuantity())
                 .imageUrl(request.getImageUrl())
+                .discountPrice(request.getDiscountPrice())
+                .colors(request.getColors())
+                .sizes(request.getSizes())
+                .isFlashSale(request.isFlashSale())
+                .soldQuantity(0)
                 .build();
     }
 
@@ -63,5 +73,9 @@ public class ProductMapper {
         product.setPrice(request.getPrice());
         product.setQuantity(request.getQuantity());
         product.setImageUrl(request.getImageUrl());
+        product.setDiscountPrice(request.getDiscountPrice());
+        product.setColors(request.getColors());
+        product.setSizes(request.getSizes());
+        product.setFlashSale(request.isFlashSale());
     }
 }
