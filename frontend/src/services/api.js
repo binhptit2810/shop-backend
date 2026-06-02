@@ -38,4 +38,18 @@ API.interceptors.response.use(
   }
 );
 
+export const getImageBaseUrl = () => {
+  if (import.meta.env.VITE_IMAGE_BASE_URL) {
+    return import.meta.env.VITE_IMAGE_BASE_URL;
+  }
+  const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api/v1';
+  try {
+    const url = new URL(apiBase);
+    return url.origin;
+  } catch (e) {
+    return 'http://localhost:8080';
+  }
+};
+
 export default API;
+

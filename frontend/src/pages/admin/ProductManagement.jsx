@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import API from '../../services/api';
+import API, { getImageBaseUrl } from '../../services/api';
 import { showToast } from '../../services/toast';
 import { 
   Plus, 
@@ -199,7 +199,7 @@ const ProductManagement = () => {
                       <td>
                         {prod.imageUrl ? (
                           <img 
-                            src={`${import.meta.env.VITE_IMAGE_BASE_URL || 'http://localhost:8080'}${prod.imageUrl}`} 
+                            src={`${getImageBaseUrl()}${prod.imageUrl}`} 
                             alt={prod.name} 
                             style={{ width: '48px', height: '48px', objectFit: 'cover', borderRadius: '8px', border: '1px solid var(--border-color)' }}
                           />

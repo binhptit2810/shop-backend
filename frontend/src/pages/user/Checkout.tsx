@@ -212,7 +212,7 @@ const Checkout = () => {
                   {item.productName} <span className="font-semibold text-gray-400">x{item.quantity}</span>
                 </span>
                 <span className="font-semibold text-gray-950 dark:text-white flex-shrink-0">
-                  {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.productPrice * item.quantity)}
+                  {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price * item.quantity)}
                 </span>
               </div>
             ))}

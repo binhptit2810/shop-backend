@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import API from '../../services/api';
+import API, { getImageBaseUrl } from '../../services/api';
 import { AuthContext } from '../../context/AuthContext';
 import { CartContext } from '../../context/CartContext';
 import { useWishlistStore } from '../../store/useWishlistStore';
@@ -191,7 +191,7 @@ const ProductDetail = () => {
 
   if (!product) return null;
 
-  const imageBase = import.meta.env.VITE_IMAGE_BASE_URL || 'http://localhost:8080';
+  const imageBase = getImageBaseUrl();
   const imageUrl = activeImage 
     ? (activeImage.startsWith('http') ? activeImage : `${imageBase}${activeImage}`) 
     : 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3';

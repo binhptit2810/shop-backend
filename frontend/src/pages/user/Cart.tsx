@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { CartContext } from '../../context/CartContext';
 import { AuthContext } from '../../context/AuthContext';
 import { showToast } from '../../services/toast';
-import API from '../../services/api';
+import API, { getImageBaseUrl } from '../../services/api';
 import { 
   Trash2, 
   ShoppingBag, 
@@ -118,7 +118,7 @@ const Cart = () => {
     if (!cart?.cartItems) return 0;
     return cart.cartItems
       .filter(item => selectedItems[item.id])
-      .reduce((sum, item) => sum + (item.productPrice * item.quantity), 0);
+      .reduce((sum, item) => sum + (item.price * item.quantity), 0);
   };
 
   // Apply Voucher logic
@@ -256,9 +256,9 @@ const Cart = () => {
             {/* Cart Items Cards */}
             <div className="flex flex-col gap-3">
               {items.map(item => {
-                const imgBase = import.meta.env.VITE_IMAGE_BASE_URL || 'http://localhost:8080';
-                const imgUrl = item.productImageUrl 
-                  ? (item.productImageUrl.startsWith('http') ? item.productImageUrl : `${imgBase}${item.productImageUrl}`) 
+                const imgBase = getImageBaseUrl();
+                const imgUrl = item.imageUrl 
+                  ? (item.imageUrl.startsWith('http') ? item.imageUrl : `${imgBase}${item.imageUrl}`) 
                   : 'https://images.unsplash.com/photo-1542496658-e33a6d0d50f6?w=200';
 
                 return (
@@ -287,7 +287,7 @@ const Cart = () => {
                       </h3>
                       <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                         <span className="font-bold text-xs text-shopee">
-                          {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.productPrice)}
+                          {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price)}
                         </span>
                       </div>
                     </div>

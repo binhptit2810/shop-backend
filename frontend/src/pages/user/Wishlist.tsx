@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useWishlistStore } from '../../store/useWishlistStore';
 import { CartContext } from '../../context/CartContext';
 import { showToast } from '../../services/toast';
+import { getImageBaseUrl } from '../../services/api';
 import { Heart, ShoppingCart, Trash2, ShoppingBag, Grid } from 'lucide-react';
 
 const Wishlist = () => {
@@ -65,7 +66,7 @@ const Wishlist = () => {
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {items.map(item => {
-            const imgBase = import.meta.env.VITE_IMAGE_BASE_URL || 'http://localhost:8080';
+            const imgBase = getImageBaseUrl();
             const imgUrl = item.productImageUrl 
               ? (item.productImageUrl.startsWith('http') ? item.productImageUrl : `${imgBase}${item.productImageUrl}`) 
               : 'https://images.unsplash.com/photo-1542496658-e33a6d0d50f6?w=250';
