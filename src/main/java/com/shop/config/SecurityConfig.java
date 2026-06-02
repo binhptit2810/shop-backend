@@ -44,6 +44,7 @@ public class SecurityConfig {
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/api-docs/**", "/api-docs", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/uploads/**").permitAll()
+                        .requestMatchers("/error").permitAll()
                         
                         // Cho phép đọc thông tin danh mục và sản phẩm công khai
                         .requestMatchers(HttpMethod.GET, "/api/v1/categories/**").permitAll()
