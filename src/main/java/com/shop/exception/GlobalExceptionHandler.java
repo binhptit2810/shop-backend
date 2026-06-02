@@ -77,7 +77,7 @@ public class GlobalExceptionHandler {
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
-                .message("Đã xảy ra lỗi hệ thống. Vui lòng liên hệ quản trị viên.")
+                .message(ex.getClass().getName() + ": " + ex.getMessage())
                 .path(request.getDescription(false).replace("uri=", ""))
                 .build();
         
