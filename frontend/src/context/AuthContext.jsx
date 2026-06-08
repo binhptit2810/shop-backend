@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }) => {
       if (response.data.id) localStorage.setItem('userId', response.data.id);
       
       setUser({ id: response.data.id, username, email, role });
-      return { success: true };
+      return { success: true, role };
     } catch (error) {
       console.error("Login error:", error);
       let errMsg = 'Tên đăng nhập hoặc mật khẩu không chính xác';

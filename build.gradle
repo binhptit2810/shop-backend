@@ -69,7 +69,6 @@ jar {
 }
 
 tasks.withType(JavaCompile).configureEach {
-    options.fork = true
-    options.forkOptions.jvmArgs = ['-Xmx256m']
+    options.fork = false
 }
 

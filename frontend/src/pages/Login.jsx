@@ -24,7 +24,13 @@ const Login = () => {
 
     if (res.success) {
       showToast('Đăng nhập thành công!');
-      navigate('/');
+      if (res.role === 'SELLER') {
+        navigate('/seller');
+      } else if (res.role === 'ADMIN') {
+        navigate('/admin');
+      } else {
+        navigate('/');
+      }
     } else {
       showToast(res.message, 'error');
     }
