@@ -117,7 +117,16 @@ const ProductManagement = () => {
       setShowModal(false);
       loadData();
     } catch (error) {
-      showToast(error.response?.data?.message || 'Lỗi khi lưu sản phẩm!', 'error');
+      let errMsg = 'Lỗi khi lưu sản phẩm!';
+      if (error.response?.data) {
+        const data = error.response.data;
+        if (data.errors && data.errors.length > 0) {
+          errMsg = data.errors.join('; ');
+        } else if (data.message) {
+          errMsg = data.message;
+        }
+      }
+      showToast(errMsg, 'error');
     }
   };
 
