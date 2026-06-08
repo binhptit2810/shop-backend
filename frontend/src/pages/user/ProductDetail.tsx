@@ -61,7 +61,7 @@ const ProductDetail = () => {
       
       // Set default image
       if (prod.imageUrl) {
-        setActiveImage(prod.imageUrl);
+        setActiveImage(prod.imageUrl.split(';')[0]);
       }
       
       // Set default variant selections
@@ -195,6 +195,10 @@ const ProductDetail = () => {
     ? getProductImageUrl(activeImage) 
     : 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3';
 
+  const imageList = product.imageUrl 
+    ? product.imageUrl.split(';').filter(Boolean) 
+    : ['https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3'];
+
   // Parse color & size arrays
   const colorsList = product.colors ? product.colors.split(',').map(c => c.trim()).filter(Boolean) : [];
   const sizesList = product.sizes ? product.sizes.split(',').map(s => s.trim()).filter(Boolean) : [];
@@ -248,24 +252,17 @@ const ProductDetail = () => {
             )}
           </div>
 
-          {/* Thumbnail list (Using product image and fallback mock thumbnails for premium feel) */}
+          {/* Thumbnail list */}
           <div className="flex gap-2.5 overflow-x-auto pb-1">
-            <button 
-              onClick={() => product.imageUrl && setActiveImage(product.imageUrl)}
-              className={`w-20 h-20 bg-gray-50 rounded-md border flex-shrink-0 p-1 overflow-hidden transition-all ${
-                activeImage === product.imageUrl ? 'border-shopee ring-1 ring-shopee' : 'border-gray-200 hover:border-gray-300'
-              }`}
-            >
-              <img src={getProductImageUrl(product.imageUrl)} alt="thumbnail" className="w-full h-full object-contain" />
-            </button>
-            {/* Fallback extra thumbnails for premium aesthetic */}
-            {['/images/thumb1.jpg', '/images/thumb2.jpg', '/images/thumb3.jpg'].map((thumb, idx) => (
+            {imageList.map((imgUrl, idx) => (
               <button 
                 key={idx}
-                onClick={() => setActiveImage(imageUrl)}
-                className="w-20 h-20 bg-gray-50 rounded-md border border-gray-200 hover:border-gray-300 flex-shrink-0 p-1 overflow-hidden transition-all"
+                onClick={() => setActiveImage(imgUrl)}
+                className={`w-20 h-20 bg-gray-50 rounded-md border flex-shrink-0 p-1 overflow-hidden transition-all ${
+                  activeImage === imgUrl ? 'border-shopee ring-1 ring-shopee' : 'border-gray-200 hover:border-gray-300'
+                }`}
               >
-                <img src={imageUrl} alt="thumbnail" className="w-full h-full object-contain opacity-70 hover:opacity-100" />
+                <img src={getProductImageUrl(imgUrl)} alt={`thumbnail-${idx}`} className="w-full h-full object-contain hover:opacity-100" />
               </button>
             ))}
           </div>

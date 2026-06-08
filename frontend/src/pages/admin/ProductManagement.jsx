@@ -30,6 +30,9 @@ const ProductManagement = () => {
   const [previewUrl, setPreviewUrl] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [formImages, setFormImages] = useState(['', '', '', '']);
+  const fileInputRef = React.useRef(null);
+  const [activeUploadIndex, setActiveUploadIndex] = useState(null);
 
   useEffect(() => {
     loadData();
@@ -54,6 +57,7 @@ const ProductManagement = () => {
 
   const openAddModal = () => {
     setEditingProduct(null);
+    setFormImages(['', '', '', '']);
     setProductForm({
       name: '',
       description: '',
@@ -67,6 +71,12 @@ const ProductManagement = () => {
 
   const openEditModal = (prod) => {
     setEditingProduct(prod);
+    const imgList = prod.imageUrl ? prod.imageUrl.split(';') : [];
+    const slots = ['', '', '', ''];
+    for (let i = 0; i < Math.min(imgList.length, 4); i++) {
+      slots[i] = imgList[i] || '';
+    }
+    setFormImages(slots);
     setProductForm({
       name: prod.name,
       description: prod.description || '',
@@ -112,16 +122,61 @@ const ProductManagement = () => {
     }
   };
 
+  const triggerSlotUpload = (index) => {
+    setActiveUploadIndex(index);
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleSlotImageChange = async (e) => {
+    const file = e.target.files[0];
+    if (file && activeUploadIndex !== null) {
+      if (file.size > 5 * 1024 * 1024) {
+        showToast('Ảnh không được vượt quá 5MB!', 'error');
+        return;
+      }
+      setUploadingImage(true);
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', 'Project Thương Mại Điện Tử');
+      try {
+        const res = await fetch('https://api.cloudinary.com/v1_1/dpqivf7oe/image/upload', {
+          method: 'POST',
+          body: formData
+        });
+        if (!res.ok) {
+          throw new Error('Upload to Cloudinary failed');
+        }
+        const data = await res.json();
+        setFormImages(prev => {
+          const next = [...prev];
+          next[activeUploadIndex] = data.secure_url;
+          return next;
+        });
+        showToast(`Tải ảnh ${activeUploadIndex + 1} lên Cloudinary thành công!`, 'success');
+      } catch (err) {
+        console.error(err);
+        showToast('Lỗi khi tải ảnh lên đám mây Cloudinary!', 'error');
+      } finally {
+        setUploadingImage(false);
+        setActiveUploadIndex(null);
+        e.target.value = ''; // Reset input to allow choosing same file
+      }
+    }
+  };
+
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
+      const combinedImageUrl = formImages.filter(url => url && url.trim() !== '').join(';');
       const payload = {
         name: productForm.name,
         description: productForm.description,
         price: parseFloat(productForm.price),
         quantity: parseInt(productForm.quantity),
         categoryId: parseInt(productForm.categoryId),
-        imageUrl: productForm.imageUrl || null
+        imageUrl: combinedImageUrl || null
       };
 
       if (editingProduct) {
@@ -374,39 +429,94 @@ const ProductManagement = () => {
               </div>
 
               <div className="form-group">
-                <label>Hình ảnh sản phẩm</label>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <input 
-                    type="file" 
-                    id="form-product-image" 
-                    accept="image/*" 
-                    onChange={handleFormImageChange}
-                    style={{ display: 'none' }}
-                  />
-                  <label 
-                    htmlFor="form-product-image" 
-                    className="btn btn-secondary" 
-                    style={{ 
-                      padding: '8px 16px', 
-                      cursor: uploadingImage ? 'not-allowed' : 'pointer', 
-                      fontSize: '13px', 
-                      display: 'flex', 
-                      align: 'center', 
-                      gap: '6px',
-                      opacity: uploadingImage ? 0.7 : 1
-                    }}
-                  >
-                    <Upload size={14} />
-                    <span>{uploadingImage ? 'Đang tải ảnh...' : 'Chọn ảnh...'}</span>
-                  </label>
-                  {productForm.imageUrl && (
-                    <img 
-                      src={getProductImageUrl(productForm.imageUrl)} 
-                      alt="Preview" 
-                      style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px', border: '1px solid var(--border-color)' }}
-                    />
-                  )}
+                <label>Hình ảnh sản phẩm (Tối đa 4 ảnh)</label>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
+                  {formImages.map((url, idx) => (
+                    <div 
+                      key={idx} 
+                      style={{ 
+                        position: 'relative', 
+                        aspectRatio: '1', 
+                        borderRadius: '8px', 
+                        border: '1.5px dashed var(--border-color)', 
+                        display: 'flex', 
+                        flexDirection: 'column',
+                        alignItems: 'center', 
+                        justifyContent: 'center', 
+                        overflow: 'hidden',
+                        background: 'var(--bg-tertiary)'
+                      }}
+                    >
+                      {url ? (
+                        <>
+                          <img 
+                            src={getProductImageUrl(url)} 
+                            alt={`Preview ${idx + 1}`} 
+                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                          />
+                          <button 
+                            type="button"
+                            onClick={() => {
+                              setFormImages(prev => {
+                                const next = [...prev];
+                                next[idx] = '';
+                                return next;
+                              });
+                            }}
+                            style={{ 
+                              position: 'absolute', 
+                              top: '4px', 
+                              right: '4px', 
+                              background: 'rgba(255, 0, 0, 0.8)', 
+                              color: 'white', 
+                              border: 'none', 
+                              borderRadius: '50%', 
+                              width: '20px', 
+                              height: '20px', 
+                              display: 'flex', 
+                              alignItems: 'center', 
+                              justifyContent: 'center',
+                              cursor: 'pointer',
+                              fontSize: '10px',
+                              zIndex: 10
+                            }}
+                          >
+                            <X size={12} />
+                          </button>
+                        </>
+                      ) : (
+                        <button 
+                          type="button"
+                          onClick={() => triggerSlotUpload(idx)}
+                          disabled={uploadingImage}
+                          style={{ 
+                            background: 'none', 
+                            border: 'none', 
+                            color: 'var(--text-secondary)', 
+                            display: 'flex', 
+                            flexDirection: 'column', 
+                            alignItems: 'center', 
+                            gap: '4px',
+                            cursor: 'pointer',
+                            width: '100%',
+                            height: '100%',
+                            justifyContent: 'center'
+                          }}
+                        >
+                          <Plus size={16} />
+                          <span style={{ fontSize: '10px' }}>Ảnh {idx + 1}</span>
+                        </button>
+                      )}
+                    </div>
+                  ))}
                 </div>
+                <input 
+                  type="file" 
+                  ref={fileInputRef}
+                  accept="image/*" 
+                  onChange={handleSlotImageChange}
+                  style={{ display: 'none' }}
+                />
               </div>
 
               <div style={{ display: 'flex', gap: '12px', marginTop: '28px' }}>

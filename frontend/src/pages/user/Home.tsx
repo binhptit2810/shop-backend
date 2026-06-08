@@ -276,7 +276,10 @@ const Home = () => {
                         }}
                       />
                     ) : null}
-                    <div className="no-image-placeholder absolute inset-0 flex flex-col items-center justify-center text-gray-300 dark:text-gray-600 bg-gray-50 dark:bg-zinc-800">
+                    <div 
+                      className="no-image-placeholder absolute inset-0 flex flex-col items-center justify-center text-gray-300 dark:text-gray-600 bg-gray-50 dark:bg-zinc-800"
+                      style={{ display: p.imageUrl ? 'none' : 'flex' }}
+                    >
                       <Sparkles size={24} />
                       <span className="text-[10px] mt-1 font-semibold">Deal Hot</span>
                     </div>
@@ -377,7 +380,10 @@ const Home = () => {
                         }}
                       />
                     ) : null}
-                    <div className="no-image-placeholder absolute inset-0 flex flex-col items-center justify-center text-gray-300 dark:text-gray-600 bg-gray-50 dark:bg-zinc-800">
+                    <div 
+                      className="no-image-placeholder absolute inset-0 flex flex-col items-center justify-center text-gray-300 dark:text-gray-600 bg-gray-50 dark:bg-zinc-800"
+                      style={{ display: product.imageUrl ? 'none' : 'flex' }}
+                    >
                       <ShoppingCart size={24} />
                       <span className="text-[10px] mt-1 font-semibold">Chưa có ảnh</span>
                     </div>
