@@ -16,6 +16,7 @@ import Checkout from '../pages/user/Checkout';
 import Orders from '../pages/user/Orders';
 import Profile from '../pages/user/Profile';
 import Wishlist from '../pages/user/Wishlist';
+import Search from '../pages/user/Search';
 
 // Common Auth Pages
 import Login from '../pages/Login';
@@ -36,6 +37,7 @@ const AppRoutes = () => {
       <Route path="/" element={<UserLayout />}>
         <Route index element={<Home />} />
         <Route path="products/:id" element={<ProductDetail />} />
+        <Route path="search" element={<Search />} />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         
