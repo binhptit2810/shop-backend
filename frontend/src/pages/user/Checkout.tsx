@@ -20,9 +20,159 @@ const Checkout = () => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [orderInfo, setOrderInfo] = useState<Order | null>(null);
 
+  // Map state
+  const [leafletLoaded, setLeafletLoaded] = useState(false);
+  const [showMap, setShowMap] = useState(false);
+  const [mapSearch, setMapSearch] = useState('');
+  const [mapLoading, setMapLoading] = useState(false);
+
+  const mapRef = React.useRef<any>(null);
+  const markerRef = React.useRef<any>(null);
+
   useEffect(() => {
     fetchCart();
+
+    // Dynamically load Leaflet script and stylesheet
+    if ((window as any).L) {
+      setLeafletLoaded(true);
+      return;
+    }
+
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+    link.id = 'leaflet-css';
+    document.head.appendChild(link);
+
+    const script = document.createElement('script');
+    script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+    script.id = 'leaflet-js';
+    script.onload = () => {
+      setLeafletLoaded(true);
+    };
+    document.body.appendChild(script);
+
+    return () => {
+      // Keep Leaflet in window to avoid loading twice on page change
+    };
   }, []);
+
+  useEffect(() => {
+    if (showMap && leafletLoaded) {
+      const timer = setTimeout(() => {
+        initMap();
+      }, 200);
+      return () => clearTimeout(timer);
+    } else {
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+        markerRef.current = null;
+      }
+    }
+  }, [showMap, leafletLoaded]);
+
+  const initMap = () => {
+    const L = (window as any).L;
+    if (!L || mapRef.current) return;
+
+    // Fix default marker icon path issue in leaflet
+    delete L.Icon.Default.prototype._getIconUrl;
+    L.Icon.Default.mergeOptions({
+      iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+      iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+    });
+
+    const defaultCenter = [21.0285, 105.8542]; // Ha Noi
+    
+    const map = L.map('checkout-map').setView(defaultCenter, 13);
+    mapRef.current = map;
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    const marker = L.marker(defaultCenter, { draggable: true }).addTo(map);
+    markerRef.current = marker;
+
+    map.on('click', (e: any) => {
+      updateLocation(e.latlng.lat, e.latlng.lng);
+    });
+
+    marker.on('dragend', () => {
+      const pos = marker.getLatLng();
+      updateLocation(pos.lat, pos.lng);
+    });
+
+    // Request GPS location
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          updateLocation(pos.coords.latitude, pos.coords.longitude);
+        },
+        (err) => {
+          console.warn("Lỗi định vị GPS:", err);
+          updateLocation(defaultCenter[0], defaultCenter[1]);
+        }
+      );
+    } else {
+      updateLocation(defaultCenter[0], defaultCenter[1]);
+    }
+  };
+
+  const updateLocation = async (lat: number, lng: number) => {
+    const L = (window as any).L;
+    if (!L) return;
+
+    if (markerRef.current) {
+      markerRef.current.setLatLng([lat, lng]);
+    }
+    if (mapRef.current) {
+      mapRef.current.panTo([lat, lng]);
+    }
+
+    setMapLoading(true);
+    try {
+      const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=vi`);
+      const data = await response.json();
+      if (data && data.display_name) {
+        setShippingAddress(data.display_name);
+      }
+    } catch (err) {
+      console.error("Lỗi chuyển đổi tọa độ sang địa chỉ:", err);
+    } finally {
+      setMapLoading(false);
+    }
+  };
+
+  const handleMapSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!mapSearch.trim() || !leafletLoaded) return;
+
+    setMapLoading(true);
+    try {
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(mapSearch.trim())}&limit=1&accept-language=vi`);
+      const data = await response.json();
+      if (data && data.length > 0) {
+        const { lat, lon } = data[0];
+        const latitude = parseFloat(lat);
+        const longitude = parseFloat(lon);
+        
+        updateLocation(latitude, longitude);
+        if (mapRef.current) {
+          mapRef.current.setZoom(16);
+        }
+      } else {
+        showToast("Không tìm thấy địa điểm trên bản đồ!", "error");
+      }
+    } catch (err) {
+      console.error("Lỗi tìm kiếm bản đồ:", err);
+      showToast("Có lỗi xảy ra khi tìm địa chỉ.", "error");
+    } finally {
+      setMapLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (!cart || !cart.cartItems || cart.cartItems.length === 0) {
@@ -162,19 +312,73 @@ const Checkout = () => {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="address" className="text-[11px] text-gray-550 flex items-center gap-1.5 font-bold">
-              <MapPin size={13} />
-              <span>Địa chỉ giao nhận chi tiết</span>
-            </label>
+            <div className="flex justify-between items-center mb-1">
+              <label htmlFor="address" className="text-[11px] text-gray-550 flex items-center gap-1.5 font-bold">
+                <MapPin size={13} />
+                <span>Địa chỉ giao nhận chi tiết</span>
+              </label>
+              
+              <button
+                type="button"
+                onClick={() => setShowMap(!showMap)}
+                className="text-[10px] md:text-xs font-bold text-shopee bg-orange-50 dark:bg-orange-950/20 hover:bg-orange-100/70 font-bold px-2.5 py-1.5 rounded-lg border border-shopee/10 flex items-center gap-1 transition-all focus:outline-none"
+              >
+                📍 {showMap ? "Ẩn bản đồ" : "Chọn từ Bản đồ / Định vị GPS"}
+              </button>
+            </div>
+            
             <textarea 
               id="address" 
               className="text-xs px-3.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 focus:outline-none focus:border-shopee resize-y"
               placeholder="Ví dụ: Số 12, Ngõ 45, Đường Nguyễn Trãi, Quận Thanh Xuân, Hà Nội..."
-              rows={4}
+              rows={3}
               value={shippingAddress}
               onChange={(e) => setShippingAddress(e.target.value)}
               required
             />
+
+            {showMap && (
+              <div className="border border-gray-150 dark:border-gray-700 rounded-xl p-3 bg-gray-50 dark:bg-gray-900/50 flex flex-col gap-2.5 animate-fade-in mt-1">
+                {/* Search Bar for Map */}
+                <div className="flex gap-1.5">
+                  <input 
+                    type="text" 
+                    placeholder="Tìm địa điểm trên bản đồ (ví dụ: Nguyễn Trãi, Hà Nội)..."
+                    value={mapSearch}
+                    onChange={(e) => setMapSearch(e.target.value)}
+                    className="flex-1 text-xs px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 focus:outline-none"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleMapSearch(e);
+                      }
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleMapSearch}
+                    disabled={mapLoading}
+                    className="bg-shopee hover:bg-shopee-hover text-white text-xs font-bold px-4 rounded-lg focus:outline-none flex-shrink-0"
+                  >
+                    {mapLoading ? 'Đang tìm...' : 'Tìm kiếm'}
+                  </button>
+                </div>
+
+                {/* Map Container */}
+                <div className="relative w-full h-[280px] rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 bg-gray-200 dark:bg-gray-800">
+                  <div id="checkout-map" className="w-full h-full z-10" />
+                  
+                  {mapLoading && (
+                    <div className="absolute inset-0 bg-white/60 dark:bg-black/60 flex items-center justify-center z-20">
+                      <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-shopee" />
+                    </div>
+                  )}
+                </div>
+                <span className="text-[10px] text-gray-400 italic">
+                  * Hướng dẫn: Click chuột lên vị trí bất kỳ trên bản đồ hoặc kéo marker để chọn vị trí. Hệ thống sẽ tự động điền địa chỉ vào ô bên trên.
+                </span>
+              </div>
+            )}
           </div>
 
           <div className="flex flex-col gap-1">
