@@ -33,4 +33,11 @@ public class UserController {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/{id}/role")
+    public ResponseEntity<UserResponse> changeUserRole(
+            @PathVariable Long id,
+            @RequestParam String role) {
+        return ResponseEntity.ok(userService.changeUserRole(id, role));
+    }
 }

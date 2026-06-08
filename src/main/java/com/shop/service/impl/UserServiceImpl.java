@@ -4,6 +4,7 @@ import com.shop.dto.UserLockRequest;
 import com.shop.dto.UserResponse;
 import com.shop.entity.Order;
 import com.shop.entity.User;
+import com.shop.entity.Role;
 import com.shop.exception.BadRequestException;
 import com.shop.repository.CartRepository;
 import com.shop.repository.OrderRepository;
@@ -106,5 +107,50 @@ public class UserServiceImpl implements UserService {
 
         // Xóa người dùng
         userRepository.delete(user);
+    }
+
+    @Override
+    @Transactional
+    public UserResponse changeUserRole(Long userId, String newRole) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BadRequestException("Người dùng không tồn tại!"));
+
+        if (user.getRole() == Role.ADMIN) {
+            throw new BadRequestException("Không thể thay đổi vai trò của tài khoản Quản trị viên (ADMIN)!");
+        }
+
+        Role targetRole;
+        try {
+            targetRole = Role.valueOf(newRole.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException("Vai trò không hợp lệ! Chỉ chấp nhận USER hoặc SELLER.");
+        }
+
+        if (targetRole == Role.ADMIN) {
+            throw new BadRequestException("Không thể nâng cấp người dùng khác thành Quản trị viên (ADMIN)!");
+        }
+
+        user.setRole(targetRole);
+        User updatedUser = userRepository.save(user);
+
+        // Trả về DTO cập nhật mới nhất kèm thống kê đơn hàng
+        List<Order> orders = orderRepository.findByUserIdOrderByCreatedAtDesc(userId);
+        int totalOrders = orders.size();
+        double totalSpent = orders.stream()
+                .map(Order::getTotalPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .doubleValue();
+
+        return UserResponse.builder()
+                .id(updatedUser.getId())
+                .username(updatedUser.getUsername())
+                .email(updatedUser.getEmail())
+                .role(updatedUser.getRole().name())
+                .isLocked(updatedUser.isLocked())
+                .statusReason(updatedUser.getStatusReason())
+                .createdAt(updatedUser.getCreatedAt())
+                .totalOrders(totalOrders)
+                .totalSpent(totalSpent)
+                .build();
     }
 }

@@ -12,7 +12,8 @@ import {
   RefreshCw,
   Lock,
   Unlock,
-  Trash2
+  Trash2,
+  UserCog
 } from 'lucide-react';
 
 const UserManagement = () => {
@@ -91,6 +92,21 @@ const UserManagement = () => {
       } catch (error) {
         console.error(error);
         showToast(error.response?.data?.message || 'Không thể xóa người dùng này.', 'error');
+      }
+    }
+  };
+
+  const handleChangeRole = async (user) => {
+    const newRole = user.role === 'USER' ? 'SELLER' : 'USER';
+    const roleText = newRole === 'SELLER' ? 'Người bán (SELLER)' : 'Người mua (USER)';
+    if (window.confirm(`Bạn có chắc chắn muốn đổi vai trò của tài khoản "${user.username}" thành ${roleText} không?`)) {
+      try {
+        const response = await API.put(`/users/${user.id}/role?role=${newRole}`);
+        showToast(`Đã đổi vai trò tài khoản "${user.username}" thành ${roleText} thành công.`);
+        setUsers(users.map(u => u.id === user.id ? response.data : u));
+      } catch (error) {
+        console.error(error);
+        showToast(error.response?.data?.message || 'Có lỗi xảy ra khi đổi vai trò.', 'error');
       }
     }
   };
@@ -272,6 +288,16 @@ const UserManagement = () => {
                                 Khóa
                               </button>
                             )}
+                            
+                            <button 
+                              onClick={() => handleChangeRole(u)} 
+                              className="btn btn-secondary"
+                              style={{ padding: '6px 10px', fontSize: '12px', borderColor: 'var(--primary)', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '4px' }}
+                              title="Thay đổi vai trò thành viên"
+                            >
+                              <UserCog size={14} />
+                              <span>{u.role === 'USER' ? 'Lên Người bán' : 'Xuống Người mua'}</span>
+                            </button>
                             
                             <button 
                               onClick={() => handleDeleteUser(u)} 

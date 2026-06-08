@@ -8,4 +8,5 @@ public interface UserService {
     List<UserResponse> getAllUsers();
     UserResponse lockUnlockUser(Long userId, UserLockRequest request);
     void deleteUser(Long userId);
+    UserResponse changeUserRole(Long userId, String newRole);
 }
