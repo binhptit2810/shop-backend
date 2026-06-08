@@ -8,10 +8,16 @@
 
 .main-content {
   flex: 1;
-  padding: 110px 24px 80px;
+  padding: 135px 24px 80px;
   max-width: 1240px;
   width: 100%;
   margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    padding: 95px 16px 60px;
+  }
 }
 
 /* Common Panels and Glassmorphism */
