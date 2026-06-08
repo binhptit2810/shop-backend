@@ -223,18 +223,18 @@ const SearchPage = () => {
             <div className="flex flex-col gap-1.5 max-h-48 overflow-y-auto pr-1">
               <button 
                 onClick={() => updateFilter('categoryId', null)}
-                className={`w-full text-left text-xs py-1.5 px-2 rounded-lg font-bold transition-all truncate block ${!categoryIdParam ? 'bg-orange-50 dark:bg-orange-950/30 text-shopee' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-zinc-800'}`}
+                className={`w-full text-left text-xs h-9 px-2.5 rounded-lg font-bold transition-all flex items-center ${!categoryIdParam ? 'bg-orange-50 dark:bg-orange-950/30 text-shopee' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-zinc-800'}`}
               >
-                Tất cả sản phẩm
+                <span>Tất cả sản phẩm</span>
               </button>
               {categories.map(cat => (
                 <button 
                   key={cat.id}
                   onClick={() => updateFilter('categoryId', cat.id.toString())}
-                  className={`w-full text-left text-xs py-1.5 px-2 rounded-lg font-bold transition-all truncate block ${categoryIdParam === cat.id.toString() ? 'bg-orange-50 dark:bg-orange-950/30 text-shopee' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-zinc-800'}`}
+                  className={`w-full text-left text-xs h-9 px-2.5 rounded-lg font-bold transition-all flex items-center ${categoryIdParam === cat.id.toString() ? 'bg-orange-50 dark:bg-orange-950/30 text-shopee' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-zinc-800'}`}
                   title={cat.name}
                 >
-                  {cat.name}
+                  <span className="truncate">{cat.name}</span>
                 </button>
               ))}
             </div>
@@ -511,9 +511,9 @@ const SearchPage = () => {
                     updateFilter('categoryId', null);
                     setIsMobileFilterOpen(false);
                   }}
-                  className={`w-full text-left text-xs py-2 px-2.5 rounded-lg font-bold transition-all truncate block ${!categoryIdParam ? 'bg-orange-50 dark:bg-orange-950/30 text-shopee' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-zinc-900'}`}
+                  className={`w-full text-left text-xs h-10 px-3 rounded-lg font-bold transition-all flex items-center ${!categoryIdParam ? 'bg-orange-50 dark:bg-orange-950/30 text-shopee' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-zinc-900'}`}
                 >
-                  Tất cả sản phẩm
+                  <span>Tất cả sản phẩm</span>
                 </button>
                 {categories.map(cat => (
                   <button 
@@ -522,9 +522,9 @@ const SearchPage = () => {
                       updateFilter('categoryId', cat.id.toString());
                       setIsMobileFilterOpen(false);
                     }}
-                    className={`w-full text-left text-xs py-2 px-2.5 rounded-lg font-bold transition-all truncate block ${categoryIdParam === cat.id.toString() ? 'bg-orange-50 dark:bg-orange-950/30 text-shopee' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-zinc-900'}`}
+                    className={`w-full text-left text-xs h-10 px-3 rounded-lg font-bold transition-all flex items-center ${categoryIdParam === cat.id.toString() ? 'bg-orange-50 dark:bg-orange-950/30 text-shopee' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-zinc-900'}`}
                   >
-                    {cat.name}
+                    <span className="truncate">{cat.name}</span>
                   </button>
                 ))}
               </div>
