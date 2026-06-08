@@ -9,12 +9,19 @@ export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  const formatCartData = (data) => {
+    if (data && data.items) {
+      data.cartItems = data.items;
+    }
+    return data;
+  };
+
   const fetchCart = async () => {
     if (!user) return;
     setLoading(true);
     try {
       const response = await API.get('/cart');
-      setCart(response.data);
+      setCart(formatCartData(response.data));
     } catch (error) {
       console.error('Lỗi khi tải giỏ hàng:', error);
       setCart(null);
@@ -34,7 +41,7 @@ export const CartProvider = ({ children }) => {
   const addToCart = async (productId, quantity) => {
     try {
       const response = await API.post('/cart/items', { productId, quantity });
-      setCart(response.data);
+      setCart(formatCartData(response.data));
       return { success: true };
     } catch (error) {
       return {
@@ -47,7 +54,7 @@ export const CartProvider = ({ children }) => {
   const updateQuantity = async (cartItemId, quantity) => {
     try {
       const response = await API.put(`/cart/items/${cartItemId}?quantity=${quantity}`);
-      setCart(response.data);
+      setCart(formatCartData(response.data));
       return { success: true };
     } catch (error) {
       return {
@@ -60,7 +67,7 @@ export const CartProvider = ({ children }) => {
   const removeFromCart = async (cartItemId) => {
     try {
       const response = await API.delete(`/cart/items/${cartItemId}`);
-      setCart(response.data);
+      setCart(formatCartData(response.data));
       return { success: true };
     } catch (error) {
       return {

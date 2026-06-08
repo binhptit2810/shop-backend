@@ -16,7 +16,8 @@ import {
   Sun,
   Menu,
   X,
-  Package
+  Package,
+  Heart
 } from 'lucide-react';
 import { showToast } from '../services/toast';
 
@@ -65,7 +66,7 @@ const Navbar = () => {
   const fetchCartCount = async () => {
     try {
       const response = await API.get('/cart');
-      const items = response.data?.cartItems || [];
+      const items = response.data?.cartItems || response.data?.items || [];
       const totalCount = items.reduce((acc: number, curr: any) => acc + curr.quantity, 0);
       setCartCount(totalCount);
     } catch (error) {
