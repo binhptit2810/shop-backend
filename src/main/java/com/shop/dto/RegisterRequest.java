@@ -26,4 +26,7 @@ public class RegisterRequest {
     @Email(message = "Định dạng email không hợp lệ")
     @Size(max = 100, message = "Email không được vượt quá 100 ký tự")
     private String email;
+
+    // "USER" hoặc "SELLER" – mặc định là USER nếu không truyền
+    private String role;
 }

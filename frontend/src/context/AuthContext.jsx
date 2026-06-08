@@ -19,7 +19,8 @@ export const AuthProvider = ({ children }) => {
           // Gửi request lên backend để kiểm tra xem token còn hợp lệ và tài khoản có bị khóa/xóa không
           const response = await API.get('/auth/me');
           const data = response.data;
-          setUser({ username: data.username, email: data.email, role: data.role });
+          setUser({ id: data.id, username: data.username, email: data.email, role: data.role });
+          if (data.id) localStorage.setItem('userId', data.id);
         } catch (error) {
           console.error("Xác thực token thất bại hoặc tài khoản bị khóa/xóa:", error);
           localStorage.removeItem('token');
@@ -46,8 +47,9 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('username', username);
       localStorage.setItem('email', email);
       localStorage.setItem('role', role);
+      if (response.data.id) localStorage.setItem('userId', response.data.id);
       
-      setUser({ username, email, role });
+      setUser({ id: response.data.id, username, email, role });
       return { success: true };
     } catch (error) {
       console.error("Login error:", error);
@@ -64,9 +66,9 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const register = async (username, email, password) => {
+  const register = async (username, email, password, role = 'USER') => {
     try {
-      await API.post('/auth/register', { username, email, password });
+      await API.post('/auth/register', { username, email, password, role });
       return { success: true };
     } catch (error) {
       return {
@@ -81,6 +83,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('username');
     localStorage.removeItem('email');
     localStorage.removeItem('role');
+    localStorage.removeItem('userId');
     setUser(null);
   };
 
@@ -88,8 +91,12 @@ export const AuthProvider = ({ children }) => {
     return user && (user.role === 'ADMIN' || user.role === 'ROLE_ADMIN');
   };
 
+  const isSeller = () => {
+    return user && (user.role === 'SELLER' || user.role === 'ROLE_SELLER');
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, isAdmin }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, isAdmin, isSeller }}>
       {children}
     </AuthContext.Provider>
   );

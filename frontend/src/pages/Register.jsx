@@ -10,6 +10,7 @@ const Register = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState('USER');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -30,7 +31,7 @@ const Register = () => {
     }
 
     setLoading(true);
-    const res = await register(username, email, password);
+    const res = await register(username, email, password, role);
     setLoading(false);
 
     if (res.success) {
@@ -42,6 +43,13 @@ const Register = () => {
       showToast(res.message, 'error');
     }
   };
+
+  const roleToggleStyle = (active) => ({
+    flex: 1, padding: '10px', border: 'none', borderRadius: '8px',
+    cursor: 'pointer', fontSize: '13px', fontWeight: 600, transition: 'all 0.2s',
+    background: active ? 'linear-gradient(135deg, #e94560, #c0392b)' : 'transparent',
+    color: active ? '#fff' : '#888',
+  });
 
   return (
     <div className="auth-container">
@@ -79,7 +87,7 @@ const Register = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="password">Mật khẩu</label>
+            <label>Mật khẩu</label>
             <input 
               type="password" 
               id="password" 
@@ -89,6 +97,23 @@ const Register = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
+          </div>
+
+          <div className="form-group">
+            <label>Loại tài khoản</label>
+            <div style={{ display: 'flex', background: '#f3f4f6', borderRadius: '10px', padding: '4px', gap: '4px' }}>
+              <button type="button" onClick={() => setRole('USER')} style={roleToggleStyle(role === 'USER')}>
+                🛍️ Người mua
+              </button>
+              <button type="button" onClick={() => setRole('SELLER')} style={roleToggleStyle(role === 'SELLER')}>
+                🏪 Người bán
+              </button>
+            </div>
+            {role === 'SELLER' && (
+              <p style={{ margin: '6px 0 0', fontSize: '12px', color: '#888', fontStyle: 'italic' }}>
+                ℹ️ Tài khoản Người bán có thể đăng sản phẩm và quản lý cửa hàng.
+              </p>
+            )}
           </div>
 
           <button 

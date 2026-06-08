@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API, { getImageBaseUrl, getProductImageUrl } from '../../services/api';
 import { showToast } from '../../services/toast';
+import ChatPanel from '../../components/ChatPanel';
 import { 
   Package, 
   Calendar, 
@@ -20,6 +21,7 @@ const Orders = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('ALL');
   const [selectedInvoice, setSelectedInvoice] = useState<Order | null>(null);
+  const [chatInfo, setChatInfo] = useState<{ orderId: number; receiverId: number; receiverName: string } | null>(null);
 
   useEffect(() => {
     fetchOrderHistory();
@@ -251,6 +253,20 @@ const Orders = () => {
                           <span>Hủy đơn</span>
                         </button>
                       )}
+
+                      {/* Nút nhắn tin với người bán - chỉ hiển thị khi đơn không bị hủy và SP có seller */}
+                      {order.orderStatus !== 'CANCELLED' && order.items?.some((item: any) => item.sellerId) && (() => {
+                        const firstSellerItem = order.items?.find((item: any) => item.sellerId);
+                        return firstSellerItem ? (
+                          <button
+                            onClick={() => setChatInfo({ orderId: order.id, receiverId: firstSellerItem.sellerId, receiverName: firstSellerItem.sellerName || 'Người bán' })}
+                            className="flex-1 sm:flex-initial bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/20 dark:hover:bg-blue-950/40 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/30 px-3.5 py-2 rounded-xl flex items-center justify-center gap-1 font-bold transition-all focus:outline-none text-xs"
+                          >
+                            <span>💬</span>
+                            <span>Nhắn tin với người bán</span>
+                          </button>
+                        ) : null;
+                      })()}
                     </div>
                   </div>
                 </div>
@@ -260,7 +276,18 @@ const Orders = () => {
         </div>
       )}
 
+      {/* Chat Panel – floating bubble */}
+      {chatInfo && (
+        <ChatPanel
+          orderId={chatInfo.orderId}
+          receiverId={chatInfo.receiverId}
+          receiverName={chatInfo.receiverName}
+          onClose={() => setChatInfo(null)}
+        />
+      )}
+
       {/* Invoice Area (Hidden unless printing) */}
+
       {selectedInvoice && (
         <div id="orders-invoice-print" className="hidden">
           <div className="invoice-header">

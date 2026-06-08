@@ -22,4 +22,10 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             @Param("userId") Long userId, 
             @Param("productId") Long productId, 
             @Param("statuses") List<OrderStatus> statuses);
+
+    /**
+     * Lấy đơn hàng có chứa sản phẩm của một seller cụ thể
+     */
+    @Query("SELECT DISTINCT o FROM Order o JOIN o.orderItems oi WHERE oi.product.seller.id = :sellerId ORDER BY o.createdAt DESC")
+    List<Order> findOrdersBySellerId(@Param("sellerId") Long sellerId);
 }

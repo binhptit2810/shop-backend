@@ -128,7 +128,13 @@ const Navbar = () => {
           {/* Top Bar */}
           <div className="max-w-7xl mx-auto px-4 py-1.5 flex justify-between items-center text-xs border-b border-white/10">
             <div className="flex items-center gap-4">
-              <Link to="#" className="hover:text-gray-200 transition-colors">Kênh Người Bán</Link>
+              {user && (user.role === 'SELLER') ? (
+                <Link to="/seller" className="hover:text-gray-200 transition-colors font-semibold">🏪 Kênh Người Bán</Link>
+              ) : user && (user.role === 'ADMIN') ? (
+                <Link to="/admin" className="hover:text-gray-200 transition-colors font-semibold">⚙️ Quản trị</Link>
+              ) : (
+                <Link to="/register" className="hover:text-gray-200 transition-colors">Kênh Người Bán</Link>
+              )}
               <span className="opacity-30">|</span>
               <Link to="#" className="hover:text-gray-200 transition-colors">Tải ứng dụng</Link>
               <span className="opacity-30">|</span>

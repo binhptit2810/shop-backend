@@ -26,6 +26,17 @@ public class ProductMapper {
             }
         }
 
+        Long sellerId = null;
+        String sellerName = null;
+        if (product.getSeller() != null) {
+            try {
+                sellerId = product.getSeller().getId();
+                sellerName = product.getSeller().getUsername();
+            } catch (jakarta.persistence.EntityNotFoundException e) {
+                sellerName = "[Người bán không xác định]";
+            }
+        }
+
         return ProductResponse.builder()
                 .id(product.getId())
                 .name(product.getName())
@@ -35,6 +46,8 @@ public class ProductMapper {
                 .imageUrl(product.getImageUrl())
                 .categoryId(categoryId)
                 .categoryName(categoryName)
+                .sellerId(sellerId)
+                .sellerName(sellerName)
                 .discountPrice(product.getDiscountPrice())
                 .colors(product.getColors())
                 .sizes(product.getSizes())

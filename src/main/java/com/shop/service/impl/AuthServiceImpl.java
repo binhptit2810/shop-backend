@@ -35,11 +35,17 @@ public class AuthServiceImpl implements AuthService {
             throw new BadRequestException("Email '" + request.getEmail() + "' đã tồn tại!");
         }
 
+        // Xác định role: chỉ cho phép USER hoặc SELLER, không cho tự cấp ADMIN
+        Role role = Role.USER;
+        if ("SELLER".equalsIgnoreCase(request.getRole())) {
+            role = Role.SELLER;
+        }
+
         User user = User.builder()
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .email(request.getEmail())
-                .role(Role.USER) // Đăng ký mặc định có vai trò USER
+                .role(role)
                 .build();
 
         User savedUser = userRepository.save(user);

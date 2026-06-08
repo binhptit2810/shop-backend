@@ -51,19 +51,24 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/categories/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
                         
-                        // Chỉ Admin mới được thêm/sửa/xóa danh mục và sản phẩm
+                        // Chỉ Admin mới được thêm/sửa/xóa danh mục
                         .requestMatchers(HttpMethod.POST, "/api/v1/categories/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/v1/categories/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/categories/**").hasRole("ADMIN")
                         
-                        .requestMatchers(HttpMethod.POST, "/api/v1/products/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/products/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/products/**").hasRole("ADMIN")
+                        // Admin và Seller đều có thể thêm/sửa/xóa sản phẩm (Seller chỉ quản lý SP của mình - logic trong service)
+                        .requestMatchers(HttpMethod.POST, "/api/v1/products/**").hasAnyRole("ADMIN", "SELLER")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/products/**").hasAnyRole("ADMIN", "SELLER")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/products/**").hasAnyRole("ADMIN", "SELLER")
                         
                         // Cấu hình phân quyền cho Đơn hàng (Order)
                         .requestMatchers(HttpMethod.GET, "/api/v1/orders").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/orders/seller").hasRole("SELLER")
                         .requestMatchers(HttpMethod.PUT, "/api/v1/orders/*/status").hasRole("ADMIN")
                         .requestMatchers("/api/v1/orders/**").authenticated()
+                        
+                        // API Tin nhắn - yêu cầu xác thực
+                        .requestMatchers("/api/v1/messages/**").authenticated()
                         
                         // Quản trị người dùng chỉ dành cho Admin
                         .requestMatchers("/api/v1/users/**").hasRole("ADMIN")

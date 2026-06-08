@@ -70,12 +70,18 @@ public class OrderMapper {
         String productName = null;
         String imageUrl = null;
         Long productId = null;
+        Long sellerId = null;
+        String sellerName = null;
 
         if (item.getProduct() != null) {
             try {
                 productId = item.getProduct().getId();
                 productName = item.getProduct().getName();
                 imageUrl = item.getProduct().getImageUrl();
+                if (item.getProduct().getSeller() != null) {
+                    sellerId = item.getProduct().getSeller().getId();
+                    sellerName = item.getProduct().getSeller().getUsername();
+                }
             } catch (jakarta.persistence.EntityNotFoundException e) {
                 productId = null;
                 productName = "[Sản phẩm đã bị xóa]";
@@ -93,6 +99,8 @@ public class OrderMapper {
                 .imageUrl(imageUrl)
                 .quantity(item.getQuantity())
                 .totalPrice(itemTotalPrice)
+                .sellerId(sellerId)
+                .sellerName(sellerName)
                 .build();
     }
 }

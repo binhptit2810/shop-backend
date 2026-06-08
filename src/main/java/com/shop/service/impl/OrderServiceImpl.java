@@ -270,4 +270,12 @@ public class OrderServiceImpl implements OrderService {
                 return false;
         }
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public java.util.List<com.shop.dto.OrderResponse> getOrdersBySeller(com.shop.entity.User seller) {
+        return orderRepository.findOrdersBySellerId(seller.getId()).stream()
+                .map(OrderMapper::toResponse)
+                .collect(java.util.stream.Collectors.toList());
+    }
 }

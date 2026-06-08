@@ -45,6 +45,10 @@ public class Product {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "seller_id", nullable = true)
+    private User seller;
+
     @Column(name = "discount_price", precision = 15, scale = 2)
     private BigDecimal discountPrice;
 

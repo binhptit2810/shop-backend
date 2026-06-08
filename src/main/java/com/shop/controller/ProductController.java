@@ -2,6 +2,7 @@ package com.shop.controller;
 
 import com.shop.dto.ProductRequest;
 import com.shop.dto.ProductResponse;
+import com.shop.entity.User;
 import com.shop.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,9 +26,16 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
-    @Operation(summary = "Tạo sản phẩm mới")
-    public ResponseEntity<ProductResponse> createProduct(@Valid @RequestBody ProductRequest request) {
-        ProductResponse response = productService.create(request);
+    @Operation(summary = "Tạo sản phẩm mới (Admin hoặc Seller)")
+    public ResponseEntity<ProductResponse> createProduct(
+            @AuthenticationPrincipal User user,
+            @Valid @RequestBody ProductRequest request) {
+        ProductResponse response;
+        if (user != null && user.getRole().name().equals("SELLER")) {
+            response = productService.createBySeller(request, user);
+        } else {
+            response = productService.create(request);
+        }
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
@@ -51,19 +60,38 @@ public class ProductController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/my-products")
+    @Operation(summary = "Lấy danh sách sản phẩm của Seller hiện tại")
+    public ResponseEntity<List<ProductResponse>> getMyProducts(@AuthenticationPrincipal User user) {
+        List<ProductResponse> response = productService.getMyProducts(user);
+        return ResponseEntity.ok(response);
+    }
+
     @PutMapping("/{id}")
-    @Operation(summary = "Cập nhật sản phẩm theo ID")
+    @Operation(summary = "Cập nhật sản phẩm theo ID (Admin hoặc Seller chủ sản phẩm)")
     public ResponseEntity<ProductResponse> updateProduct(
+            @AuthenticationPrincipal User user,
             @PathVariable Long id,
             @Valid @RequestBody ProductRequest request) {
-        ProductResponse response = productService.update(id, request);
+        ProductResponse response;
+        if (user != null && user.getRole().name().equals("SELLER")) {
+            response = productService.updateBySeller(id, request, user);
+        } else {
+            response = productService.update(id, request);
+        }
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Xóa sản phẩm theo ID")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
-        productService.delete(id);
+    @Operation(summary = "Xóa sản phẩm theo ID (Admin hoặc Seller chủ sản phẩm)")
+    public ResponseEntity<Void> deleteProduct(
+            @AuthenticationPrincipal User user,
+            @PathVariable Long id) {
+        if (user != null && user.getRole().name().equals("SELLER")) {
+            productService.deleteBySeller(id, user);
+        } else {
+            productService.delete(id);
+        }
         return ResponseEntity.noContent().build();
     }
 

@@ -37,4 +37,9 @@ public interface OrderService {
      * Khách hàng tự hủy đơn hàng của mình khi đơn đang ở trạng thái PENDING
      */
     OrderResponse cancelOrder(User user, Long orderId);
+
+    /**
+     * Lấy danh sách đơn hàng có sản phẩm của Seller hiện tại
+     */
+    List<OrderResponse> getOrdersBySeller(User seller);
 }

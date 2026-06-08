@@ -20,4 +20,8 @@ public class OrderItemResponse {
     private String imageUrl;
     private Integer quantity;
     private BigDecimal totalPrice;
+
+    // Thông tin người bán (để hiển thị nút nhắn tin)
+    private Long sellerId;
+    private String sellerName;
 }

@@ -71,4 +71,11 @@ public class OrderController {
         OrderResponse response = orderService.cancelOrder(user, id);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/seller")
+    @Operation(summary = "Lấy đơn hàng có sản phẩm của Seller hiện tại (Chỉ dành cho SELLER)")
+    public ResponseEntity<List<OrderResponse>> getSellerOrders(@AuthenticationPrincipal User user) {
+        List<OrderResponse> response = orderService.getOrdersBySeller(user);
+        return ResponseEntity.ok(response);
+    }
 }

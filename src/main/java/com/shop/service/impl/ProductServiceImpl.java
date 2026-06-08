@@ -176,4 +176,63 @@ public class ProductServiceImpl implements ProductService {
         org.springframework.data.domain.Pageable limit = org.springframework.data.domain.PageRequest.of(0, 10);
         return productRepository.findNamesByQuery(query.trim(), limit);
     }
+
+    @Override
+    @Transactional
+    public ProductResponse createBySeller(ProductRequest request, com.shop.entity.User seller) {
+        Category category = categoryRepository.findById(request.getCategoryId())
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy danh mục với ID: " + request.getCategoryId()));
+
+        Product product = ProductMapper.toEntity(request);
+        product.setCategory(category);
+        product.setSeller(seller);
+
+        Product savedProduct = productRepository.save(product);
+        return ProductMapper.toResponse(savedProduct);
+    }
+
+    @Override
+    @Transactional
+    public ProductResponse updateBySeller(Long id, ProductRequest request, com.shop.entity.User seller) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy sản phẩm với ID: " + id));
+
+        if (product.getSeller() == null || !product.getSeller().getId().equals(seller.getId())) {
+            throw new com.shop.exception.BadRequestException("Bạn không có quyền chỉnh sửa sản phẩm này");
+        }
+
+        Category category = categoryRepository.findById(request.getCategoryId())
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy danh mục với ID: " + request.getCategoryId()));
+
+        ProductMapper.updateEntity(request, product);
+        product.setCategory(category);
+
+        Product updatedProduct = productRepository.save(product);
+        return ProductMapper.toResponse(updatedProduct);
+    }
+
+    @Override
+    @Transactional
+    public void deleteBySeller(Long id, com.shop.entity.User seller) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy sản phẩm với ID: " + id));
+
+        if (product.getSeller() == null || !product.getSeller().getId().equals(seller.getId())) {
+            throw new com.shop.exception.BadRequestException("Bạn không có quyền xóa sản phẩm này");
+        }
+
+        if (product.getImageUrl() != null) {
+            fileStorageService.deleteFile(product.getImageUrl());
+        }
+
+        productRepository.delete(product);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ProductResponse> getMyProducts(com.shop.entity.User seller) {
+        return productRepository.findBySellerId(seller.getId()).stream()
+                .map(ProductMapper::toResponse)
+                .collect(Collectors.toList());
+    }
 }

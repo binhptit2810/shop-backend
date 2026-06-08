@@ -56,4 +56,24 @@ public interface ProductService {
      * Gợi ý từ khóa tìm kiếm liên quan
      */
     List<String> getSearchSuggestions(String query);
+
+    /**
+     * Tạo sản phẩm bởi Seller (tự động gắn seller)
+     */
+    ProductResponse createBySeller(ProductRequest request, com.shop.entity.User seller);
+
+    /**
+     * Cập nhật sản phẩm bởi Seller (kiểm tra quyền sở hữu)
+     */
+    ProductResponse updateBySeller(Long id, ProductRequest request, com.shop.entity.User seller);
+
+    /**
+     * Xóa sản phẩm bởi Seller (kiểm tra quyền sở hữu)
+     */
+    void deleteBySeller(Long id, com.shop.entity.User seller);
+
+    /**
+     * Lấy danh sách sản phẩm của một Seller
+     */
+    List<ProductResponse> getMyProducts(com.shop.entity.User seller);
 }

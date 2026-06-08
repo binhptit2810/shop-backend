@@ -30,6 +30,13 @@ import OrderManagement from '../pages/admin/OrderManagement';
 import UserManagement from '../pages/admin/UserManagement';
 import RevenueManagement from '../pages/admin/RevenueManagement';
 
+// Seller Pages
+import SellerLayout from '../pages/seller/SellerLayout';
+import SellerDashboard from '../pages/seller/SellerDashboard';
+import SellerProducts from '../pages/seller/SellerProducts';
+import SellerOrders from '../pages/seller/SellerOrders';
+import SellerMessages from '../pages/seller/SellerMessages';
+
 const AppRoutes = () => {
   return (
     <Routes>
@@ -99,6 +106,21 @@ const AppRoutes = () => {
         <Route path="orders" element={<OrderManagement />} />
         <Route path="users" element={<UserManagement />} />
         <Route path="revenue" element={<RevenueManagement />} />
+      </Route>
+
+      {/* 3. Nhóm Route Người Bán (Seller Site) dùng chung SellerLayout */}
+      <Route 
+        path="/seller" 
+        element={
+          <ProtectedRoute sellerOnly={true}>
+            <SellerLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<SellerDashboard />} />
+        <Route path="products" element={<SellerProducts />} />
+        <Route path="orders" element={<SellerOrders />} />
+        <Route path="messages" element={<SellerMessages />} />
       </Route>
     </Routes>
   );

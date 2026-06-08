@@ -44,4 +44,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query("SELECT DISTINCT p.name FROM Product p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :query, '%'))")
     List<String> findNamesByQuery(@Param("query") String query, org.springframework.data.domain.Pageable pageable);
+
+    /**
+     * Tìm sản phẩm thuộc về một seller cụ thể
+     */
+    List<Product> findBySellerId(Long sellerId);
 }
