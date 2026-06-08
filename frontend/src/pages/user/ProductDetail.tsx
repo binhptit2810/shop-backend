@@ -56,6 +56,44 @@ const ProductDetail = () => {
     }
   }, [id, user]);
 
+  const handleChatWithSeller = async () => {
+    if (!user) {
+      showToast('Vui lòng đăng nhập để nhắn tin với người bán!', 'error');
+      navigate('/login');
+      return;
+    }
+
+    try {
+      const sellerId = product?.sellerId || 1;
+      const sellerName = product?.sellerName || 'Admin';
+
+      // Tải danh sách đơn hàng để tìm đơn hàng đã giao dịch với người bán này
+      const res = await API.get('/orders/my');
+      const orders = res.data || [];
+
+      const matchingOrder = orders.find((order: any) => 
+        order.orderStatus !== 'CANCELLED' && 
+        order.items?.some((item: any) => {
+          const itemSellerId = item.sellerId || 1;
+          return itemSellerId === sellerId;
+        })
+      );
+
+      if (matchingOrder) {
+        setChatInfo({
+          orderId: matchingOrder.id,
+          receiverId: sellerId,
+          receiverName: sellerName === 'admin' ? 'Admin' : sellerName
+        });
+      } else {
+        showToast('Bạn cần mua hàng và có ít nhất 1 đơn hàng với người bán này để chat!', 'warning');
+      }
+    } catch (err) {
+      console.error('Lỗi khi chuẩn bị chat:', err);
+      showToast('Không thể kết nối dịch vụ chat lúc này.', 'error');
+    }
+  };
+
   const fetchProductDetail = async () => {
     setLoading(true);
     try {
@@ -369,13 +407,20 @@ const ProductDetail = () => {
             <div className="flex flex-col gap-2 mt-2 pt-2.5 border-t border-gray-100 dark:border-gray-800 text-[11px] md:text-xs text-gray-650 dark:text-gray-300 font-semibold">
               <div className="flex items-center gap-3">
                 <span className="text-gray-400 w-20 flex-shrink-0">Người bán:</span>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   <span className="font-extrabold text-gray-800 dark:text-gray-100">
                     {product.sellerName ? (product.sellerName === 'admin' ? 'Admin' : product.sellerName) : 'Admin'}
                   </span>
                   <span className="bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 text-[9px] font-bold px-1.5 py-0.5 rounded">
                     {product.sellerName && product.sellerName !== 'admin' ? '✓ Người bán uy tín' : '🛡️ Hệ thống'}
                   </span>
+                  <button
+                    onClick={handleChatWithSeller}
+                    className="inline-flex items-center gap-1 text-[11px] font-bold text-shopee bg-orange-50 dark:bg-orange-950/20 hover:bg-orange-100 dark:hover:bg-orange-900/40 px-2.5 py-1 rounded-lg border border-orange-200 dark:border-orange-900/50 transition-all focus:outline-none ml-2"
+                  >
+                    <span>💬</span>
+                    <span>Chat với người bán</span>
+                  </button>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -693,6 +738,15 @@ const ProductDetail = () => {
           )}
         </div>
       </div>
+      {/* Chat Panel – floating bubble */}
+      {chatInfo && (
+        <ChatPanel
+          orderId={chatInfo.orderId}
+          receiverId={chatInfo.receiverId}
+          receiverName={chatInfo.receiverName}
+          onClose={() => setChatInfo(null)}
+        />
+      )}
     </div>
   );
 };
