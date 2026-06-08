@@ -39,6 +39,7 @@ const ProductDetail = () => {
   const [commentInput, setCommentInput] = useState('');
   const [imageUrlInput, setImageUrlInput] = useState('');
   const [showReviewForm, setShowReviewForm] = useState(false);
+  const [canReview, setCanReview] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -46,6 +47,9 @@ const ProductDetail = () => {
       fetchReviews();
       if (user) {
         fetchWishlist();
+        checkPurchaseStatus();
+      } else {
+        setCanReview(false);
       }
     }
   }, [id, user]);
@@ -86,6 +90,21 @@ const ProductDetail = () => {
       setReviews(response.data || []);
     } catch (error) {
       console.error('Lỗi khi tải đánh giá:', error);
+    }
+  };
+
+  const checkPurchaseStatus = async () => {
+    try {
+      const response = await API.get('/orders/my');
+      const orders = response.data || [];
+      const purchased = orders.some((order: any) => 
+        (order.status === 'DELIVERED' || order.status === 'COMPLETED' || order.orderStatus === 'DELIVERED' || order.orderStatus === 'COMPLETED') &&
+        order.items?.some((item: any) => item.productId === parseInt(id || ''))
+      );
+      setCanReview(purchased);
+    } catch (e) {
+      console.error("Lỗi khi kiểm tra trạng thái mua hàng:", e);
+      setCanReview(false);
     }
   };
 
@@ -482,14 +501,18 @@ const ProductDetail = () => {
           <h3 className="text-sm md:text-lg font-bold text-gray-900 dark:text-white">
             Đánh giá sản phẩm ({totalReviews})
           </h3>
-          {user && (
+          {canReview ? (
             <button 
               onClick={() => setShowReviewForm(!showReviewForm)}
               className="text-[10px] md:text-xs font-bold text-shopee bg-orange-50 dark:bg-orange-950/20 hover:bg-orange-100 px-3 py-1.5 rounded-lg transition-all focus:outline-none"
             >
               {showReviewForm ? "Đóng Form viết đánh giá" : "Viết đánh giá sản phẩm"}
             </button>
-          )}
+          ) : user ? (
+            <span className="text-[10px] md:text-xs font-medium text-gray-400 dark:text-gray-500 italic bg-gray-50 dark:bg-gray-900/50 px-3 py-1.5 rounded-lg border border-gray-100/50 dark:border-gray-800">
+              Bạn chỉ có thể đánh giá sản phẩm sau khi đã mua và nhận hàng thành công.
+            </span>
+          ) : null}
         </div>
 
         {/* Submit Review Form */}

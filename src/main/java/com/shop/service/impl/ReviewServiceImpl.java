@@ -5,14 +5,18 @@ import com.shop.dto.ReviewResponse;
 import com.shop.entity.Product;
 import com.shop.entity.Review;
 import com.shop.entity.User;
+import com.shop.entity.OrderStatus;
 import com.shop.exception.ResourceNotFoundException;
+import com.shop.exception.BadRequestException;
 import com.shop.repository.ProductRepository;
 import com.shop.repository.ReviewRepository;
+import com.shop.repository.OrderRepository;
 import com.shop.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +26,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final ProductRepository productRepository;
+    private final OrderRepository orderRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -46,6 +51,17 @@ public class ReviewServiceImpl implements ReviewService {
     public ReviewResponse addReview(User user, Long productId, ReviewRequest request) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy sản phẩm với ID: " + productId));
+
+        // Kiểm tra xem người dùng đã mua sản phẩm này và đơn hàng giao thành công / hoàn thành chưa
+        boolean hasPurchased = orderRepository.existsByUserIdAndProductIdAndStatusIn(
+                user.getId(),
+                productId,
+                Arrays.asList(OrderStatus.DELIVERED, OrderStatus.COMPLETED)
+        );
+
+        if (!hasPurchased) {
+            throw new BadRequestException("Bạn chỉ có thể đánh giá sản phẩm sau khi đã mua và nhận hàng thành công!");
+        }
 
         Review review = Review.builder()
                 .user(user)
