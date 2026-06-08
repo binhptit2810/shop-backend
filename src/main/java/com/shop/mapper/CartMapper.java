@@ -56,10 +56,17 @@ public class CartMapper {
         Long productId = null;
 
         if (item.getProduct() != null) {
-            productId = item.getProduct().getId();
-            price = item.getProduct().getPrice();
-            productName = item.getProduct().getName();
-            imageUrl = item.getProduct().getImageUrl();
+            try {
+                productId = item.getProduct().getId();
+                price = item.getProduct().getPrice();
+                productName = item.getProduct().getName();
+                imageUrl = item.getProduct().getImageUrl();
+            } catch (jakarta.persistence.EntityNotFoundException e) {
+                productId = null;
+                price = BigDecimal.ZERO;
+                productName = "[Sản phẩm đã bị xóa]";
+                imageUrl = null;
+            }
         }
 
         BigDecimal itemTotalPrice = price.multiply(BigDecimal.valueOf(item.getQuantity()));

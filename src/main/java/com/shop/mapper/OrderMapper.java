@@ -28,10 +28,23 @@ public class OrderMapper {
         }
 
         String statusStr = order.getStatus() != null ? order.getStatus().name() : null;
+
+        Long userId = null;
+        String username = null;
+        if (order.getUser() != null) {
+            try {
+                userId = order.getUser().getId();
+                username = order.getUser().getUsername();
+            } catch (jakarta.persistence.EntityNotFoundException e) {
+                userId = null;
+                username = "[Người dùng đã bị xóa]";
+            }
+        }
+
         return OrderResponse.builder()
                 .id(order.getId())
-                .userId(order.getUser() != null ? order.getUser().getId() : null)
-                .username(order.getUser() != null ? order.getUser().getUsername() : null)
+                .userId(userId)
+                .username(username)
                 .items(itemResponses)
                 .totalPrice(order.getTotalPrice())
                 .shippingAddress(order.getShippingAddress())
@@ -59,9 +72,15 @@ public class OrderMapper {
         Long productId = null;
 
         if (item.getProduct() != null) {
-            productId = item.getProduct().getId();
-            productName = item.getProduct().getName();
-            imageUrl = item.getProduct().getImageUrl();
+            try {
+                productId = item.getProduct().getId();
+                productName = item.getProduct().getName();
+                imageUrl = item.getProduct().getImageUrl();
+            } catch (jakarta.persistence.EntityNotFoundException e) {
+                productId = null;
+                productName = "[Sản phẩm đã bị xóa]";
+                imageUrl = null;
+            }
         }
 
         BigDecimal itemTotalPrice = price.multiply(BigDecimal.valueOf(item.getQuantity()));

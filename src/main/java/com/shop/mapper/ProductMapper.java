@@ -17,8 +17,13 @@ public class ProductMapper {
         Long categoryId = null;
         String categoryName = null;
         if (product.getCategory() != null) {
-            categoryId = product.getCategory().getId();
-            categoryName = product.getCategory().getName();
+            try {
+                categoryId = product.getCategory().getId();
+                categoryName = product.getCategory().getName();
+            } catch (jakarta.persistence.EntityNotFoundException e) {
+                categoryId = null;
+                categoryName = "[Danh mục đã bị xóa]";
+            }
         }
 
         return ProductResponse.builder()
