@@ -1,7 +1,18 @@
 import axios from 'axios';
 
+let apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api/v1';
+// Chuẩn hóa đường dẫn: tự động thêm '/api/v1' nếu thiếu
+if (apiBase) {
+  if (apiBase.endsWith('/')) {
+    apiBase = apiBase.slice(0, -1);
+  }
+  if (!apiBase.endsWith('/api/v1')) {
+    apiBase = apiBase + '/api/v1';
+  }
+}
+
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api/v1',
+  baseURL: apiBase,
 });
 
 // Request interceptor đính kèm JWT token vào header Authorization
