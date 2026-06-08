@@ -62,5 +62,14 @@ export const getImageBaseUrl = () => {
   }
 };
 
+export const getProductImageUrl = (url) => {
+  if (!url) return 'https://images.unsplash.com/photo-1542496658-e33a6d0d50f6?w=200';
+  if (url.startsWith('http') || url.startsWith('data:')) {
+    return url;
+  }
+  return `${getImageBaseUrl()}${url}`;
+};
+
 export default API;
+
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import API, { getImageBaseUrl } from '../../services/api';
+import API, { getImageBaseUrl, getProductImageUrl } from '../../services/api';
 import { showToast } from '../../services/toast';
 import { 
   Plus, 
@@ -20,7 +20,7 @@ const ProductManagement = () => {
   const [showModal, setShowModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [productForm, setProductForm] = useState({
-    name: '', description: '', price: '', quantity: '', categoryId: ''
+    name: '', description: '', price: '', quantity: '', categoryId: '', imageUrl: ''
   });
 
   // Image Upload Modal States
@@ -58,7 +58,8 @@ const ProductManagement = () => {
       description: '',
       price: '',
       quantity: '',
-      categoryId: categories[0]?.id || ''
+      categoryId: categories[0]?.id || '',
+      imageUrl: ''
     });
     setShowModal(true);
   };
@@ -70,9 +71,28 @@ const ProductManagement = () => {
       description: prod.description || '',
       price: prod.price,
       quantity: prod.quantity,
-      categoryId: prod.categoryId
+      categoryId: prod.categoryId,
+      imageUrl: prod.imageUrl || ''
     });
     setShowModal(true);
+  };
+
+  const handleFormImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        showToast('Ảnh không được vượt quá 5MB!', 'error');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProductForm(prev => ({
+          ...prev,
+          imageUrl: reader.result
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleFormSubmit = async (e) => {
@@ -83,7 +103,8 @@ const ProductManagement = () => {
         description: productForm.description,
         price: parseFloat(productForm.price),
         quantity: parseInt(productForm.quantity),
-        categoryId: parseInt(productForm.categoryId)
+        categoryId: parseInt(productForm.categoryId),
+        imageUrl: productForm.imageUrl || null
       };
 
       if (editingProduct) {
@@ -199,7 +220,7 @@ const ProductManagement = () => {
                       <td>
                         {prod.imageUrl ? (
                           <img 
-                            src={`${getImageBaseUrl()}${prod.imageUrl}`} 
+                            src={getProductImageUrl(prod.imageUrl)} 
                             alt={prod.name} 
                             style={{ width: '48px', height: '48px', objectFit: 'cover', borderRadius: '8px', border: '1px solid var(--border-color)' }}
                           />
@@ -314,6 +335,30 @@ const ProductManagement = () => {
                   onChange={(e) => setProductForm({ ...productForm, description: e.target.value })}
                   placeholder="Mô tả các thông số kỹ thuật, bảo hành..."
                 />
+              </div>
+
+              <div className="form-group">
+                <label>Hình ảnh sản phẩm</label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <input 
+                    type="file" 
+                    id="form-product-image" 
+                    accept="image/*" 
+                    onChange={handleFormImageChange}
+                    style={{ display: 'none' }}
+                  />
+                  <label htmlFor="form-product-image" className="btn btn-secondary" style={{ padding: '8px 16px', cursor: 'pointer', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Upload size={14} />
+                    <span>Chọn ảnh...</span>
+                  </label>
+                  {productForm.imageUrl && (
+                    <img 
+                      src={getProductImageUrl(productForm.imageUrl)} 
+                      alt="Preview" 
+                      style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px', border: '1px solid var(--border-color)' }}
+                    />
+                  )}
+                </div>
               </div>
 
               <div style={{ display: 'flex', gap: '12px', marginTop: '28px' }}>

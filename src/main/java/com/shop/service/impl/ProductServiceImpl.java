@@ -14,6 +14,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import com.shop.exception.BadRequestException;
+import java.io.IOException;
+import java.util.Base64;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -102,19 +105,27 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy sản phẩm với ID: " + id));
 
-        // Lưu trữ file mới và nhận URL tĩnh tương đối
-        String imageUrl = fileStorageService.storeFile(file);
-
-        // Nếu sản phẩm đã có ảnh cũ, thực hiện xóa ảnh cũ
-        if (product.getImageUrl() != null) {
-            fileStorageService.deleteFile(product.getImageUrl());
+        if (file == null || file.isEmpty()) {
+            throw new BadRequestException("Tệp tin tải lên trống");
         }
 
-        // Cập nhật URL ảnh mới
-        product.setImageUrl(imageUrl);
-        Product updatedProduct = productRepository.save(product);
+        try {
+            byte[] fileBytes = file.getBytes();
+            String base64Content = Base64.getEncoder().encodeToString(fileBytes);
+            String contentType = file.getContentType();
+            if (contentType == null) {
+                contentType = "image/png";
+            }
+            String imageUrl = "data:" + contentType + ";base64," + base64Content;
 
-        return ProductMapper.toResponse(updatedProduct);
+            // Cập nhật URL ảnh mới
+            product.setImageUrl(imageUrl);
+            Product updatedProduct = productRepository.save(product);
+
+            return ProductMapper.toResponse(updatedProduct);
+        } catch (IOException e) {
+            throw new BadRequestException("Không thể lưu trữ tệp tin. Vui lòng thử lại! Chi tiết: " + e.getMessage());
+        }
     }
 
     @Override

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import API, { getImageBaseUrl } from '../../services/api';
+import API, { getImageBaseUrl, getProductImageUrl } from '../../services/api';
 import { AuthContext } from '../../context/AuthContext';
 import { CartContext } from '../../context/CartContext';
 import { useWishlistStore } from '../../store/useWishlistStore';
@@ -191,9 +191,8 @@ const ProductDetail = () => {
 
   if (!product) return null;
 
-  const imageBase = getImageBaseUrl();
   const imageUrl = activeImage 
-    ? (activeImage.startsWith('http') ? activeImage : `${imageBase}${activeImage}`) 
+    ? getProductImageUrl(activeImage) 
     : 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3';
 
   // Parse color & size arrays
@@ -257,7 +256,7 @@ const ProductDetail = () => {
                 activeImage === product.imageUrl ? 'border-shopee ring-1 ring-shopee' : 'border-gray-200 hover:border-gray-300'
               }`}
             >
-              <img src={product.imageUrl ? (product.imageUrl.startsWith('http') ? product.imageUrl : `${imageBase}${product.imageUrl}`) : imageUrl} alt="thumbnail" className="w-full h-full object-contain" />
+              <img src={getProductImageUrl(product.imageUrl)} alt="thumbnail" className="w-full h-full object-contain" />
             </button>
             {/* Fallback extra thumbnails for premium aesthetic */}
             {['/images/thumb1.jpg', '/images/thumb2.jpg', '/images/thumb3.jpg'].map((thumb, idx) => (

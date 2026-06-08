@@ -33,7 +33,6 @@ public class ProductRequest {
     @Min(value = 0, message = "Số lượng tồn kho phải lớn hơn hoặc bằng 0")
     private Integer quantity;
 
-    @Size(max = 255, message = "Đường dẫn ảnh không được vượt quá 255 ký tự")
     private String imageUrl;
 
     @NotNull(message = "ID danh mục không được để trống")

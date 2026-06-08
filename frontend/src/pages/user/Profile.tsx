@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
-import API, { getImageBaseUrl } from '../../services/api';
+import API, { getImageBaseUrl, getProductImageUrl } from '../../services/api';
 import { showToast } from '../../services/toast';
 import { 
   User as UserIcon, 
@@ -386,7 +386,7 @@ const Profile = () => {
                             <div key={item.id} className="py-3 flex gap-3 text-xs">
                               {item.imageUrl && (
                                 <img 
-                                  src={item.imageUrl.startsWith('http') ? item.imageUrl : `${getImageBaseUrl()}${item.imageUrl}`} 
+                                  src={getProductImageUrl(item.imageUrl)} 
                                   alt={item.productName} 
                                   className="w-12 h-12 object-contain rounded border border-gray-100 bg-gray-50 p-1 flex-shrink-0"
                                 />

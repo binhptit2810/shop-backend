@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { CartContext } from '../../context/CartContext';
 import { AuthContext } from '../../context/AuthContext';
 import { showToast } from '../../services/toast';
-import API, { getImageBaseUrl } from '../../services/api';
+import API, { getImageBaseUrl, getProductImageUrl } from '../../services/api';
 import { 
   Trash2, 
   ShoppingBag, 
@@ -256,10 +256,7 @@ const Cart = () => {
             {/* Cart Items Cards */}
             <div className="flex flex-col gap-3">
               {items.map(item => {
-                const imgBase = getImageBaseUrl();
-                const imgUrl = item.imageUrl 
-                  ? (item.imageUrl.startsWith('http') ? item.imageUrl : `${imgBase}${item.imageUrl}`) 
-                  : 'https://images.unsplash.com/photo-1542496658-e33a6d0d50f6?w=200';
+                const imgUrl = getProductImageUrl(item.imageUrl);
 
                 return (
                   <div 

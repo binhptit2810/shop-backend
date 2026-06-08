@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import API, { getImageBaseUrl } from '../../services/api';
+import API, { getImageBaseUrl, getProductImageUrl } from '../../services/api';
 import { Product, Category } from '../../types';
 import { useWishlistStore } from '../../store/useWishlistStore';
 import { 
@@ -267,7 +267,7 @@ const Home = () => {
                   <div className="relative aspect-square bg-gray-50 flex items-center justify-center overflow-hidden">
                     {p.imageUrl ? (
                       <img 
-                        src={`${getImageBaseUrl()}${p.imageUrl}`} 
+                        src={getProductImageUrl(p.imageUrl)} 
                         alt={p.name} 
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         onError={(e: any) => {
@@ -368,7 +368,7 @@ const Home = () => {
                   <div className="relative aspect-square bg-gray-50 flex items-center justify-center overflow-hidden">
                     {product.imageUrl ? (
                       <img 
-                        src={`${getImageBaseUrl()}${product.imageUrl}`} 
+                        src={getProductImageUrl(product.imageUrl)} 
                         alt={product.name} 
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         onError={(e: any) => {
