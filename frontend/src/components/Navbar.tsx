@@ -361,34 +361,34 @@ const Navbar = () => {
 
           {/* Row 2: Search Bar */}
           <div className="w-full relative" ref={suggestionsRefMobile}>
-            <form onSubmit={handleSearchSubmit} className="flex bg-white p-1 rounded-md shadow-xs border border-orange-600/10">
+            <form onSubmit={handleSearchSubmit} className="flex bg-white dark:bg-zinc-800 p-1 rounded-xl shadow-sm border border-orange-500/20 focus-within:ring-2 focus-within:ring-shopee/20 transition-all">
               <input 
                 type="text" 
                 placeholder="Tìm kiếm sản phẩm..." 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => setShowSuggestionsMobile(true)}
-                className="flex-1 px-3 py-1 text-xs text-gray-800 focus:outline-none placeholder:text-gray-400"
+                className="flex-1 px-3 py-1.5 text-sm text-gray-800 dark:text-gray-150 bg-transparent focus:outline-none placeholder:text-gray-400"
               />
               <button 
                 type="submit" 
-                className="bg-shopee hover:bg-shopee-hover text-white px-4 py-1.5 rounded-xs transition-all flex items-center justify-center shadow-xs"
+                className="bg-shopee hover:bg-shopee-hover text-white px-4 py-1.5 rounded-lg transition-all flex items-center justify-center focus:outline-none flex-shrink-0 font-bold"
               >
-                <Search size={14} />
+                <Search size={15} />
               </button>
             </form>
 
             {/* Mobile Suggestions */}
             {showSuggestionsMobile && suggestions.length > 0 && (
-              <div className="absolute w-full mt-1 bg-white border border-gray-100 rounded-lg shadow-lg text-gray-800 z-50 overflow-hidden">
+              <div className="absolute w-full mt-1 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-xl shadow-lg text-gray-850 dark:text-gray-200 z-50 overflow-hidden">
                 {suggestions.map((item, idx) => (
                   <div 
                     key={idx}
                     onClick={() => handleSuggestionClick(item)}
-                    className="px-4 py-2.5 hover:bg-gray-50 cursor-pointer text-xs border-b border-gray-50 flex items-center justify-between"
+                    className="px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer text-xs border-b border-gray-50 dark:border-gray-800/50 flex items-center justify-between transition-colors"
                   >
-                    <span className="font-medium text-gray-700">{item}</span>
-                    <Search size={12} className="text-gray-400" />
+                    <span className="font-semibold text-gray-700 dark:text-gray-300">{item}</span>
+                    <Search size={12} className="text-gray-400 dark:text-gray-500" />
                   </div>
                 ))}
               </div>
