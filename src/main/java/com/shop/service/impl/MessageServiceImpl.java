@@ -60,7 +60,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<MessageResponse> getMessagesByOrder(Long orderId, User currentUser) {
+    public List<MessageResponse> getMessagesByOrder(Long orderId, User currentUser, Long withUserId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy đơn hàng với ID: " + orderId));
 
@@ -73,7 +73,25 @@ public class MessageServiceImpl implements MessageService {
             throw new BadRequestException("Bạn không có quyền xem tin nhắn của đơn hàng này");
         }
 
-        return messageRepository.findByOrderIdOrderByCreatedAtAsc(orderId).stream()
+        List<Message> messages = messageRepository.findByOrderIdOrderByCreatedAtAsc(orderId);
+
+        // Bảo mật: Chỉ cho phép người dùng xem tin nhắn mà họ tham gia (là người gửi hoặc người nhận)
+        messages = messages.stream()
+                .filter(msg -> msg.getSender().getId().equals(currentUser.getId())
+                        || msg.getReceiver().getId().equals(currentUser.getId()))
+                .collect(Collectors.toList());
+
+        // Nếu có chỉ định đối tác chat cụ thể, lọc tiếp để chỉ hiển thị hội thoại giữa currentUser và đối tác đó
+        if (withUserId != null) {
+            messages = messages.stream()
+                    .filter(msg ->
+                        (msg.getSender().getId().equals(currentUser.getId()) && msg.getReceiver().getId().equals(withUserId)) ||
+                        (msg.getSender().getId().equals(withUserId) && msg.getReceiver().getId().equals(currentUser.getId()))
+                    )
+                    .collect(Collectors.toList());
+        }
+
+        return messages.stream()
                 .map(this::toResponse)
                 .collect(Collectors.toList());
     }

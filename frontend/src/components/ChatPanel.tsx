@@ -29,7 +29,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ orderId, receiverId, receiverName
 
   const fetchMessages = async () => {
     try {
-      const res = await API.get(`/messages/order/${orderId}`);
+      const res = await API.get(`/messages/order/${orderId}?withUserId=${receiverId}`);
       setMessages(res.data || []);
       // Mark as read
       await API.put(`/messages/order/${orderId}/read`);

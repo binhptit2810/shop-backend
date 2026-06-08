@@ -10,7 +10,7 @@ public interface MessageService {
 
     MessageResponse sendMessage(User sender, MessageRequest request);
 
-    List<MessageResponse> getMessagesByOrder(Long orderId, User currentUser);
+    List<MessageResponse> getMessagesByOrder(Long orderId, User currentUser, Long withUserId);
 
     void markAsRead(Long orderId, User currentUser);
 

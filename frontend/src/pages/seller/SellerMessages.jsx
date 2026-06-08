@@ -38,7 +38,10 @@ const SellerMessages = () => {
 
   const fetchMessages = async (orderId) => {
     try {
-      const res = await API.get(`/messages/order/${orderId}`);
+      const order = orders.find(o => o.id === orderId);
+      const buyerId = order?.userId || order?.user?.id;
+      const url = buyerId ? `/messages/order/${orderId}?withUserId=${buyerId}` : `/messages/order/${orderId}`;
+      const res = await API.get(url);
       setMessages(res.data || []);
       await API.put(`/messages/order/${orderId}/read`);
     } catch {}

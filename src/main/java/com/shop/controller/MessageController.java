@@ -35,8 +35,9 @@ public class MessageController {
     @Operation(summary = "Lấy tất cả tin nhắn của một đơn hàng")
     public ResponseEntity<List<MessageResponse>> getMessagesByOrder(
             @AuthenticationPrincipal User user,
-            @PathVariable Long orderId) {
-        return ResponseEntity.ok(messageService.getMessagesByOrder(orderId, user));
+            @PathVariable Long orderId,
+            @RequestParam(required = false) Long withUserId) {
+        return ResponseEntity.ok(messageService.getMessagesByOrder(orderId, user, withUserId));
     }
 
     @PutMapping("/order/{orderId}/read")
