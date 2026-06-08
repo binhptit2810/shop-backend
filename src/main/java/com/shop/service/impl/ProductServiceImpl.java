@@ -158,6 +158,16 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
+    public ProductResponse updateImageUrl(Long id, String imageUrl) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy sản phẩm với ID: " + id));
+        product.setImageUrl(imageUrl);
+        Product updatedProduct = productRepository.save(product);
+        return ProductMapper.toResponse(updatedProduct);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public List<String> getSearchSuggestions(String query) {
         if (query == null || query.trim().isEmpty()) {

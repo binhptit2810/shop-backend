@@ -29,6 +29,7 @@ const ProductManagement = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -77,21 +78,37 @@ const ProductManagement = () => {
     setShowModal(true);
   };
 
-  const handleFormImageChange = (e) => {
+  const handleFormImageChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
         showToast('Ảnh không được vượt quá 5MB!', 'error');
         return;
       }
-      const reader = new FileReader();
-      reader.onloadend = () => {
+      setUploadingImage(true);
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', 'Project Thương Mại Điện Tử');
+      try {
+        const res = await fetch('https://api.cloudinary.com/v1_1/dpqivf7oe/image/upload', {
+          method: 'POST',
+          body: formData
+        });
+        if (!res.ok) {
+          throw new Error('Upload to Cloudinary failed');
+        }
+        const data = await res.json();
         setProductForm(prev => ({
           ...prev,
-          imageUrl: reader.result
+          imageUrl: data.secure_url
         }));
-      };
-      reader.readAsDataURL(file);
+        showToast('Tải ảnh lên Cloudinary thành công!', 'success');
+      } catch (err) {
+        console.error(err);
+        showToast('Lỗi khi tải ảnh lên đám mây Cloudinary!', 'error');
+      } finally {
+        setUploadingImage(false);
+      }
     }
   };
 
@@ -167,18 +184,28 @@ const ProductManagement = () => {
     setUploading(true);
     const formData = new FormData();
     formData.append('file', selectedFile);
+    formData.append('upload_preset', 'Project Thương Mại Điện Tử');
 
     try {
-      await API.post(`/products/${targetProductId}/image`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+      // 1. Tải lên Cloudinary
+      const res = await fetch('https://api.cloudinary.com/v1_1/dpqivf7oe/image/upload', {
+        method: 'POST',
+        body: formData
       });
-      showToast('Tải lên hình ảnh sản phẩm thành công!');
+      if (!res.ok) {
+        throw new Error('Cloudinary upload failed');
+      }
+      const data = await res.json();
+
+      // 2. Cập nhật đường dẫn ảnh trên backend
+      await API.put(`/products/${targetProductId}/image-url?imageUrl=${encodeURIComponent(data.secure_url)}`);
+
+      showToast('Cập nhật hình ảnh sản phẩm thành công!', 'success');
       setShowUploadModal(false);
       loadData();
     } catch (error) {
-      showToast(error.response?.data?.message || 'Tải ảnh lên thất bại!', 'error');
+      console.error(error);
+      showToast('Tải ảnh lên đám mây Cloudinary thất bại!', 'error');
     } finally {
       setUploading(false);
     }
@@ -356,9 +383,21 @@ const ProductManagement = () => {
                     onChange={handleFormImageChange}
                     style={{ display: 'none' }}
                   />
-                  <label htmlFor="form-product-image" className="btn btn-secondary" style={{ padding: '8px 16px', cursor: 'pointer', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <label 
+                    htmlFor="form-product-image" 
+                    className="btn btn-secondary" 
+                    style={{ 
+                      padding: '8px 16px', 
+                      cursor: uploadingImage ? 'not-allowed' : 'pointer', 
+                      fontSize: '13px', 
+                      display: 'flex', 
+                      align: 'center', 
+                      gap: '6px',
+                      opacity: uploadingImage ? 0.7 : 1
+                    }}
+                  >
                     <Upload size={14} />
-                    <span>Chọn ảnh...</span>
+                    <span>{uploadingImage ? 'Đang tải ảnh...' : 'Chọn ảnh...'}</span>
                   </label>
                   {productForm.imageUrl && (
                     <img 
@@ -374,7 +413,7 @@ const ProductManagement = () => {
                 <button type="button" onClick={() => setShowModal(false)} className="btn btn-secondary" style={{ flex: 1 }}>
                   Hủy bỏ
                 </button>
-                <button type="submit" className="btn btn-primary" style={{ flex: 1 }}>
+                 <button type="submit" className="btn btn-primary" style={{ flex: 1 }} disabled={uploadingImage}>
                   Xác nhận
                 </button>
               </div>

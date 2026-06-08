@@ -76,6 +76,15 @@ public class ProductController {
         return ResponseEntity.ok(response);
     }
 
+    @PutMapping("/{id}/image-url")
+    @Operation(summary = "Cập nhật trực tiếp đường dẫn ảnh của sản phẩm")
+    public ResponseEntity<ProductResponse> updateImageUrl(
+            @PathVariable Long id,
+            @RequestParam String imageUrl) {
+        ProductResponse response = productService.updateImageUrl(id, imageUrl);
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/search")
     @Operation(summary = "Tìm kiếm nâng cao sản phẩm")
     public ResponseEntity<List<ProductResponse>> searchProducts(
