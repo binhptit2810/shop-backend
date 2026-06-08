@@ -15,6 +15,7 @@ import {
   Camera
 } from 'lucide-react';
 import { Product, Review } from '../../types';
+import ChatPanel from '../../components/ChatPanel';
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -40,6 +41,7 @@ const ProductDetail = () => {
   const [imageUrlInput, setImageUrlInput] = useState('');
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [canReview, setCanReview] = useState(false);
+  const [chatInfo, setChatInfo] = useState<{ orderId: number; receiverId: number; receiverName: string } | null>(null);
 
   useEffect(() => {
     if (id) {
@@ -364,7 +366,18 @@ const ProductDetail = () => {
             </div>
 
             {/* Shopee Badges */}
-            <div className="flex flex-col gap-2 mt-2 pt-2.5 border-t border-gray-100 dark:border-gray-800 text-[11px] md:text-xs text-gray-600 dark:text-gray-300">
+            <div className="flex flex-col gap-2 mt-2 pt-2.5 border-t border-gray-100 dark:border-gray-800 text-[11px] md:text-xs text-gray-650 dark:text-gray-300 font-semibold">
+              <div className="flex items-center gap-3">
+                <span className="text-gray-400 w-20 flex-shrink-0">Người bán:</span>
+                <div className="flex items-center gap-2">
+                  <span className="font-extrabold text-gray-800 dark:text-gray-100">
+                    {product.sellerName ? (product.sellerName === 'admin' ? 'Admin' : product.sellerName) : 'Admin'}
+                  </span>
+                  <span className="bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 text-[9px] font-bold px-1.5 py-0.5 rounded">
+                    {product.sellerName && product.sellerName !== 'admin' ? '✓ Người bán uy tín' : '🛡️ Hệ thống'}
+                  </span>
+                </div>
+              </div>
               <div className="flex items-center gap-3">
                 <span className="text-gray-400 w-20 flex-shrink-0">Vận chuyển:</span>
                 <div className="flex items-center gap-1.5 flex-wrap">

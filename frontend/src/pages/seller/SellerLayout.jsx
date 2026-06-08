@@ -1,21 +1,34 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import API from '../../services/api';
+import { 
+  LayoutDashboard, 
+  ShoppingBag, 
+  ClipboardList, 
+  MessageSquare,
+  LogOut, 
+  User as UserIcon,
+  Store,
+  Menu,
+  X
+} from 'lucide-react';
+import { showToast } from '../../services/toast';
 
 const SellerLayout = () => {
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
 
-  React.useEffect(() => {
-    const fetchUnread = async () => {
-      try {
-        const res = await API.get('/messages/unread-count');
-        setUnreadCount(res.data.count || 0);
-      } catch {}
-    };
+  const fetchUnread = async () => {
+    try {
+      const res = await API.get('/messages/unread-count');
+      setUnreadCount(res.data.count || 0);
+    } catch {}
+  };
+
+  useEffect(() => {
     fetchUnread();
     const interval = setInterval(fetchUnread, 10000);
     return () => clearInterval(interval);
@@ -23,207 +36,122 @@ const SellerLayout = () => {
 
   const handleLogout = () => {
     logout();
+    setIsSidebarOpen(false);
+    showToast('Đăng xuất thành công!');
     navigate('/login');
   };
 
-  const navItems = [
-    { to: '/seller', label: 'Tổng quan', icon: '📊', end: true },
-    { to: '/seller/products', label: 'Sản phẩm', icon: '📦' },
-    { to: '/seller/orders', label: 'Đơn hàng', icon: '🛒' },
-    { to: '/seller/messages', label: 'Tin nhắn', icon: '💬', badge: unreadCount },
-  ];
-
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', fontFamily: "'Inter', sans-serif", background: '#f0f2f5' }}>
-      {/* Sidebar */}
-      <aside style={{
-        width: sidebarOpen ? '240px' : '64px',
-        background: 'linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
-        transition: 'width 0.3s ease',
-        display: 'flex',
-        flexDirection: 'column',
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        bottom: 0,
-        zIndex: 100,
-        overflow: 'hidden',
-        boxShadow: '4px 0 20px rgba(0,0,0,0.3)',
-      }}>
-        {/* Logo */}
-        <div style={{
-          padding: '20px 16px',
-          borderBottom: '1px solid rgba(255,255,255,0.1)',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '12px',
-          minHeight: '72px',
-        }}>
-          <div style={{
-            width: '40px',
-            height: '40px',
-            borderRadius: '12px',
-            background: 'linear-gradient(135deg, #e94560, #0f3460)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '20px',
-            flexShrink: 0,
-            boxShadow: '0 4px 15px rgba(233,69,96,0.4)',
-          }}>🏪</div>
-          {sidebarOpen && (
-            <div>
-              <div style={{ color: '#fff', fontWeight: 700, fontSize: '14px' }}>Kênh người bán</div>
-              <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '11px', marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '140px' }}>
-                {user?.username}
-              </div>
-            </div>
-          )}
+    <div className="admin-layout">
+      {/* Lớp phủ mờ nền khi mở sidebar trên di động */}
+      {isSidebarOpen && (
+        <div className="admin-sidebar-overlay" onClick={() => setIsSidebarOpen(false)}></div>
+      )}
+
+      {/* 1. Sidebar Left */}
+      <aside className={`admin-sidebar ${isSidebarOpen ? 'open' : ''}`}>
+        <div className="admin-sidebar-header">
+          <div className="admin-sidebar-logo">
+            <Store size={24} color="var(--primary)" />
+            <span>Kênh Người Bán</span>
+          </div>
+          <button className="admin-sidebar-close" onClick={() => setIsSidebarOpen(false)}>
+            <X size={20} />
+          </button>
         </div>
 
-        {/* Nav Items */}
-        <nav style={{ flex: 1, padding: '12px 8px', overflowY: 'auto' }}>
-          {navItems.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.end}
-              style={({ isActive }) => ({
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                padding: '12px 12px',
-                borderRadius: '10px',
-                textDecoration: 'none',
-                marginBottom: '4px',
-                transition: 'all 0.2s',
-                background: isActive ? 'rgba(233,69,96,0.2)' : 'transparent',
-                borderLeft: isActive ? '3px solid #e94560' : '3px solid transparent',
-                color: isActive ? '#e94560' : 'rgba(255,255,255,0.7)',
-              })}
-            >
-              <span style={{ fontSize: '20px', flexShrink: 0, width: '24px', textAlign: 'center' }}>{item.icon}</span>
-              {sidebarOpen && (
-                <span style={{ fontSize: '14px', fontWeight: 500, whiteSpace: 'nowrap', flex: 1 }}>{item.label}</span>
-              )}
-              {sidebarOpen && item.badge > 0 && (
-                <span style={{
-                  background: '#e94560',
-                  color: '#fff',
-                  borderRadius: '20px',
-                  padding: '2px 8px',
-                  fontSize: '11px',
-                  fontWeight: 700,
-                }}>{item.badge}</span>
-              )}
-              {!sidebarOpen && item.badge > 0 && (
-                <span style={{
-                  position: 'absolute',
-                  top: '4px',
-                  right: '4px',
-                  background: '#e94560',
-                  color: '#fff',
-                  borderRadius: '50%',
-                  width: '16px',
-                  height: '16px',
-                  fontSize: '9px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>{item.badge}</span>
-              )}
-            </NavLink>
-          ))}
+        <nav className="admin-sidebar-menu">
+          <NavLink 
+            to="/seller" 
+            end
+            className={({ isActive }) => `admin-sidebar-item ${isActive ? 'active' : ''}`}
+            onClick={() => setIsSidebarOpen(false)}
+          >
+            <LayoutDashboard size={18} />
+            <span>Tổng quan</span>
+          </NavLink>
+
+          <NavLink 
+            to="/seller/products" 
+            className={({ isActive }) => `admin-sidebar-item ${isActive ? 'active' : ''}`}
+            onClick={() => setIsSidebarOpen(false)}
+          >
+            <ShoppingBag size={18} />
+            <span>Quản lý sản phẩm</span>
+          </NavLink>
+
+          <NavLink 
+            to="/seller/orders" 
+            className={({ isActive }) => `admin-sidebar-item ${isActive ? 'active' : ''}`}
+            onClick={() => setIsSidebarOpen(false)}
+          >
+            <ClipboardList size={18} />
+            <span>Quản lý đơn hàng</span>
+          </NavLink>
+
+          <NavLink 
+            to="/seller/messages" 
+            className={({ isActive }) => `admin-sidebar-item ${isActive ? 'active' : ''}`}
+            onClick={() => setIsSidebarOpen(false)}
+            style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <MessageSquare size={18} />
+              <span>Tin nhắn cửa hàng</span>
+            </div>
+            {unreadCount > 0 && (
+              <span style={{
+                background: 'var(--primary)',
+                color: '#fff',
+                borderRadius: '12px',
+                padding: '2px 8px',
+                fontSize: '11px',
+                fontWeight: 700,
+                lineHeight: 1
+              }}>
+                {unreadCount}
+              </span>
+            )}
+          </NavLink>
         </nav>
 
-        {/* Sidebar Footer */}
-        <div style={{ padding: '12px 8px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-          <button
-            onClick={() => navigate('/')}
-            style={{
-              display: 'flex', alignItems: 'center', gap: '12px',
-              padding: '10px 12px', borderRadius: '10px', width: '100%',
-              background: 'transparent', border: 'none', cursor: 'pointer',
-              color: 'rgba(255,255,255,0.6)', fontSize: '14px', marginBottom: '4px',
-            }}
+        <div className="admin-sidebar-footer">
+          <button 
+            onClick={handleLogout} 
+            className="btn btn-secondary" 
+            style={{ width: '100%', display: 'flex', gap: '8px', justifyContent: 'center' }}
           >
-            <span style={{ fontSize: '18px', flexShrink: 0, width: '24px', textAlign: 'center' }}>🛍️</span>
-            {sidebarOpen && <span>Về trang chính</span>}
-          </button>
-          <button
-            onClick={handleLogout}
-            style={{
-              display: 'flex', alignItems: 'center', gap: '12px',
-              padding: '10px 12px', borderRadius: '10px', width: '100%',
-              background: 'rgba(233,69,96,0.1)', border: '1px solid rgba(233,69,96,0.3)',
-              cursor: 'pointer', color: '#e94560', fontSize: '14px',
-            }}
-          >
-            <span style={{ fontSize: '18px', flexShrink: 0, width: '24px', textAlign: 'center' }}>🚪</span>
-            {sidebarOpen && <span>Đăng xuất</span>}
+            <LogOut size={16} />
+            <span>Đăng xuất</span>
           </button>
         </div>
-
-        {/* Toggle Button */}
-        <button
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          style={{
-            position: 'absolute', top: '24px', right: '-12px',
-            width: '24px', height: '24px', borderRadius: '50%',
-            background: '#e94560', border: 'none', cursor: 'pointer',
-            color: '#fff', fontSize: '12px', display: 'flex',
-            alignItems: 'center', justifyContent: 'center',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
-          }}
-        >
-          {sidebarOpen ? '←' : '→'}
-        </button>
       </aside>
 
-      {/* Main Content */}
-      <main style={{
-        marginLeft: sidebarOpen ? '240px' : '64px',
-        transition: 'margin-left 0.3s ease',
-        flex: 1,
-        minHeight: '100vh',
-        padding: '24px',
-      }}>
-        {/* Top Bar */}
-        <div style={{
-          background: '#fff',
-          borderRadius: '16px',
-          padding: '16px 24px',
-          marginBottom: '24px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-        }}>
-          <div>
-            <h1 style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: '#1a1a2e' }}>Kênh người bán</h1>
-            <p style={{ margin: 0, fontSize: '13px', color: '#888', marginTop: '2px' }}>
-              Quản lý cửa hàng của bạn
-            </p>
+      {/* 2. Main content area on the right */}
+      <div className="admin-main-viewport">
+        {/* Topbar */}
+        <header className="admin-topbar">
+          <button 
+            className="admin-menu-toggle" 
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            aria-label="Toggle navigation sidebar"
+          >
+            <Menu size={22} />
+          </button>
+          
+          <div className="admin-topbar-user">
+            <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <UserIcon size={16} color="var(--primary)" />
+              {user?.username} (Người bán)
+            </span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{
-              width: '36px', height: '36px', borderRadius: '50%',
-              background: 'linear-gradient(135deg, #e94560, #0f3460)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: '#fff', fontWeight: 700, fontSize: '14px',
-            }}>
-              {user?.username?.[0]?.toUpperCase() || 'S'}
-            </div>
-            <div>
-              <div style={{ fontSize: '13px', fontWeight: 600, color: '#1a1a2e' }}>{user?.username}</div>
-              <div style={{ fontSize: '11px', color: '#e94560', fontWeight: 500 }}>Người bán</div>
-            </div>
-          </div>
-        </div>
+        </header>
 
-        {/* Page Content */}
-        <Outlet />
-      </main>
+        {/* Content wrapper */}
+        <main className="admin-content-area">
+          <Outlet />
+        </main>
+      </div>
     </div>
   );
 };

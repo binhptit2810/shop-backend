@@ -28,6 +28,8 @@ export interface Product {
   isFlashSale?: boolean;
   createdAt?: string;
   updatedAt?: string;
+  sellerId?: number;
+  sellerName?: string;
 }
 
 export interface CartItem {

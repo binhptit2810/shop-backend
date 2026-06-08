@@ -81,6 +81,9 @@ public class OrderMapper {
                 if (item.getProduct().getSeller() != null) {
                     sellerId = item.getProduct().getSeller().getId();
                     sellerName = item.getProduct().getSeller().getUsername();
+                } else {
+                    sellerId = 1L; // Mặc định là Admin (ID = 1)
+                    sellerName = "admin";
                 }
             } catch (jakarta.persistence.EntityNotFoundException e) {
                 productId = null;

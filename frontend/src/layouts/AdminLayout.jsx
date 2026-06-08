@@ -12,7 +12,8 @@ import {
   User as UserIcon,
   Store,
   Menu,
-  X
+  X,
+  MessageSquare
 } from 'lucide-react';
 import { showToast } from '../services/toast';
 
@@ -101,6 +102,15 @@ const AdminLayout = () => {
           >
             <TrendingUp size={18} />
             <span>Doanh thu & Báo cáo</span>
+          </NavLink>
+
+          <NavLink 
+            to="/admin/messages" 
+            className={({ isActive }) => `admin-sidebar-item ${isActive ? 'active' : ''}`}
+            onClick={() => setIsSidebarOpen(false)}
+          >
+            <MessageSquare size={18} />
+            <span>Phản hồi & Hỗ trợ</span>
           </NavLink>
         </nav>
 

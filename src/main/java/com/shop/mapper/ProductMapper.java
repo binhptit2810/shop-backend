@@ -26,8 +26,8 @@ public class ProductMapper {
             }
         }
 
-        Long sellerId = null;
-        String sellerName = null;
+        Long sellerId = 1L; // Mặc định là Admin (ID = 1)
+        String sellerName = "admin";
         if (product.getSeller() != null) {
             try {
                 sellerId = product.getSeller().getId();

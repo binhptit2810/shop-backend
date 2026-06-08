@@ -29,6 +29,7 @@ import CategoryManagement from '../pages/admin/CategoryManagement';
 import OrderManagement from '../pages/admin/OrderManagement';
 import UserManagement from '../pages/admin/UserManagement';
 import RevenueManagement from '../pages/admin/RevenueManagement';
+import AdminMessages from '../pages/admin/AdminMessages';
 
 // Seller Pages
 import SellerLayout from '../pages/seller/SellerLayout';
@@ -106,6 +107,7 @@ const AppRoutes = () => {
         <Route path="orders" element={<OrderManagement />} />
         <Route path="users" element={<UserManagement />} />
         <Route path="revenue" element={<RevenueManagement />} />
+        <Route path="messages" element={<AdminMessages />} />
       </Route>
 
       {/* 3. Nhóm Route Người Bán (Seller Site) dùng chung SellerLayout */}
