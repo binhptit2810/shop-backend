@@ -8,13 +8,23 @@ import {
   Upload, 
   Image as ImageIcon, 
   X,
-  FileImage
+  FileImage,
+  Search,
+  Filter,
+  RefreshCw,
+  AlertTriangle
 } from 'lucide-react';
 
 const ProductManagement = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Search & Filter States
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterCategory, setFilterCategory] = useState('ALL'); // 'ALL' or categoryId
+  const [filterStock, setFilterStock] = useState('ALL'); // 'ALL', 'IN_STOCK', 'OUT_OF_STOCK', 'LOW_STOCK'
+  const [sortBy, setSortBy] = useState('newest'); // 'newest', 'oldest', 'priceAsc', 'priceDesc', 'stockAsc', 'stockDesc'
 
   // Form Modal States
   const [showModal, setShowModal] = useState(false);
@@ -45,8 +55,8 @@ const ProductManagement = () => {
         API.get('/products'),
         API.get('/categories')
       ]);
-      setProducts(resProd.data);
-      setCategories(resCat.data);
+      setProducts(resProd.data || []);
+      setCategories(resCat.data || []);
     } catch (error) {
       console.error('Lỗi khi tải dữ liệu sản phẩm:', error);
       showToast('Không thể tải danh sách sản phẩm.', 'error');
@@ -266,6 +276,38 @@ const ProductManagement = () => {
     }
   };
 
+  // --- FILTERING & SORTING LOGIC ---
+  const filteredProducts = products.filter(prod => {
+    const matchesCategory = filterCategory === 'ALL' ? true : prod.categoryId === parseInt(filterCategory);
+    
+    const matchesStock = 
+      filterStock === 'ALL' ? true :
+      filterStock === 'IN_STOCK' ? prod.quantity > 0 :
+      filterStock === 'OUT_OF_STOCK' ? prod.quantity === 0 :
+      filterStock === 'LOW_STOCK' ? prod.quantity > 0 && prod.quantity <= 5 : true;
+
+    const matchesSearch = 
+      prod.id.toString().includes(searchTerm) ||
+      prod.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (prod.description && prod.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (prod.categoryName && prod.categoryName.toLowerCase().includes(searchTerm.toLowerCase()));
+
+    return matchesCategory && matchesStock && matchesSearch;
+  });
+
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    switch (sortBy) {
+      case 'oldest': return a.id - b.id;
+      case 'priceAsc': return a.price - b.price;
+      case 'priceDesc': return b.price - a.price;
+      case 'stockAsc': return a.quantity - b.quantity;
+      case 'stockDesc': return b.quantity - a.quantity;
+      case 'newest':
+      default:
+        return b.id - a.id;
+    }
+  });
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -276,10 +318,123 @@ const ProductManagement = () => {
           </p>
         </div>
 
-        <button onClick={openAddModal} className="btn btn-primary" style={{ padding: '10px 20px' }}>
-          <Plus size={16} />
-          <span>Thêm sản phẩm</span>
-        </button>
+        <div style={{ display: 'flex', gap: '12px' }}>
+          <button onClick={loadData} className="btn btn-secondary" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <RefreshCw size={15} />
+            <span>Làm mới</span>
+          </button>
+          <button onClick={openAddModal} className="btn btn-primary" style={{ padding: '10px 20px', display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <Plus size={16} />
+            <span>Thêm sản phẩm</span>
+          </button>
+        </div>
+      </div>
+
+      {/* KPI Stats Grid */}
+      <div className="kpi-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
+        <div className="glass-panel kpi-card" style={{ padding: '16px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px', justifyContent: 'center' }}>
+          <span style={{ fontSize: '13px', color: 'var(--text-secondary)', fontWeight: 600 }}>TỔNG SẢN PHẨM</span>
+          <h3 style={{ fontSize: '24px', fontWeight: 800, marginTop: '4px' }}>{products.length}</h3>
+        </div>
+        <div className="glass-panel kpi-card" style={{ padding: '16px', borderLeft: '4px solid #059669', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px', justifyContent: 'center' }}>
+          <span style={{ fontSize: '13px', color: 'var(--text-secondary)', fontWeight: 600 }}>SẢN PHẨM CÒN HÀNG</span>
+          <h3 style={{ fontSize: '24px', fontWeight: 800, marginTop: '4px', color: '#059669' }}>
+            {products.filter(p => p.quantity > 0).length}
+          </h3>
+        </div>
+        <div className="glass-panel kpi-card" style={{ padding: '16px', borderLeft: '4px solid #ef4444', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px', justifyContent: 'center' }}>
+          <span style={{ fontSize: '13px', color: 'var(--text-secondary)', fontWeight: 600 }}>SẢN PHẨM HẾT HÀNG</span>
+          <h3 style={{ fontSize: '24px', fontWeight: 800, marginTop: '4px', color: '#ef4444' }}>
+            {products.filter(p => p.quantity === 0).length}
+          </h3>
+        </div>
+        <div className="glass-panel kpi-card" style={{ padding: '16px', borderLeft: '4px solid #ea580c', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px', justifyContent: 'center' }}>
+          <span style={{ fontSize: '13px', color: 'var(--text-secondary)', fontWeight: 600 }}>CẢNH BÁO TỒN KHO (≤ 5)</span>
+          <h3 style={{ fontSize: '24px', fontWeight: 800, marginTop: '4px', color: '#ea580c' }}>
+            {products.filter(p => p.quantity > 0 && p.quantity <= 5).length}
+          </h3>
+        </div>
+        <div className="glass-panel kpi-card" style={{ padding: '16px', borderLeft: '4px solid #8b5cf6', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px', justifyContent: 'center' }}>
+          <span style={{ fontSize: '13px', color: 'var(--text-secondary)', fontWeight: 600 }}>TỔNG GIÁ TRỊ TỒN KHO</span>
+          <h3 style={{ fontSize: '18px', fontWeight: 800, marginTop: '4px', color: '#8b5cf6' }}>
+            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(
+              products.reduce((sum, p) => sum + ((p.price || 0) * (p.quantity || 0)), 0)
+            )}
+          </h3>
+        </div>
+      </div>
+
+      {/* Filter and Search Bar */}
+      <div className="glass-panel" style={{ padding: '16px', display: 'flex', flexWrap: 'wrap', gap: '16px', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className="search-input-wrapper" style={{ flex: 1, minWidth: '240px', marginBottom: 0 }}>
+          <Search className="search-icon" size={18} />
+          <input 
+            type="text" 
+            placeholder="Tìm theo tên, mô tả, danh mục..." 
+            className="input-field" 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+          {/* Category Filter */}
+          <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+            <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)' }}>Danh mục:</span>
+            <select
+              value={filterCategory}
+              onChange={(e) => setFilterCategory(e.target.value)}
+              className="input-field"
+              style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--border-color)', fontWeight: 600, width: 'auto', display: 'inline-block' }}
+            >
+              <option value="ALL">Tất cả danh mục</option>
+              {categories.map(cat => (
+                <option key={cat.id} value={cat.id}>{cat.name}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Sort selection */}
+          <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+            <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)' }}>Sắp xếp:</span>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="input-field"
+              style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--border-color)', fontWeight: 600, width: 'auto', display: 'inline-block' }}
+            >
+              <option value="newest">Mới nhất</option>
+              <option value="oldest">Cũ nhất</option>
+              <option value="priceAsc">Giá tăng dần</option>
+              <option value="priceDesc">Giá giảm dần</option>
+              <option value="stockAsc">Tồn kho ít nhất</option>
+              <option value="stockDesc">Tồn kho nhiều nhất</option>
+            </select>
+          </div>
+
+          {/* Stock Filter Chips */}
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginLeft: '8px' }}>
+            <Filter size={15} style={{ color: 'var(--text-secondary)' }} />
+            <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)' }}>Bộ lọc:</span>
+            <div style={{ display: 'flex', gap: '4px' }}>
+              {[
+                { value: 'ALL', label: 'Tất cả' },
+                { value: 'IN_STOCK', label: 'Còn hàng' },
+                { value: 'LOW_STOCK', label: 'Sắp hết' },
+                { value: 'OUT_OF_STOCK', label: 'Hết hàng' }
+              ].map(item => (
+                <button
+                  key={item.value}
+                  className={`category-chip ${filterStock === item.value ? 'active' : ''}`}
+                  style={{ padding: '6px 12px', fontSize: '12px' }}
+                  onClick={() => setFilterStock(item.value)}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
 
       {loading ? (
@@ -287,9 +442,9 @@ const ProductManagement = () => {
       ) : (
         <div className="glass-panel" style={{ padding: '24px' }}>
           <div className="table-wrapper">
-            {products.length === 0 ? (
+            {sortedProducts.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
-                Chưa có sản phẩm nào. Nhấn "Thêm sản phẩm" để tạo mới.
+                Không tìm thấy sản phẩm nào phù hợp với bộ lọc.
               </div>
             ) : (
               <table className="admin-table">
@@ -305,18 +460,18 @@ const ProductManagement = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {products.map(prod => (
+                  {sortedProducts.map(prod => (
                     <tr key={prod.id}>
                       <td style={{ fontWeight: 600 }}>#{prod.id}</td>
                       <td>
                         {prod.imageUrl ? (
                           <img 
-                            src={getProductImageUrl(prod.imageUrl)} 
+                            src={getProductImageUrl(prod.imageUrl.split(';')[0])} 
                             alt={prod.name} 
                             style={{ width: '48px', height: '48px', objectFit: 'cover', borderRadius: '8px', border: '1px solid var(--border-color)' }}
                           />
                         ) : (
-                          <div style={{ width: '48px', height: '48px', borderRadius: '8px', background: 'var(--bg-tertiary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
+                          <div style={{ width: '48px', height: '48px', borderRadius: '8px', background: 'var(--bg-tertiary)', display: 'flex', alignItems: 'center', justify5Content: 'center', color: 'var(--text-muted)' }}>
                             <ImageIcon size={18} />
                           </div>
                         )}
@@ -325,7 +480,19 @@ const ProductManagement = () => {
                       <td style={{ color: 'var(--accent)', fontWeight: 700 }}>
                         {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(prod.price)}
                       </td>
-                      <td style={{ fontWeight: 600 }}>{prod.quantity}</td>
+                      <td>
+                        {prod.quantity === 0 ? (
+                          <span style={{ color: '#ef4444', fontWeight: 800, background: '#fee2e2', padding: '4px 8px', borderRadius: '12px', fontSize: '11px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                            Hết hàng
+                          </span>
+                        ) : prod.quantity <= 5 ? (
+                          <span style={{ color: '#ea580c', fontWeight: 800, background: '#ffedd5', padding: '4px 8px', borderRadius: '12px', fontSize: '11px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                            {prod.quantity} (Sắp hết)
+                          </span>
+                        ) : (
+                          <span style={{ fontWeight: 600 }}>{prod.quantity}</span>
+                        )}
+                      </td>
                       <td>
                         <span style={{ fontSize: '13px', background: 'var(--bg-tertiary)', padding: '4px 10px', borderRadius: '20px', fontWeight: 600, color: 'var(--text-secondary)' }}>
                           {prod.categoryName}
@@ -523,7 +690,7 @@ const ProductManagement = () => {
                 <button type="button" onClick={() => setShowModal(false)} className="btn btn-secondary" style={{ flex: 1 }}>
                   Hủy bỏ
                 </button>
-                 <button type="submit" className="btn btn-primary" style={{ flex: 1 }} disabled={uploadingImage}>
+                <button type="submit" className="btn btn-primary" style={{ flex: 1 }} disabled={uploadingImage}>
                   Xác nhận
                 </button>
               </div>
