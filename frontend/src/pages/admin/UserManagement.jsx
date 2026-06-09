@@ -21,6 +21,14 @@ const UserManagement = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   
+  // Pagination States
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 30;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
+
   // Modal states
   const [showLockModal, setShowLockModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -116,6 +124,30 @@ const UserManagement = () => {
     user.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Pagination Calculations
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentUsers = filteredUsers.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxVisible = 5;
+    if (totalPages <= maxVisible) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      let start = Math.max(1, currentPage - 2);
+      let end = Math.min(totalPages, currentPage + 2);
+      if (start === 1) {
+        end = maxVisible;
+      } else if (end === totalPages) {
+        start = totalPages - maxVisible + 1;
+      }
+      for (let i = start; i <= end; i++) pages.push(i);
+    }
+    return pages;
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -182,140 +214,188 @@ const UserManagement = () => {
                 Không tìm thấy thành viên nào.
               </div>
             ) : (
-              <table className="admin-table">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Thông Tin Thành Viên</th>
-                    <th>Vai Trò</th>
-                    <th>Email</th>
-                    <th>Trạng Thái</th>
-                    <th>Đơn đã mua</th>
-                    <th>Tổng chi tiêu</th>
-                    <th style={{ textAlign: 'right' }}>Hành Động</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredUsers.map(u => (
-                    <tr key={u.id}>
-                      <td style={{ fontWeight: 600, color: 'var(--text-secondary)' }}>#{u.id}</td>
-                      <td>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                          <div style={{ 
-                            width: '36px', 
-                            height: '36px', 
-                            borderRadius: '50%', 
-                            background: u.role === 'ADMIN' || u.role === 'ROLE_ADMIN' ? 'rgba(99, 102, 241, 0.1)' : 'rgba(16, 185, 129, 0.1)', 
-                            display: 'flex', 
-                            alignItems: 'center', 
-                            justifyContent: 'center',
-                            color: u.role === 'ADMIN' || u.role === 'ROLE_ADMIN' ? 'var(--primary)' : 'var(--success)'
-                          }}>
-                            {u.role === 'ADMIN' || u.role === 'ROLE_ADMIN' ? <Shield size={16} /> : <UserIcon size={16} />}
-                          </div>
-                          <div>
-                            <div style={{ fontWeight: 700, fontSize: '15px' }}>{u.username}</div>
-                            <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                              Ngày tạo: {new Date(u.createdAt).toLocaleDateString('vi-VN')}
+              <>
+                <table className="admin-table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Thông Tin Thành Viên</th>
+                      <th>Vai Trò</th>
+                      <th>Email</th>
+                      <th>Trạng Thái</th>
+                      <th>Đơn đã mua</th>
+                      <th>Tổng chi tiêu</th>
+                      <th style={{ textAlign: 'right' }}>Hành Động</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {currentUsers.map(u => (
+                      <tr key={u.id}>
+                        <td style={{ fontWeight: 600, color: 'var(--text-secondary)' }}>#{u.id}</td>
+                        <td>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <div style={{ 
+                              width: '36px', 
+                              height: '36px', 
+                              borderRadius: '50%', 
+                              background: u.role === 'ADMIN' || u.role === 'ROLE_ADMIN' ? 'rgba(99, 102, 241, 0.1)' : 'rgba(16, 185, 129, 0.1)', 
+                              display: 'flex', 
+                              alignItems: 'center', 
+                              justifyContent: 'center',
+                              color: u.role === 'ADMIN' || u.role === 'ROLE_ADMIN' ? 'var(--primary)' : 'var(--success)'
+                            }}>
+                              {u.role === 'ADMIN' || u.role === 'ROLE_ADMIN' ? <Shield size={16} /> : <UserIcon size={16} />}
+                            </div>
+                            <div>
+                              <div style={{ fontWeight: 700, fontSize: '15px' }}>{u.username}</div>
+                              <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                                Ngày tạo: {new Date(u.createdAt).toLocaleDateString('vi-VN')}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </td>
-                      <td>
-                        <span style={{ 
-                          fontSize: '11px', 
-                          fontWeight: 800, 
-                          padding: '4px 10px', 
-                          borderRadius: '20px',
-                          background: u.role === 'ADMIN' || u.role === 'ROLE_ADMIN' ? 'rgba(99, 102, 241, 0.12)' : 'var(--bg-tertiary)',
-                          color: u.role === 'ADMIN' || u.role === 'ROLE_ADMIN' ? 'var(--primary)' : 'var(--text-secondary)'
-                        }}>
-                          {u.role}
-                        </span>
-                      </td>
-                      <td>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: 'var(--text-secondary)' }}>
-                          <Mail size={12} />
-                          <span>{u.email}</span>
-                        </div>
-                      </td>
-                      <td>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                          {u.isLocked ? (
-                            <>
-                              <span className="badge badge-cancelled" style={{ alignSelf: 'flex-start' }}>🔒 Bị khóa</span>
-                              {u.statusReason && (
-                                <span style={{ fontSize: '11px', color: 'var(--error)', fontStyle: 'italic', maxWidth: '180px' }}>
-                                  Lý do: {u.statusReason}
-                                </span>
-                              )}
-                            </>
-                          ) : (
-                            <span className="badge badge-completed" style={{ alignSelf: 'flex-start' }}>🟢 Hoạt động</span>
-                          )}
-                        </div>
-                      </td>
-                      <td style={{ fontWeight: 700 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <ShoppingBag size={13} color="var(--text-muted)" />
-                          <span>{u.totalOrders}</span>
-                        </div>
-                      </td>
-                      <td style={{ fontWeight: 800, color: 'var(--accent)', fontSize: '14px' }}>
-                        {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(u.totalSpent)}
-                      </td>
-                      <td style={{ textAlign: 'right' }}>
-                        {u.role !== 'ADMIN' && u.role !== 'ROLE_ADMIN' ? (
-                          <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                            {u.isLocked ? (
-                              <button 
-                                onClick={() => handleUnlockUser(u)} 
-                                className="btn btn-secondary"
-                                style={{ padding: '6px 10px', fontSize: '12px', borderColor: 'var(--success)', color: 'var(--success)' }}
-                                title="Mở khóa tài khoản"
-                              >
-                                <Unlock size={14} style={{ marginRight: '4px' }} />
-                                Mở khóa
-                              </button>
-                            ) : (
-                              <button 
-                                onClick={() => handleOpenLockModal(u)} 
-                                className="btn btn-secondary"
-                                style={{ padding: '6px 10px', fontSize: '12px', borderColor: 'var(--warning)', color: 'var(--warning)' }}
-                                title="Khóa tài khoản"
-                              >
-                                <Lock size={14} style={{ marginRight: '4px' }} />
-                                Khóa
-                              </button>
-                            )}
-                            
-                            <button 
-                              onClick={() => handleChangeRole(u)} 
-                              className="btn btn-secondary"
-                              style={{ padding: '6px 10px', fontSize: '12px', borderColor: 'var(--primary)', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '4px' }}
-                              title="Thay đổi vai trò thành viên"
-                            >
-                              <UserCog size={14} />
-                              <span>{u.role === 'USER' ? 'Lên Người bán' : 'Xuống Người mua'}</span>
-                            </button>
-                            
-                            <button 
-                              onClick={() => handleDeleteUser(u)} 
-                              className="btn btn-secondary"
-                              style={{ padding: '6px 10px', fontSize: '12px', borderColor: 'var(--error)', color: 'var(--error)' }}
-                              title="Xóa tài khoản"
-                            >
-                              <Trash2 size={14} />
-                            </button>
+                        </td>
+                        <td>
+                          <span style={{ 
+                            fontSize: '11px', 
+                            fontWeight: 800, 
+                            padding: '4px 10px', 
+                            borderRadius: '20px',
+                            background: u.role === 'ADMIN' || u.role === 'ROLE_ADMIN' ? 'rgba(99, 102, 241, 0.12)' : 'var(--bg-tertiary)',
+                            color: u.role === 'ADMIN' || u.role === 'ROLE_ADMIN' ? 'var(--primary)' : 'var(--text-secondary)'
+                          }}>
+                            {u.role}
+                          </span>
+                        </td>
+                        <td>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: 'var(--text-secondary)' }}>
+                            <Mail size={12} />
+                            <span>{u.email}</span>
                           </div>
-                        ) : (
-                          <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontStyle: 'italic' }}>Không thể thay đổi</span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                        </td>
+                        <td>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                            {u.isLocked ? (
+                              <>
+                                <span className="badge badge-cancelled" style={{ alignSelf: 'flex-start' }}>🔒 Bị khóa</span>
+                                {u.statusReason && (
+                                  <span style={{ fontSize: '11px', color: 'var(--error)', fontStyle: 'italic', maxWidth: '180px' }}>
+                                    Lý do: {u.statusReason}
+                                  </span>
+                                )}
+                              </>
+                            ) : (
+                              <span className="badge badge-completed" style={{ alignSelf: 'flex-start' }}>🟢 Hoạt động</span>
+                            )}
+                          </div>
+                        </td>
+                        <td style={{ fontWeight: 700 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <ShoppingBag size={13} color="var(--text-muted)" />
+                            <span>{u.totalOrders}</span>
+                          </div>
+                        </td>
+                        <td style={{ fontWeight: 800, color: 'var(--accent)', fontSize: '14px' }}>
+                          {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(u.totalSpent)}
+                        </td>
+                        <td style={{ textAlign: 'right' }}>
+                          {u.role !== 'ADMIN' && u.role !== 'ROLE_ADMIN' ? (
+                            <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                              {u.isLocked ? (
+                                <button 
+                                  onClick={() => handleUnlockUser(u)} 
+                                  className="btn btn-secondary"
+                                  style={{ padding: '6px 10px', fontSize: '12px', borderColor: 'var(--success)', color: 'var(--success)' }}
+                                  title="Mở khóa tài khoản"
+                                >
+                                  <Unlock size={14} style={{ marginRight: '4px' }} />
+                                  Mở khóa
+                                </button>
+                              ) : (
+                                <button 
+                                  onClick={() => handleOpenLockModal(u)} 
+                                  className="btn btn-secondary"
+                                  style={{ padding: '6px 10px', fontSize: '12px', borderColor: 'var(--warning)', color: 'var(--warning)' }}
+                                  title="Khóa tài khoản"
+                                >
+                                  <Lock size={14} style={{ marginRight: '4px' }} />
+                                  Khóa
+                                </button>
+                              )}
+                              
+                              <button 
+                                onClick={() => handleChangeRole(u)} 
+                                className="btn btn-secondary"
+                                style={{ padding: '6px 10px', fontSize: '12px', borderColor: 'var(--primary)', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '4px' }}
+                                title="Thay đổi vai trò thành viên"
+                              >
+                                <UserCog size={14} />
+                                <span>{u.role === 'USER' ? 'Lên Người bán' : 'Xuống Người mua'}</span>
+                              </button>
+                              
+                              <button 
+                                onClick={() => handleDeleteUser(u)} 
+                                className="btn btn-secondary"
+                                style={{ padding: '6px 10px', fontSize: '12px', borderColor: 'var(--error)', color: 'var(--error)' }}
+                                title="Xóa tài khoản"
+                              >
+                                <Trash2 size={14} />
+                              </button>
+                            </div>
+                          ) : (
+                            <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontStyle: 'italic' }}>Không thể thay đổi</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                  <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center', 
+                    marginTop: '20px', 
+                    paddingTop: '16px', 
+                    borderTop: '1px solid var(--border-color)', 
+                    flexWrap: 'wrap', 
+                    gap: '12px' 
+                  }}>
+                    <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                      Hiển thị <strong>{indexOfFirstItem + 1}</strong> - <strong>{Math.min(indexOfLastItem, filteredUsers.length)}</strong> trong tổng số <strong>{filteredUsers.length}</strong> thành viên
+                    </span>
+                    <div style={{ display: 'flex', gap: '6px' }}>
+                      <button
+                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                        disabled={currentPage === 1}
+                        className="btn btn-secondary"
+                        style={{ padding: '6px 12px', fontSize: '13px', cursor: currentPage === 1 ? 'not-allowed' : 'pointer' }}
+                      >
+                        Trước
+                      </button>
+                      {getPageNumbers().map(pageNum => (
+                        <button
+                          key={pageNum}
+                          onClick={() => setCurrentPage(pageNum)}
+                          className={`category-chip ${currentPage === pageNum ? 'active' : ''}`}
+                          style={{ padding: '6px 12px', fontSize: '13px', cursor: 'pointer' }}
+                        >
+                          {pageNum}
+                        </button>
+                      ))}
+                      <button
+                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                        disabled={currentPage === totalPages}
+                        className="btn btn-secondary"
+                        style={{ padding: '6px 12px', fontSize: '13px', cursor: currentPage === totalPages ? 'not-allowed' : 'pointer' }}
+                      >
+                        Sau
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>

@@ -25,6 +25,14 @@ const OrderManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOrder, setSortOrder] = useState('desc'); // 'desc' (Mới nhất) hoặc 'asc' (Cũ nhất)
 
+  // Pagination States
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 30;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filterStatus, sortOrder]);
+
   useEffect(() => {
     fetchOrders();
   }, []);
@@ -139,6 +147,30 @@ const OrderManagement = () => {
     return sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
   });
 
+  // Pagination Calculations
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentOrders = sortedOrders.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(sortedOrders.length / itemsPerPage);
+
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxVisible = 5;
+    if (totalPages <= maxVisible) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      let start = Math.max(1, currentPage - 2);
+      let end = Math.min(totalPages, currentPage + 2);
+      if (start === 1) {
+        end = maxVisible;
+      } else if (end === totalPages) {
+        start = totalPages - maxVisible + 1;
+      }
+      for (let i = start; i <= end; i++) pages.push(i);
+    }
+    return pages;
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -234,92 +266,140 @@ const OrderManagement = () => {
                 Không tìm thấy đơn hàng nào phù hợp với bộ lọc.
               </div>
             ) : (
-              <table className="admin-table">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Khách Hàng</th>
-                    <th>Ngày Đặt</th>
-                    <th>Sản Phẩm Đặt</th>
-                    <th>Tổng Tiền</th>
-                    <th>Thông Tin Nhận Hàng</th>
-                    <th>Trạng Thái</th>
-                    <th>Hành Động</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {sortedOrders.map(order => (
-                    <tr key={order.id}>
-                      <td style={{ fontWeight: 700 }}>#{order.id}</td>
-                      <td>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600 }}>
-                          <User size={14} color="var(--primary)" />
-                          <span>{order.username || `User #${order.userId}`}</span>
-                        </div>
-                      </td>
-                      <td style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          <Calendar size={14} />
-                          <span>{new Date(order.createdAt).toLocaleString('vi-VN')}</span>
-                        </div>
-                      </td>
-                      <td>
-                        <div className="order-items-mini" style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                          {order.items?.map(item => (
-                            <div key={item.id} style={{ fontSize: '13px', color: 'var(--text-primary)' }}>
-                              • {item.productName} <strong style={{ color: 'var(--primary)' }}>x{item.quantity}</strong>
-                            </div>
-                          ))}
-                        </div>
-                      </td>
-                      <td style={{ color: 'var(--accent)', fontWeight: 800, fontSize: '15px' }}>
-                        {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.totalPrice)}
-                      </td>
-                      <td style={{ fontSize: '13px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 600 }}>
-                          <Phone size={12} />
-                          <span>{order.phoneNumber}</span>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'start', gap: '4px', color: 'var(--text-secondary)', marginTop: '4px', maxWidth: '200px' }}>
-                          <MapPin size={12} style={{ flexShrink: 0, marginTop: '2px' }} />
-                          <span>{order.shippingAddress}</span>
-                        </div>
-                      </td>
-                      <td>
-                        <span className={`order-status ${getStatusClass(order.orderStatus)}`} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '6px 12px', borderRadius: '20px', fontWeight: 700, fontSize: '12px' }}>
-                          {getStatusIcon(order.orderStatus)}
-                          <span>{translateStatusOnly(order.orderStatus)}</span>
-                        </span>
-                      </td>
-                      <td>
-                        <select 
-                          value={order.orderStatus} 
-                          onChange={(e) => handleUpdateOrderStatus(order.id, e.target.value)}
-                          disabled={order.orderStatus === 'COMPLETED' || order.orderStatus === 'CANCELLED'}
-                          className="input-field"
-                          style={{ 
-                            padding: '6px 12px', 
-                            fontSize: '13px', 
-                            background: order.orderStatus === 'COMPLETED' || order.orderStatus === 'CANCELLED' ? '#e2e8f0' : 'var(--bg-tertiary)', 
-                            borderRadius: '8px', 
-                            cursor: order.orderStatus === 'COMPLETED' || order.orderStatus === 'CANCELLED' ? 'not-allowed' : 'pointer', 
-                            border: '1px solid var(--border-color)', 
-                            fontWeight: 600,
-                            color: order.orderStatus === 'COMPLETED' || order.orderStatus === 'CANCELLED' ? '#94a3b8' : 'var(--text-primary)'
-                          }}
-                        >
-                          <option value="PENDING" disabled={isTransitionDisabled(order.orderStatus, 'PENDING')}>Chờ xử lý</option>
-                          <option value="CONFIRMED" disabled={isTransitionDisabled(order.orderStatus, 'CONFIRMED')}>Đã xác nhận</option>
-                          <option value="SHIPPING" disabled={isTransitionDisabled(order.orderStatus, 'SHIPPING')}>Đang giao hàng</option>
-                          <option value="DELIVERED" disabled={isTransitionDisabled(order.orderStatus, 'DELIVERED')}>Đã giao hàng</option>
-                          <option value="COMPLETED" disabled={isTransitionDisabled(order.orderStatus, 'COMPLETED')}>Hoàn thành</option>
-                          <option value="CANCELLED" disabled={isTransitionDisabled(order.orderStatus, 'CANCELLED')}>Hủy đơn hàng</option>
-                        </select>
-                      </td>
+              <>
+                <table className="admin-table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Khách Hàng</th>
+                      <th>Ngày Đặt</th>
+                      <th>Sản Phẩm Đặt</th>
+                      <th>Tổng Tiền</th>
+                      <th>Thông Tin Nhận Hàng</th>
+                      <th>Trạng Thái</th>
+                      <th>Hành Động</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {currentOrders.map(order => (
+                      <tr key={order.id}>
+                        <td style={{ fontWeight: 700 }}>#{order.id}</td>
+                        <td>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600 }}>
+                            <User size={14} color="var(--primary)" />
+                            <span>{order.username || `User #${order.userId}`}</span>
+                          </div>
+                        </td>
+                        <td style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <Calendar size={14} />
+                            <span>{new Date(order.createdAt).toLocaleString('vi-VN')}</span>
+                          </div>
+                        </td>
+                        <td>
+                          <div className="order-items-mini" style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                            {order.items?.map(item => (
+                              <div key={item.id} style={{ fontSize: '13px', color: 'var(--text-primary)' }}>
+                                • {item.productName} <strong style={{ color: 'var(--primary)' }}>x{item.quantity}</strong>
+                              </div>
+                            ))}
+                          </div>
+                        </td>
+                        <td style={{ color: 'var(--accent)', fontWeight: 800, fontSize: '15px' }}>
+                          {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.totalPrice)}
+                        </td>
+                        <td style={{ fontSize: '13px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 600 }}>
+                            <Phone size={12} />
+                            <span>{order.phoneNumber}</span>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'start', gap: '4px', color: 'var(--text-secondary)', marginTop: '4px', maxWidth: '200px' }}>
+                            <MapPin size={12} style={{ flexShrink: 0, marginTop: '2px' }} />
+                            <span>{order.shippingAddress}</span>
+                          </div>
+                        </td>
+                        <td>
+                          <span className={`order-status ${getStatusClass(order.orderStatus)}`} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '6px 12px', borderRadius: '20px', fontWeight: 700, fontSize: '12px' }}>
+                            {getStatusIcon(order.orderStatus)}
+                            <span>{translateStatusOnly(order.orderStatus)}</span>
+                          </span>
+                        </td>
+                        <td>
+                          <select 
+                            value={order.orderStatus} 
+                            onChange={(e) => handleUpdateOrderStatus(order.id, e.target.value)}
+                            disabled={order.orderStatus === 'COMPLETED' || order.orderStatus === 'CANCELLED'}
+                            className="input-field"
+                            style={{ 
+                              padding: '6px 12px', 
+                              fontSize: '13px', 
+                              background: order.orderStatus === 'COMPLETED' || order.orderStatus === 'CANCELLED' ? '#e2e8f0' : 'var(--bg-tertiary)', 
+                              borderRadius: '8px', 
+                              cursor: order.orderStatus === 'COMPLETED' || order.orderStatus === 'CANCELLED' ? 'not-allowed' : 'pointer', 
+                              border: '1px solid var(--border-color)', 
+                              fontWeight: 600,
+                              color: order.orderStatus === 'COMPLETED' || order.orderStatus === 'CANCELLED' ? '#94a3b8' : 'var(--text-primary)'
+                            }}
+                          >
+                            <option value="PENDING" disabled={isTransitionDisabled(order.orderStatus, 'PENDING')}>Chờ xử lý</option>
+                            <option value="CONFIRMED" disabled={isTransitionDisabled(order.orderStatus, 'CONFIRMED')}>Đã xác nhận</option>
+                            <option value="SHIPPING" disabled={isTransitionDisabled(order.orderStatus, 'SHIPPING')}>Đang giao hàng</option>
+                            <option value="DELIVERED" disabled={isTransitionDisabled(order.orderStatus, 'DELIVERED')}>Đã giao hàng</option>
+                            <option value="COMPLETED" disabled={isTransitionDisabled(order.orderStatus, 'COMPLETED')}>Hoàn thành</option>
+                            <option value="CANCELLED" disabled={isTransitionDisabled(order.orderStatus, 'CANCELLED')}>Hủy đơn hàng</option>
+                          </select>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                  <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center', 
+                    marginTop: '20px', 
+                    paddingTop: '16px', 
+                    borderTop: '1px solid var(--border-color)', 
+                    flexWrap: 'wrap', 
+                    gap: '12px' 
+                  }}>
+                    <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                      Hiển thị <strong>{indexOfFirstItem + 1}</strong> - <strong>{Math.min(indexOfLastItem, sortedOrders.length)}</strong> trong tổng số <strong>{sortedOrders.length}</strong> đơn hàng
+                    </span>
+                    <div style={{ display: 'flex', gap: '6px' }}>
+                      <button
+                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                        disabled={currentPage === 1}
+                        className="btn btn-secondary"
+                        style={{ padding: '6px 12px', fontSize: '13px', cursor: currentPage === 1 ? 'not-allowed' : 'pointer' }}
+                      >
+                        Trước
+                      </button>
+                      {getPageNumbers().map(pageNum => (
+                        <button
+                          key={pageNum}
+                          onClick={() => setCurrentPage(pageNum)}
+                          className={`category-chip ${currentPage === pageNum ? 'active' : ''}`}
+                          style={{ padding: '6px 12px', fontSize: '13px', cursor: 'pointer' }}
+                        >
+                          {pageNum}
+                        </button>
+                      ))}
+                      <button
+                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                        disabled={currentPage === totalPages}
+                        className="btn btn-secondary"
+                        style={{ padding: '6px 12px', fontSize: '13px', cursor: currentPage === totalPages ? 'not-allowed' : 'pointer' }}
+                      >
+                        Sau
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>

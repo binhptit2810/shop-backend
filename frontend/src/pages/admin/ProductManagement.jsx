@@ -26,6 +26,14 @@ const ProductManagement = () => {
   const [filterStock, setFilterStock] = useState('ALL'); // 'ALL', 'IN_STOCK', 'OUT_OF_STOCK', 'LOW_STOCK'
   const [sortBy, setSortBy] = useState('newest'); // 'newest', 'oldest', 'priceAsc', 'priceDesc', 'stockAsc', 'stockDesc'
 
+  // Pagination States
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 30;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filterCategory, filterStock, sortBy]);
+
   // Form Modal States
   const [showModal, setShowModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
@@ -308,6 +316,30 @@ const ProductManagement = () => {
     }
   });
 
+  // Pagination Calculations
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentProducts = sortedProducts.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(sortedProducts.length / itemsPerPage);
+
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxVisible = 5;
+    if (totalPages <= maxVisible) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      let start = Math.max(1, currentPage - 2);
+      let end = Math.min(totalPages, currentPage + 2);
+      if (start === 1) {
+        end = maxVisible;
+      } else if (end === totalPages) {
+        start = totalPages - maxVisible + 1;
+      }
+      for (let i = start; i <= end; i++) pages.push(i);
+    }
+    return pages;
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -460,7 +492,7 @@ const ProductManagement = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {sortedProducts.map(prod => (
+                  {currentProducts.map(prod => (
                     <tr key={prod.id}>
                       <td style={{ fontWeight: 600 }}>#{prod.id}</td>
                       <td>
@@ -517,6 +549,52 @@ const ProductManagement = () => {
               </table>
             )}
           </div>
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              marginTop: '20px', 
+              paddingTop: '16px', 
+              borderTop: '1px solid var(--border-color)', 
+              flexWrap: 'wrap', 
+              gap: '12px' 
+            }}>
+              <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                Hiển thị <strong>{indexOfFirstItem + 1}</strong> - <strong>{Math.min(indexOfLastItem, sortedProducts.length)}</strong> trong tổng số <strong>{sortedProducts.length}</strong> sản phẩm
+              </span>
+              <div style={{ display: 'flex', gap: '6px' }}>
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="btn btn-secondary"
+                  style={{ padding: '6px 12px', fontSize: '13px', cursor: currentPage === 1 ? 'not-allowed' : 'pointer' }}
+                >
+                  Trước
+                </button>
+                {getPageNumbers().map(pageNum => (
+                  <button
+                    key={pageNum}
+                    onClick={() => setCurrentPage(pageNum)}
+                    className={`category-chip ${currentPage === pageNum ? 'active' : ''}`}
+                    style={{ padding: '6px 12px', fontSize: '13px', cursor: 'pointer' }}
+                  >
+                    {pageNum}
+                  </button>
+                ))}
+                <button
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  className="btn btn-secondary"
+                  style={{ padding: '6px 12px', fontSize: '13px', cursor: currentPage === totalPages ? 'not-allowed' : 'pointer' }}
+                >
+                  Sau
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
