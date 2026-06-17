@@ -187,7 +187,7 @@ const Navbar = () => {
         <div className="hidden md:block max-w-7xl mx-auto px-4">
           
           {/* Top Bar (Collapsed & Modern) */}
-          <div className="flex justify-between items-center text-xs opacity-90 pb-2 border-b border-white/10 mb-2">
+          <div className="relative z-40 flex justify-between items-center text-xs opacity-90 pb-2 border-b border-white/10 mb-2">
             <div className="flex items-center gap-4">
               {user && (user.role === 'SELLER') ? (
                 <Link to="/seller" className="hover:text-amber-200 transition-colors font-semibold flex items-center gap-1">
@@ -285,31 +285,33 @@ const Navbar = () => {
                     <ChevronDown size={12} className="opacity-70 group-hover:rotate-180 transition-transform duration-200" />
                   </span>
 
-                  <div className="absolute right-0 top-full mt-2 w-48 bg-white text-gray-800 rounded-2xl shadow-2xl border border-gray-150 py-2 hidden group-hover:block z-50 animate-fade-in">
-                    <Link to="/profile" className="px-4 py-2.5 hover:bg-gray-50 text-xs font-semibold block transition-colors flex items-center gap-2">
-                      <UserIcon size={14} className="text-gray-400" />
-                      <span>Hồ sơ cá nhân</span>
-                    </Link>
-                    <Link to="/profile?tab=orders" className="px-4 py-2.5 hover:bg-gray-50 text-xs font-semibold block transition-colors flex items-center gap-2">
-                      <Package size={14} className="text-gray-400" />
-                      <span>Quản lý đơn mua</span>
-                    </Link>
-                    <Link to="/wishlist" className="px-4 py-2.5 hover:bg-gray-50 text-xs font-semibold block transition-colors flex items-center gap-2 text-red-500 hover:text-red-600">
-                      <Heart size={14} className="fill-current text-red-500" />
-                      <span>Sản phẩm yêu thích</span>
-                    </Link>
-                    {user.role === 'ADMIN' && (
-                      <Link to="/admin" className="px-4 py-2.5 hover:bg-orange-50 text-xs font-bold block transition-colors text-shopee border-t border-gray-100">
-                        🛡️ Trang quản trị (Admin)
+                  <div className="absolute right-0 top-full pt-2 w-48 hidden group-hover:block z-50">
+                    <div className="bg-white text-gray-800 rounded-2xl shadow-2xl border border-gray-150 py-2 animate-fade-in">
+                      <Link to="/profile" className="px-4 py-2.5 hover:bg-gray-50 text-xs font-semibold block transition-colors flex items-center gap-2">
+                        <UserIcon size={14} className="text-gray-400" />
+                        <span>Hồ sơ cá nhân</span>
                       </Link>
-                    )}
-                    <button 
-                      onClick={handleLogout}
-                      className="w-full text-left px-4 py-2.5 hover:bg-red-50 hover:text-red-600 text-xs font-bold block transition-colors border-t border-gray-100 flex items-center gap-2"
-                    >
-                      <LogOut size={14} />
-                      <span>Đăng xuất</span>
-                    </button>
+                      <Link to="/profile?tab=orders" className="px-4 py-2.5 hover:bg-gray-50 text-xs font-semibold block transition-colors flex items-center gap-2">
+                        <Package size={14} className="text-gray-400" />
+                        <span>Quản lý đơn mua</span>
+                      </Link>
+                      <Link to="/wishlist" className="px-4 py-2.5 hover:bg-gray-50 text-xs font-semibold block transition-colors flex items-center gap-2 text-red-500 hover:text-red-600">
+                        <Heart size={14} className="fill-current text-red-500" />
+                        <span>Sản phẩm yêu thích</span>
+                      </Link>
+                      {user.role === 'ADMIN' && (
+                        <Link to="/admin" className="px-4 py-2.5 hover:bg-orange-50 text-xs font-bold block transition-colors text-shopee border-t border-gray-100">
+                          🛡️ Trang quản trị (Admin)
+                        </Link>
+                      )}
+                      <button 
+                        onClick={handleLogout}
+                        className="w-full text-left px-4 py-2.5 hover:bg-red-50 hover:text-red-600 text-xs font-bold block transition-colors border-t border-gray-100 flex items-center gap-2"
+                      >
+                        <LogOut size={14} />
+                        <span>Đăng xuất</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               ) : (
@@ -333,7 +335,7 @@ const Navbar = () => {
             </Link>
 
             {/* Search Bar with History Dropdown */}
-            <div className="flex-1 max-w-3xl relative" ref={suggestionsRef}>
+            <div className="flex-1 max-w-3xl relative z-30" ref={suggestionsRef}>
               <form onSubmit={handleSearchSubmit} className="flex bg-white p-1 rounded-xl shadow-lg border border-orange-500/10 focus-within:ring-2 focus-within:ring-yellow-400/50 transition-all duration-200">
                 <input 
                   type="text" 
