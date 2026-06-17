@@ -50,6 +50,7 @@ public class SecurityConfig {
                         // Cho phép đọc thông tin danh mục và sản phẩm công khai
                         .requestMatchers(HttpMethod.GET, "/api/v1/categories/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/reviews/**").permitAll()
                         
                         // Chỉ Admin mới được thêm/sửa/xóa danh mục
                         .requestMatchers(HttpMethod.POST, "/api/v1/categories/**").hasRole("ADMIN")

@@ -38,11 +38,14 @@ API.interceptors.response.use(
     if (error.response && (error.response.status === 401 || error.response.status === 403)) {
       // Chỉ tự động reload/đăng xuất nếu không phải là API đăng nhập hoặc API kiểm tra session
       if (!error.config.url.includes('/auth/login') && !error.config.url.includes('/auth/me')) {
-        localStorage.removeItem('token');
-        localStorage.removeItem('username');
-        localStorage.removeItem('email');
-        localStorage.removeItem('role');
-        window.location.reload();
+        const token = localStorage.getItem('token');
+        if (token) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('username');
+          localStorage.removeItem('email');
+          localStorage.removeItem('role');
+          window.location.reload();
+        }
       }
     }
     return Promise.reject(error);
