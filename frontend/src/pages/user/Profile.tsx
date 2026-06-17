@@ -96,8 +96,8 @@ const Profile = () => {
               <title>Hóa đơn mua hàng #${order.id}</title>
               <style>
                 body { font-family: 'Inter', sans-serif; padding: 40px; color: #333; }
-                .invoice-header { border-bottom: 2px solid #ee4d2d; padding-bottom: 20px; margin-bottom: 20px; }
-                .invoice-title { font-size: 24px; font-weight: bold; color: #ee4d2d; }
+                .invoice-header { border-bottom: 2px solid #4f46e5; padding-bottom: 20px; margin-bottom: 20px; }
+                .invoice-title { font-size: 24px; font-weight: bold; color: #4f46e5; }
                 .meta-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
                 table { width: 100%; border-collapse: collapse; margin-top: 20px; }
                 th, td { border: 1px solid #ddd; padding: 12px; text-align: left; font-size: 13px; }
@@ -169,7 +169,7 @@ const Profile = () => {
             </div>
             <div className="min-w-0">
               <h3 className="font-bold text-xs md:text-sm text-gray-900 dark:text-white truncate">{user?.username}</h3>
-              <span className="text-[10px] text-gray-400">Thành viên ShopeeShop</span>
+              <span className="text-[10px] text-gray-400">Thành viên BMart</span>
             </div>
           </div>
 
@@ -450,7 +450,7 @@ const Profile = () => {
       {selectedInvoice && (
         <div id="invoice-print-area" className="hidden">
           <div className="invoice-header">
-            <div className="invoice-title">SHOPEESHOP INVOICE</div>
+            <div className="invoice-title">BMART INVOICE</div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}>
               <div>
                 <p><strong>Mã đơn hàng:</strong> #{selectedInvoice.id}</p>
@@ -464,16 +464,16 @@ const Profile = () => {
 
           <div style={{ display: 'flex', gap: '40px', marginBottom: '20px', fontSize: '13px' }}>
             <div style={{ flex: 1 }}>
-              <h4 style={{ margin: '0 0 8px 0', color: '#ee4d2d' }}>THÔNG TIN NGƯỜI NHẬN</h4>
+              <h4 style={{ margin: '0 0 8px 0', color: '#4f46e5' }}>THÔNG TIN NGƯỜI NHẬN</h4>
               <p>Khách hàng: <strong>{selectedInvoice.username}</strong></p>
               <p>Số điện thoại: <strong>{selectedInvoice.phoneNumber}</strong></p>
               <p>Địa chỉ: <strong>{selectedInvoice.shippingAddress}</strong></p>
             </div>
             <div style={{ flex: 1 }}>
-              <h4 style={{ margin: '0 0 8px 0', color: '#ee4d2d' }}>ĐƠN VỊ CUNG CẤP</h4>
-              <p>Hệ thống: <strong>ShopeeShop E-Commerce Ltd.</strong></p>
+              <h4 style={{ margin: '0 0 8px 0', color: '#4f46e5' }}>ĐƠN VỊ CUNG CẤP</h4>
+              <p>Hệ thống: <strong>BMart E-Commerce Ltd.</strong></p>
               <p>Địa chỉ: 1 Cầu Giấy, Hà Nội, Việt Nam</p>
-              <p>Website: www.shopeeshop.com</p>
+              <p>Website: www.bmart.com</p>
             </div>
           </div>
 
@@ -504,13 +504,13 @@ const Profile = () => {
                 Voucher áp dụng: {selectedInvoice.voucherCode} (-{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(selectedInvoice.discountAmount || 0)})
               </p>
             )}
-            <p style={{ color: '#ee4d2d' }}>
+            <p style={{ color: '#4f46e5' }}>
               Tổng cộng thanh toán: {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(selectedInvoice.totalPrice)}
             </p>
           </div>
 
           <div className="footer-text">
-            Cảm ơn quý khách đã mua sắm tại ShopeeShop. Hẹn gặp lại quý khách!
+            Cảm ơn quý khách đã mua sắm tại BMart. Hẹn gặp lại quý khách!
           </div>
         </div>
       )}

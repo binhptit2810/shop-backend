@@ -8,9 +8,15 @@ export default {
     extend: {
       colors: {
         shopee: {
-          DEFAULT: '#ee4d2d',
-          hover: '#f05d40',
-          light: '#feeee8',
+          DEFAULT: '#4f46e5',
+          hover: '#4338ca',
+          light: '#e0e7ff',
+        },
+        bmart: {
+          DEFAULT: '#4f46e5',
+          hover: '#4338ca',
+          light: '#e0e7ff',
+          accent: '#06b6d4',
         }
       }
     },

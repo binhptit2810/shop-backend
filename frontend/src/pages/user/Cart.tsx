@@ -326,7 +326,7 @@ const Cart = () => {
               <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-100 dark:border-gray-700 shadow-xs mt-1">
                 <h3 className="text-xs font-bold text-gray-900 dark:text-white flex items-center gap-1.5 mb-3">
                   <Ticket size={16} className="text-shopee" />
-                  <span>Shopee Voucher khả dụng</span>
+                  <span>BMart Voucher khả dụng</span>
                 </h3>
                 <div className="flex flex-col gap-2 max-h-40 overflow-y-auto pr-1">
                   {activeVouchers.map(v => (

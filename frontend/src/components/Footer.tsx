@@ -14,8 +14,8 @@ const Footer = () => {
             <h4 className="font-bold text-gray-800 dark:text-gray-250 mb-4.5 uppercase tracking-wider text-[11px]">Chăm sóc khách hàng</h4>
             <ul className="space-y-3 font-semibold text-gray-650 dark:text-gray-400">
               <li><a href="#" className="hover:text-shopee hover:underline transition-all">Trung tâm trợ giúp</a></li>
-              <li><a href="#" className="hover:text-shopee hover:underline transition-all">Shopee Blog</a></li>
-              <li><a href="#" className="hover:text-shopee hover:underline transition-all">Shopee Mall</a></li>
+              <li><a href="#" className="hover:text-shopee hover:underline transition-all">BMart Blog</a></li>
+              <li><a href="#" className="hover:text-shopee hover:underline transition-all">BMart Mall</a></li>
               <li><a href="#" className="hover:text-shopee hover:underline transition-all">Hướng dẫn mua hàng</a></li>
               <li><a href="#" className="hover:text-shopee hover:underline transition-all">Chính sách vận chuyển</a></li>
               <li><a href="#" className="hover:text-shopee hover:underline transition-all">Trả hàng & Hoàn tiền</a></li>
@@ -24,9 +24,9 @@ const Footer = () => {
 
           {/* Column 2: Về chúng tôi */}
           <div>
-            <h4 className="font-bold text-gray-800 dark:text-gray-250 mb-4.5 uppercase tracking-wider text-[11px]">Về ShopeeShop</h4>
+            <h4 className="font-bold text-gray-800 dark:text-gray-250 mb-4.5 uppercase tracking-wider text-[11px]">Về BMart</h4>
             <ul className="space-y-3 font-semibold text-gray-650 dark:text-gray-400">
-              <li><a href="#" className="hover:text-shopee hover:underline transition-all">Giới thiệu ShopeeShop</a></li>
+              <li><a href="#" className="hover:text-shopee hover:underline transition-all">Giới thiệu BMart</a></li>
               <li><a href="#" className="hover:text-shopee hover:underline transition-all">Tuyển dụng nhân tài</a></li>
               <li><a href="#" className="hover:text-shopee hover:underline transition-all">Điều khoản dịch vụ</a></li>
               <li><a href="#" className="hover:text-shopee hover:underline transition-all">Chính sách bảo mật</a></li>
@@ -97,7 +97,7 @@ const Footer = () => {
 
           {/* Column 5: Tải ứng dụng */}
           <div>
-            <h4 className="font-bold text-gray-800 dark:text-gray-250 mb-4.5 uppercase tracking-wider text-[11px]">Tải ứng dụng ShopeeShop</h4>
+            <h4 className="font-bold text-gray-800 dark:text-gray-250 mb-4.5 uppercase tracking-wider text-[11px]">Tải ứng dụng BMart</h4>
             <div className="flex gap-3">
               <div className="bg-gray-50 dark:bg-zinc-900 border border-gray-150 dark:border-zinc-800 p-2 rounded-xl flex items-center justify-center shadow-xs">
                 <div className="w-16 h-16 bg-gradient-to-br from-gray-200 to-gray-300 dark:from-zinc-800 dark:to-zinc-750 rounded-lg flex items-center justify-center font-bold text-gray-400 text-[10px] uppercase select-none">
@@ -105,10 +105,10 @@ const Footer = () => {
                 </div>
               </div>
               <div className="flex flex-col gap-2 justify-center">
-                <a href="#" className="bg-gray-50 hover:bg-gray-100 dark:bg-zinc-900 border border-gray-150 dark:border-zinc-850 px-3 py-2 rounded-xl text-[9px] font-black text-gray-700 dark:text-gray-300 shadow-xs text-center transition-colors">
+                <a href="#" className="bg-gray-50 hover:bg-gray-100 dark:bg-zinc-900 border border-gray-150 dark:border-zinc-855 px-3 py-2 rounded-xl text-[9px] font-black text-gray-700 dark:text-gray-300 shadow-xs text-center transition-colors">
                   App Store
                 </a>
-                <a href="#" className="bg-gray-50 hover:bg-gray-100 dark:bg-zinc-900 border border-gray-150 dark:border-zinc-850 px-3 py-2 rounded-xl text-[9px] font-black text-gray-700 dark:text-gray-300 shadow-xs text-center transition-colors">
+                <a href="#" className="bg-gray-50 hover:bg-gray-100 dark:bg-zinc-900 border border-gray-150 dark:border-zinc-855 px-3 py-2 rounded-xl text-[9px] font-black text-gray-700 dark:text-gray-300 shadow-xs text-center transition-colors">
                   Google Play
                 </a>
               </div>
@@ -119,7 +119,7 @@ const Footer = () => {
 
         {/* Bottom footer copyright */}
         <div className="mt-14 pt-8 border-t border-gray-150 dark:border-zinc-900 flex justify-between items-center flex-wrap gap-4 text-gray-400 font-bold text-[11px]">
-          <p>&copy; {new Date().getFullYear()} ShopeeShop. Dự án mô phỏng E-Commerce chất lượng cao. Tất cả các quyền được bảo lưu.</p>
+          <p>&copy; {new Date().getFullYear()} BMart. Dự án mô phỏng E-Commerce chất lượng cao. Tất cả các quyền được bảo lưu.</p>
           <div className="flex gap-4">
             <a href="#" className="hover:text-shopee transition-colors">Quốc gia & Khu vực: Việt Nam</a>
           </div>

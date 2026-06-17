@@ -12,16 +12,16 @@
   --text-primary: #222222;
   --text-secondary: #666666;
   --text-muted: #999999;
-  --primary: #ee4d2d;
-  --primary-hover: #f05d40;
-  --primary-glow: rgba(238, 77, 45, 0.12);
-  --accent: #10b981;
-  --accent-hover: #059669;
-  --accent-glow: rgba(16, 185, 129, 0.1);
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --primary-glow: rgba(79, 70, 229, 0.12);
+  --accent: #06b6d4;
+  --accent-hover: #0891b2;
+  --accent-glow: rgba(6, 182, 212, 0.1);
   --error: #ef4444;
   --warning: #f59e0b;
   --border-color: #e8e8e8;
-  --border-focus: rgba(238, 77, 45, 0.4);
+  --border-focus: rgba(79, 70, 229, 0.4);
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 20px;
@@ -71,7 +71,7 @@ body {
 }
 
 .shopee-gradient {
-  background: linear-gradient(-180deg, #f53d2d, #f63);
+  background: linear-gradient(-180deg, #4f46e5, #6366f1);
 }
 
 /* Swiper overrides */

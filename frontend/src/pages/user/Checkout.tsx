@@ -292,7 +292,7 @@ const Checkout = () => {
         <form onSubmit={handleSubmit} className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 border border-gray-100 dark:border-gray-700 shadow-xs flex flex-col gap-4.5">
           <h3 className="text-xs md:text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2 border-b border-gray-100 dark:border-gray-700 pb-2.5">
             <Truck size={16} className="text-shopee" />
-            <span>Địa chỉ nhận hàng (Shopee style)</span>
+            <span>Địa chỉ nhận hàng BMart</span>
           </h3>
 
           <div className="flex flex-col gap-1">

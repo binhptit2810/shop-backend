@@ -54,22 +54,13 @@ const Navbar = () => {
       fetchNotifications();
       fetchCartCount();
       const interval = setInterval(fetchNotifications, 30000);
-
-      const handleCartUpdate = () => {
-        fetchCartCount();
-      };
-      window.addEventListener('cartUpdated', handleCartUpdate);
-
-      return () => {
-        clearInterval(interval);
-        window.removeEventListener('cartUpdated', handleCartUpdate);
-      };
+      return () => clearInterval(interval);
     }
   }, [user]);
 
   // Load search history from localStorage
   useEffect(() => {
-    const history = localStorage.getItem('shopee_search_history');
+    const history = localStorage.getItem('bmart_search_history');
     if (history) {
       setSearchHistory(JSON.parse(history));
     }
@@ -144,7 +135,7 @@ const Navbar = () => {
     history.unshift(query.trim());
     const newHistory = history.slice(0, 6);
     setSearchHistory(newHistory);
-    localStorage.setItem('shopee_search_history', JSON.stringify(newHistory));
+    localStorage.setItem('bmart_search_history', JSON.stringify(newHistory));
   };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -169,13 +160,13 @@ const Navbar = () => {
     e.stopPropagation();
     const newHistory = searchHistory.filter((_, idx) => idx !== indexToDelete);
     setSearchHistory(newHistory);
-    localStorage.setItem('shopee_search_history', JSON.stringify(newHistory));
+    localStorage.setItem('bmart_search_history', JSON.stringify(newHistory));
   };
 
   const clearAllHistory = (e: React.MouseEvent) => {
     e.stopPropagation();
     setSearchHistory([]);
-    localStorage.removeItem('shopee_search_history');
+    localStorage.removeItem('bmart_search_history');
   };
 
   const handleLogout = () => {
@@ -188,7 +179,7 @@ const Navbar = () => {
     <>
       <header className={`sticky top-0 z-50 w-full transition-all duration-300 ${
         isScrolled 
-          ? 'bg-[#ee4d2d]/95 backdrop-blur-md shadow-lg py-2' 
+          ? 'bg-[#4f46e5]/95 backdrop-blur-md shadow-lg py-2' 
           : 'shopee-gradient py-3'
       } text-white`}>
         
@@ -227,7 +218,7 @@ const Navbar = () => {
                   <Bell size={14} />
                   <span>Thông báo</span>
                   {unreadCount > 0 && (
-                    <span className="absolute -top-1.5 -right-2 bg-yellow-400 text-[#ee4d2d] text-[9px] font-black rounded-full h-4 w-4 flex items-center justify-center border border-white scale-90 shadow-md">
+                    <span className="absolute -top-1.5 -right-2 bg-yellow-400 text-[#4f46e5] text-[9px] font-black rounded-full h-4 w-4 flex items-center justify-center border border-white scale-90 shadow-md">
                       {unreadCount}
                     </span>
                   )}
@@ -253,7 +244,7 @@ const Navbar = () => {
                           >
                             <h4 className="font-bold text-xs text-gray-900 flex justify-between items-center">
                               {notif.title}
-                              {!notif.isRead && <span className="h-2 w-2 bg-[#ee4d2d] rounded-full" />}
+                              {!notif.isRead && <span className="h-2 w-2 bg-[#4f46e5] rounded-full" />}
                             </h4>
                             <p className="text-[11px] text-gray-500 mt-1.5 line-clamp-2 leading-relaxed">{notif.content}</p>
                             <span className="text-[9px] text-gray-400 mt-1.5 block">{new Date(notif.createdAt).toLocaleDateString('vi-VN')}</span>
@@ -336,9 +327,9 @@ const Navbar = () => {
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2 flex-shrink-0 select-none hover:scale-[1.02] transition-transform duration-250">
               <div className="h-10 w-10 bg-white rounded-2xl flex items-center justify-center shadow-md">
-                <ShoppingCart className="h-6 w-6 text-[#ee4d2d] fill-[#ee4d2d]" />
+                <ShoppingCart className="h-6 w-6 text-[#4f46e5] fill-[#4f46e5]" />
               </div>
-              <span className="text-2xl font-black tracking-tight text-white italic drop-shadow-md">ShopeeShop</span>
+              <span className="text-2xl font-black tracking-tight text-white italic drop-shadow-md">BMart</span>
             </Link>
 
             {/* Search Bar with History Dropdown */}
@@ -354,7 +345,7 @@ const Navbar = () => {
                 />
                 <button 
                   type="submit" 
-                  className="bg-gradient-to-r from-[#ee4d2d] to-[#ff7337] hover:brightness-105 text-white px-7 py-2.5 rounded-lg transition-all flex items-center justify-center shadow-md font-bold"
+                  className="bg-gradient-to-r from-[#4f46e5] to-[#6366f1] hover:brightness-105 text-white px-7 py-2.5 rounded-lg transition-all flex items-center justify-center shadow-md font-bold"
                 >
                   <Search size={18} />
                 </button>
@@ -389,7 +380,7 @@ const Navbar = () => {
                       <div className="flex justify-between items-center text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 px-1">
                         <span className="flex items-center gap-1.5"><History size={13} /> Lịch sử tìm kiếm</span>
                         {searchHistory.length > 0 && (
-                          <button onClick={clearAllHistory} className="text-[#ee4d2d] hover:underline normal-case">Xóa tất cả</button>
+                          <button onClick={clearAllHistory} className="text-shopee hover:underline normal-case">Xóa tất cả</button>
                         )}
                       </div>
                       
@@ -441,7 +432,7 @@ const Navbar = () => {
               <Link to="/cart" className="relative p-2.5 block hover:scale-105 transition-transform">
                 <ShoppingCart size={28} className="text-white hover:text-amber-100" />
                 {cartCount > 0 && (
-                  <span className="absolute top-0 right-0 bg-yellow-400 text-[#ee4d2d] text-[10px] font-black rounded-full h-5.5 w-5.5 flex items-center justify-center border-2 border-[#ee4d2d] shadow-md">
+                  <span className="absolute top-0 right-0 bg-yellow-400 text-[#4f46e5] text-[10px] font-black rounded-full h-5.5 w-5.5 flex items-center justify-center border-2 border-[#4f46e5] shadow-md">
                     {cartCount}
                   </span>
                 )}
@@ -464,9 +455,9 @@ const Navbar = () => {
             
             <Link to="/" className="flex items-center gap-1.5 select-none">
               <div className="h-7 w-7 bg-white rounded-lg flex items-center justify-center shadow-sm">
-                <ShoppingCart className="h-4 w-4 text-[#ee4d2d] fill-[#ee4d2d]" />
+                <ShoppingCart className="h-4 w-4 text-[#4f46e5] fill-[#4f46e5]" />
               </div>
-              <span className="text-lg font-black tracking-tight italic">ShopeeShop</span>
+              <span className="text-lg font-black tracking-tight italic">BMart</span>
             </Link>
             
             <div className="flex items-center gap-1">
@@ -481,7 +472,7 @@ const Navbar = () => {
               <Link to="/cart" className="relative p-2 text-white hover:bg-white/10 rounded-xl transition-colors">
                 <ShoppingCart size={20} />
                 {cartCount > 0 && (
-                  <span className="absolute top-0.5 right-0.5 bg-yellow-400 text-[#ee4d2d] text-[8px] font-black rounded-full h-4 w-4 flex items-center justify-center border border-[#ee4d2d] shadow-sm">
+                  <span className="absolute top-0.5 right-0.5 bg-yellow-400 text-[#4f46e5] text-[8px] font-black rounded-full h-4 w-4 flex items-center justify-center border border-[#4f46e5] shadow-sm">
                     {cartCount}
                   </span>
                 )}
@@ -502,7 +493,7 @@ const Navbar = () => {
               />
               <button 
                 type="submit" 
-                className="bg-gradient-to-r from-[#ee4d2d] to-[#ff7337] text-white px-4 py-1.5 rounded-lg transition-all flex items-center justify-center focus:outline-none"
+                className="bg-gradient-to-r from-[#4f46e5] to-[#6366f1] text-white px-4 py-1.5 rounded-lg transition-all flex items-center justify-center focus:outline-none"
               >
                 <Search size={14} />
               </button>
@@ -590,12 +581,12 @@ const Navbar = () => {
                 </div>
               ) : (
                 <div className="flex flex-col gap-2 mt-4 pr-6">
-                  <p className="text-xs font-bold text-white/95">Chào mừng bạn đến với ShopeeShop!</p>
+                  <p className="text-xs font-bold text-white/95">Chào mừng bạn đến với BMart!</p>
                   <div className="flex gap-2 mt-1">
                     <Link 
                       to="/login" 
                       onClick={() => setIsDrawerOpen(false)}
-                      className="flex-1 text-center py-1.5 bg-white text-[#ee4d2d] font-bold rounded-lg text-xs shadow-xs"
+                      className="flex-1 text-center py-1.5 bg-white text-[#4f46e5] font-bold rounded-lg text-xs shadow-xs"
                     >
                       Đăng nhập
                     </Link>
@@ -685,7 +676,7 @@ const Navbar = () => {
                 <Link 
                   to="/admin" 
                   onClick={() => setIsDrawerOpen(false)}
-                  className="w-full text-center py-2 bg-orange-100 dark:bg-orange-950/40 text-[#ee4d2d] dark:text-orange-400 font-bold rounded-lg text-xs shadow-xs"
+                  className="w-full text-center py-2 bg-orange-100 dark:bg-orange-950/40 text-[#4f46e5] dark:text-orange-400 font-bold rounded-lg text-xs shadow-xs"
                 >
                   Trang quản trị (Admin)
                 </Link>
@@ -707,12 +698,12 @@ const Navbar = () => {
         </div>
       )}
 
-      {/* === MOBILE BOTTOM NAVIGATION BAR (Shopee 2025 Style) === */}
+      {/* === MOBILE BOTTOM NAVIGATION BAR (BMart Style) === */}
       <div className="fixed bottom-0 left-0 right-0 z-40 bg-white dark:bg-zinc-900 border-t border-gray-100 dark:border-zinc-800 py-1.5 px-4 flex justify-between items-center md:hidden shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
         <Link 
           to="/" 
           className={`flex flex-col items-center justify-center flex-1 py-1 gap-1 transition-all ${
-            location.pathname === '/' ? 'text-[#ee4d2d] scale-105' : 'text-gray-500 dark:text-gray-400'
+            location.pathname === '/' ? 'text-[#4f46e5] scale-105' : 'text-gray-500 dark:text-gray-400'
           }`}
         >
           <Home size={18} className={location.pathname === '/' ? 'stroke-[2.5px]' : 'stroke-[1.8px]'} />
@@ -722,7 +713,7 @@ const Navbar = () => {
         <Link 
           to="/search?categoryId=all" 
           className={`flex flex-col items-center justify-center flex-1 py-1 gap-1 transition-all ${
-            location.pathname === '/search' ? 'text-[#ee4d2d] scale-105' : 'text-gray-500 dark:text-gray-400'
+            location.pathname === '/search' ? 'text-[#4f46e5] scale-105' : 'text-gray-500 dark:text-gray-400'
           }`}
         >
           <Compass size={18} className={location.pathname === '/search' ? 'stroke-[2.5px]' : 'stroke-[1.8px]'} />
@@ -732,12 +723,12 @@ const Navbar = () => {
         <Link 
           to="/cart" 
           className={`flex flex-col items-center justify-center flex-1 py-1 gap-1 relative transition-all ${
-            location.pathname === '/cart' ? 'text-[#ee4d2d] scale-105' : 'text-gray-500 dark:text-gray-400'
+            location.pathname === '/cart' ? 'text-[#4f46e5] scale-105' : 'text-gray-500 dark:text-gray-400'
           }`}
         >
           <ShoppingCart size={18} className={location.pathname === '/cart' ? 'stroke-[2.5px]' : 'stroke-[1.8px]'} />
           {cartCount > 0 && (
-            <span className="absolute top-0.5 right-4 bg-yellow-400 text-[#ee4d2d] text-[8px] font-black rounded-full h-4 w-4 flex items-center justify-center border border-white">
+            <span className="absolute top-0.5 right-4 bg-yellow-400 text-[#4f46e5] text-[8px] font-black rounded-full h-4 w-4 flex items-center justify-center border border-white">
               {cartCount}
             </span>
           )}
@@ -747,7 +738,7 @@ const Navbar = () => {
         <Link 
           to="/wishlist" 
           className={`flex flex-col items-center justify-center flex-1 py-1 gap-1 transition-all ${
-            location.pathname === '/wishlist' ? 'text-[#ee4d2d] scale-105' : 'text-gray-500 dark:text-gray-400'
+            location.pathname === '/wishlist' ? 'text-[#4f46e5] scale-105' : 'text-gray-500 dark:text-gray-400'
           }`}
         >
           <Heart size={18} className={location.pathname === '/wishlist' ? 'stroke-[2.5px] fill-current text-red-500' : 'stroke-[1.8px]'} />
@@ -757,7 +748,7 @@ const Navbar = () => {
         <Link 
           to="/profile" 
           className={`flex flex-col items-center justify-center flex-1 py-1 gap-1 transition-all ${
-            location.pathname === '/profile' ? 'text-[#ee4d2d] scale-105' : 'text-gray-500 dark:text-gray-400'
+            location.pathname === '/profile' ? 'text-[#4f46e5] scale-105' : 'text-gray-500 dark:text-gray-400'
           }`}
         >
           <UserIcon size={18} className={location.pathname === '/profile' ? 'stroke-[2.5px]' : 'stroke-[1.8px]'} />

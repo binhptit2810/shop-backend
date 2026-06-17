@@ -217,7 +217,7 @@ const Home = () => {
                 <div className="flex items-center gap-3 md:gap-4 flex-wrap">
                   <button 
                     onClick={() => navigate('/search?categoryId=all')}
-                    className="bg-gradient-to-r from-[#ee4d2d] to-[#ff7337] hover:from-[#ee4d2d]/95 hover:to-[#ff7337]/95 text-white font-extrabold text-xs md:text-sm px-6 md:px-8 py-3 rounded-2xl transition-all shadow-lg hover:shadow-orange-500/20 active:scale-95"
+                    className="bg-gradient-to-r from-[#4f46e5] to-[#6366f1] hover:from-[#4f46e5]/95 hover:to-[#6366f1]/95 text-white font-extrabold text-xs md:text-sm px-6 md:px-8 py-3 rounded-2xl transition-all shadow-lg hover:shadow-indigo-500/20 active:scale-95"
                   >
                     {slide.ctaPrimary}
                   </button>
@@ -259,10 +259,10 @@ const Home = () => {
         </div>
       </div>
 
-      {/* === 2. CAM KẾT DỊCH VỤ (Shopee 2025 Value Proposition) === */}
+      {/* === 2. CAM KẾT DỊCH VỤ === */}
       <div className="bg-white dark:bg-zinc-900 rounded-3xl p-5 md:p-6 grid grid-cols-1 sm:grid-cols-3 gap-6 text-center md:text-left shadow-[0_4px_25px_rgba(0,0,0,0.02)] border border-gray-100 dark:border-zinc-850">
         <div className="flex flex-col md:flex-row items-center gap-4 px-2">
-          <div className="h-12 w-12 rounded-2xl bg-orange-50 dark:bg-orange-950/20 text-[#ee4d2d] flex items-center justify-center flex-shrink-0">
+          <div className="h-12 w-12 rounded-2xl bg-orange-50 dark:bg-orange-950/20 text-[#4f46e5] flex items-center justify-center flex-shrink-0">
             <Truck size={22} />
           </div>
           <div>
@@ -293,7 +293,7 @@ const Home = () => {
       {/* === 3. QUICK ACCESS MENUS === */}
       <div className="bg-white dark:bg-zinc-900 rounded-3xl p-4 md:p-5 grid grid-cols-3 sm:grid-cols-6 gap-4 text-center shadow-[0_4px_25px_rgba(0,0,0,0.02)] border border-gray-100 dark:border-zinc-850">
         <button onClick={() => navigate('/search?flashSale=true')} className="flex flex-col items-center gap-2 group focus:outline-none">
-          <div className="h-12 w-12 rounded-2xl bg-orange-50 dark:bg-orange-950/25 flex items-center justify-center text-[#ee4d2d] group-hover:scale-105 group-hover:-translate-y-1 transition-all duration-300 shadow-md shadow-orange-500/5">
+          <div className="h-12 w-12 rounded-2xl bg-orange-50 dark:bg-orange-950/25 flex items-center justify-center text-[#4f46e5] group-hover:scale-105 group-hover:-translate-y-1 transition-all duration-300 shadow-md shadow-orange-500/5">
             <Flame size={22} className="fill-orange-100 dark:fill-orange-950/20" />
           </div>
           <span className="text-[10px] md:text-xs font-black text-gray-700 dark:text-gray-300">Khuyến Mãi Hot</span>
@@ -320,7 +320,7 @@ const Home = () => {
           <div className="h-12 w-12 rounded-2xl bg-yellow-50 dark:bg-yellow-950/25 flex items-center justify-center text-yellow-600 group-hover:scale-105 group-hover:-translate-y-1 transition-all duration-300 shadow-md shadow-yellow-500/5">
             <Sparkles size={22} className="fill-yellow-100 dark:fill-yellow-950/20" />
           </div>
-          <span className="text-[10px] md:text-xs font-black text-gray-700 dark:text-gray-300">Shopee Xu</span>
+          <span className="text-[10px] md:text-xs font-black text-gray-700 dark:text-gray-300">BMart Xu</span>
         </Link>
         <button onClick={() => navigate('/profile?tab=orders')} className="flex flex-col items-center gap-2 group focus:outline-none">
           <div className="h-12 w-12 rounded-2xl bg-pink-50 dark:bg-pink-950/25 flex items-center justify-center text-pink-600 group-hover:scale-105 group-hover:-translate-y-1 transition-all duration-300 shadow-md shadow-pink-500/5">
@@ -330,11 +330,11 @@ const Home = () => {
         </button>
       </div>
 
-      {/* === 4. PRODUCT CATEGORIES (Bo góc 16px, Hover lift, Micro-animations) === */}
+      {/* === 4. PRODUCT CATEGORIES === */}
       <div className="bg-white dark:bg-zinc-900 rounded-3xl p-5 md:p-6 shadow-[0_4px_25px_rgba(0,0,0,0.02)] border border-gray-100 dark:border-zinc-850">
         <div className="flex justify-between items-center mb-5">
           <div className="flex items-center gap-2">
-            <div className="h-5 w-1 bg-[#ee4d2d] rounded-full" />
+            <div className="h-5 w-1 bg-[#4f46e5] rounded-full" />
             <h3 className="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Danh Mục Sản Phẩm</h3>
           </div>
         </div>
@@ -355,14 +355,14 @@ const Home = () => {
         </div>
       </div>
 
-      {/* === 5. FLASH SALE SECTION (Countdown timer, progress bar, high interaction) === */}
+      {/* === 5. FLASH SALE SECTION === */}
       {flashSaleProducts.length > 0 && (
         <div className="bg-white dark:bg-zinc-900 rounded-3xl shadow-[0_4px_25px_rgba(0,0,0,0.02)] overflow-hidden border border-red-500/10">
           
           {/* Header Flash Sale */}
           <div className="bg-gradient-to-r from-red-50 to-orange-50/50 dark:from-red-950/20 dark:to-orange-950/5 px-5 md:px-6 py-4 flex justify-between items-center flex-wrap gap-4 border-b border-red-100/60 dark:border-red-950/30">
             <div className="flex items-center gap-3.5">
-              <span className="text-lg md:text-2xl font-black text-[#ee4d2d] flex items-center gap-1.5 italic tracking-wide">
+              <span className="text-lg md:text-2xl font-black text-[#4f46e5] flex items-center gap-1.5 italic tracking-wide">
                 <Flame className="fill-shopee animate-bounce" size={24} />
                 FLASH SALE
               </span>
@@ -370,16 +370,16 @@ const Home = () => {
               {/* Countdown panel */}
               <div className="flex items-center gap-1.5 ml-2">
                 <span className="bg-zinc-900 text-white text-[11px] md:text-xs font-black px-2 py-1.5 rounded-lg shadow-sm">{String(timeLeft.hours).padStart(2, '0')}</span>
-                <span className="font-black text-[#ee4d2d] text-sm">:</span>
+                <span className="font-black text-[#4f46e5] text-sm">:</span>
                 <span className="bg-zinc-900 text-white text-[11px] md:text-xs font-black px-2 py-1.5 rounded-lg shadow-sm">{String(timeLeft.minutes).padStart(2, '0')}</span>
-                <span className="font-black text-[#ee4d2d] text-sm">:</span>
+                <span className="font-black text-[#4f46e5] text-sm">:</span>
                 <span className="bg-zinc-900 text-white text-[11px] md:text-xs font-black px-2 py-1.5 rounded-lg shadow-sm">{String(timeLeft.seconds).padStart(2, '0')}</span>
               </div>
             </div>
             
             <button 
               onClick={() => navigate('/search?flashSale=true')} 
-              className="text-xs text-[#ee4d2d] hover:text-shopee-hover font-black flex items-center gap-1 hover:translate-x-0.5 transition-transform"
+              className="text-xs text-[#4f46e5] hover:text-shopee-hover font-black flex items-center gap-1 hover:translate-x-0.5 transition-transform"
             >
               <span>Xem Tất Cả</span>
               <ArrowRight size={13} />
@@ -422,7 +422,7 @@ const Home = () => {
                     </div>
 
                     {/* Discount Tag */}
-                    <div className="absolute top-0 right-0 bg-gradient-to-l from-[#ee4d2d] to-[#ff7337] text-white text-[9px] md:text-[10px] font-black px-2.5 py-1 rounded-bl-2xl shadow-md">
+                    <div className="absolute top-0 right-0 bg-gradient-to-l from-[#4f46e5] to-[#6366f1] text-white text-[9px] md:text-[10px] font-black px-2.5 py-1 rounded-bl-2xl shadow-md">
                       -{discountPercent}%
                     </div>
                   </div>
@@ -441,7 +441,7 @@ const Home = () => {
                     <div className="mt-auto pt-2">
                       <div className="w-full bg-red-100 dark:bg-red-950/20 h-4 rounded-full overflow-hidden relative flex items-center justify-center shadow-inner">
                         <div 
-                          className="bg-gradient-to-r from-[#ee4d2d] to-[#ff7337] h-full absolute left-0 top-0 transition-all duration-700 rounded-full" 
+                          className="bg-gradient-to-r from-[#4f46e5] to-[#6366f1] h-full absolute left-0 top-0 transition-all duration-700 rounded-full" 
                           style={{ width: `${soldPercentage}%` }}
                         />
                         <span className="text-[8px] md:text-[9px] text-white dark:text-gray-100 font-black z-10 uppercase tracking-wider">
@@ -466,7 +466,7 @@ const Home = () => {
             onClick={() => setActiveTab('RECOMMENDED')}
             className={`px-6 py-3 rounded-2xl text-[10px] md:text-xs font-black uppercase transition-all duration-200 whitespace-nowrap ${
               activeTab === 'RECOMMENDED' 
-                ? 'bg-gradient-to-r from-[#ee4d2d] to-[#ff7337] text-white shadow-lg shadow-orange-500/15' 
+                ? 'bg-gradient-to-r from-[#4f46e5] to-[#6366f1] text-white shadow-lg shadow-indigo-500/15' 
                 : 'text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-zinc-800/40'
             }`}
           >
@@ -476,7 +476,7 @@ const Home = () => {
             onClick={() => setActiveTab('NEWEST')}
             className={`px-6 py-3 rounded-2xl text-[10px] md:text-xs font-black uppercase transition-all duration-200 whitespace-nowrap ${
               activeTab === 'NEWEST' 
-                ? 'bg-gradient-to-r from-[#ee4d2d] to-[#ff7337] text-white shadow-lg shadow-orange-500/15' 
+                ? 'bg-gradient-to-r from-[#4f46e5] to-[#6366f1] text-white shadow-lg shadow-indigo-500/15' 
                 : 'text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-zinc-800/40'
             }`}
           >
@@ -486,7 +486,7 @@ const Home = () => {
             onClick={() => setActiveTab('BEST_SELLER')}
             className={`px-6 py-3 rounded-2xl text-[10px] md:text-xs font-black uppercase transition-all duration-200 whitespace-nowrap ${
               activeTab === 'BEST_SELLER' 
-                ? 'bg-gradient-to-r from-[#ee4d2d] to-[#ff7337] text-white shadow-lg shadow-orange-500/15' 
+                ? 'bg-gradient-to-r from-[#4f46e5] to-[#6366f1] text-white shadow-lg shadow-indigo-500/15' 
                 : 'text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-zinc-800/40'
             }`}
           >
@@ -542,16 +542,16 @@ const Home = () => {
                       <span className="text-[10px] mt-1.5 font-bold">Chưa có ảnh</span>
                     </div>
 
-                    {/* "Yêu thích" Orange Badge (Top-Left) */}
+                    {/* "Yêu thích" Brand Badge (Top-Left) */}
                     {product.soldQuantity && product.soldQuantity > 10 && (
-                      <div className="absolute top-2.5 left-2.5 bg-[#ee4d2d] text-white text-[9px] font-black px-2 py-0.5 rounded-md shadow-md">
+                      <div className="absolute top-2.5 left-2.5 bg-[#4f46e5] text-white text-[9px] font-black px-2 py-0.5 rounded-md shadow-md">
                         Yêu thích
                       </div>
                     )}
 
                     {/* Discount Tag (Top-Right) */}
                     {hasDiscount && (
-                      <div className="absolute top-0 right-0 bg-gradient-to-l from-[#ee4d2d] to-[#ff7337] text-white text-[9px] md:text-[10px] font-black px-2.5 py-1 rounded-bl-2xl shadow-md">
+                      <div className="absolute top-0 right-0 bg-gradient-to-l from-[#4f46e5] to-[#6366f1] text-white text-[9px] md:text-[10px] font-black px-2.5 py-1 rounded-bl-2xl shadow-md">
                         -{discountPercent}%
                       </div>
                     )}
@@ -560,7 +560,7 @@ const Home = () => {
                     <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center p-3">
                       <button 
                         onClick={(e) => handleAddToCart(e, product.id)}
-                        className="w-full bg-gradient-to-r from-[#ee4d2d] to-[#ff7337] text-white py-2 rounded-xl text-xs font-black shadow-lg hover:shadow-orange-500/20 active:scale-95 transition-all flex items-center justify-center gap-1.5 border border-white/10"
+                        className="w-full bg-gradient-to-r from-[#4f46e5] to-[#6366f1] text-white py-2 rounded-xl text-xs font-black shadow-lg hover:shadow-indigo-500/20 active:scale-95 transition-all flex items-center justify-center gap-1.5 border border-white/10"
                       >
                         <ShoppingCart size={13} />
                         <span>Thêm giỏ hàng</span>
@@ -570,7 +570,7 @@ const Home = () => {
 
                   {/* Body description */}
                   <div className="p-3 flex flex-col gap-2 flex-grow">
-                    <span className="text-[9px] text-[#ff7337] font-black uppercase tracking-wider">{product.categoryName}</span>
+                    <span className="text-[9px] text-[#06b6d4] font-black uppercase tracking-wider">{product.categoryName}</span>
                     <h3 className="text-xs font-bold text-gray-800 dark:text-gray-200 line-clamp-2 h-8 leading-4 group-hover:text-shopee transition-colors" title={product.name}>
                       {product.name}
                     </h3>
