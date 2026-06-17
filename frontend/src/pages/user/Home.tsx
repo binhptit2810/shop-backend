@@ -260,7 +260,7 @@ const Home = () => {
       </div>
 
       {/* === 2. CAM KẾT DỊCH VỤ === */}
-      <div className="bg-white dark:bg-zinc-900 rounded-3xl p-5 md:p-6 grid grid-cols-1 sm:grid-cols-3 gap-6 text-center md:text-left shadow-[0_4px_25px_rgba(0,0,0,0.02)] border border-gray-100 dark:border-zinc-850">
+      <div className="bg-white dark:bg-zinc-900 rounded-3xl p-5 md:p-6 grid grid-cols-1 sm:grid-cols-3 gap-6 text-center md:text-left shadow-[0_4px_25px_rgba(0,0,0,0.02)] border border-gray-100 dark:border-zinc-850 animate-slide-up">
         <div className="flex flex-col md:flex-row items-center gap-4 px-2">
           <div className="h-12 w-12 rounded-2xl bg-orange-50 dark:bg-orange-950/20 text-[#4f46e5] flex items-center justify-center flex-shrink-0">
             <Truck size={22} />
@@ -291,7 +291,7 @@ const Home = () => {
       </div>
 
       {/* === 3. QUICK ACCESS MENUS === */}
-      <div className="bg-white dark:bg-zinc-900 rounded-3xl p-4 md:p-5 grid grid-cols-3 sm:grid-cols-6 gap-4 text-center shadow-[0_4px_25px_rgba(0,0,0,0.02)] border border-gray-100 dark:border-zinc-850">
+      <div className="bg-white dark:bg-zinc-900 rounded-3xl p-4 md:p-5 grid grid-cols-3 sm:grid-cols-6 gap-4 text-center shadow-[0_4px_25px_rgba(0,0,0,0.02)] border border-gray-100 dark:border-zinc-850 animate-slide-up">
         <button onClick={() => navigate('/search?flashSale=true')} className="flex flex-col items-center gap-2 group focus:outline-none">
           <div className="h-12 w-12 rounded-2xl bg-orange-50 dark:bg-orange-950/25 flex items-center justify-center text-[#4f46e5] group-hover:scale-105 group-hover:-translate-y-1 transition-all duration-300 shadow-md shadow-orange-500/5">
             <Flame size={22} className="fill-orange-100 dark:fill-orange-950/20" />
@@ -331,7 +331,7 @@ const Home = () => {
       </div>
 
       {/* === 4. PRODUCT CATEGORIES === */}
-      <div className="bg-white dark:bg-zinc-900 rounded-3xl p-5 md:p-6 shadow-[0_4px_25px_rgba(0,0,0,0.02)] border border-gray-100 dark:border-zinc-850">
+      <div className="bg-white dark:bg-zinc-900 rounded-3xl p-5 md:p-6 shadow-[0_4px_25px_rgba(0,0,0,0.02)] border border-gray-100 dark:border-zinc-850 animate-slide-up">
         <div className="flex justify-between items-center mb-5">
           <div className="flex items-center gap-2">
             <div className="h-5 w-1 bg-[#4f46e5] rounded-full" />
@@ -507,7 +507,7 @@ const Home = () => {
             ))}
           </div>
         ) : getFilteredProducts().length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 animate-slide-up">
             {getFilteredProducts().map(product => {
               const activePrice = product.discountPrice !== null ? product.discountPrice : product.price;
               const hasDiscount = product.discountPrice !== null;
