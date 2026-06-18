@@ -47,7 +47,7 @@ const Navbar = () => {
   const notifRef = useRef<HTMLDivElement>(null);
 
   // Hot keywords
-  const hotKeywords = ["Điện thoại", "Laptop", "Mỹ phẩm", "Áo khoác", "Giày thể thao", "Túi xách"];
+
 
   useEffect(() => {
     if (user) {
@@ -415,18 +415,7 @@ const Navbar = () => {
                 </div>
               )}
 
-              {/* Hot Keywords list */}
-              <div className="flex gap-4.5 mt-2 text-[11px] text-white/90 overflow-hidden h-4 font-semibold px-1">
-                {hotKeywords.map((keyword, index) => (
-                  <button 
-                    key={index} 
-                    onClick={() => handleSuggestionClick(keyword)}
-                    className="hover:text-yellow-200 hover:underline transition-colors"
-                  >
-                    {keyword}
-                  </button>
-                ))}
-              </div>
+
             </div>
 
             {/* Cart Icon */}
