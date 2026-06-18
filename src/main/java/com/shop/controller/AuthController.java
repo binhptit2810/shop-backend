@@ -4,6 +4,10 @@ import com.shop.dto.AuthResponse;
 import com.shop.dto.LoginRequest;
 import com.shop.dto.RegisterRequest;
 import com.shop.dto.UserResponse;
+import com.shop.dto.ChangePasswordRequest;
+import com.shop.dto.ChangePasswordConfirmRequest;
+import com.shop.dto.ForgotPasswordRequest;
+import com.shop.dto.ForgotPasswordConfirmRequest;
 import com.shop.entity.User;
 import com.shop.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -57,5 +61,43 @@ public class AuthController {
                 .createdAt(user.getCreatedAt())
                 .build();
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/change-password/request")
+    @Operation(summary = "Yêu cầu đổi mật khẩu (sinh mã OTP gửi qua email)")
+    public ResponseEntity<?> requestChangePassword(
+            @AuthenticationPrincipal User user,
+            @Valid @RequestBody ChangePasswordRequest request) {
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Người dùng chưa đăng nhập!");
+        }
+        authService.requestChangePassword(user, request);
+        return ResponseEntity.ok("Mã xác thực OTP đã được gửi về email của bạn.");
+    }
+
+    @PostMapping("/change-password/confirm")
+    @Operation(summary = "Xác nhận đổi mật khẩu bằng mã OTP")
+    public ResponseEntity<?> confirmChangePassword(
+            @AuthenticationPrincipal User user,
+            @Valid @RequestBody ChangePasswordConfirmRequest request) {
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Người dùng chưa đăng nhập!");
+        }
+        authService.confirmChangePassword(user, request);
+        return ResponseEntity.ok("Đổi mật khẩu thành công!");
+    }
+
+    @PostMapping("/forgot-password/request")
+    @Operation(summary = "Yêu cầu khôi phục mật khẩu (sinh mã OTP gửi qua email)")
+    public ResponseEntity<?> requestForgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+        authService.requestForgotPassword(request);
+        return ResponseEntity.ok("Mã xác thực OTP khôi phục mật khẩu đã được gửi về email của bạn.");
+    }
+
+    @PostMapping("/forgot-password/confirm")
+    @Operation(summary = "Xác nhận đặt lại mật khẩu mới bằng mã OTP")
+    public ResponseEntity<?> confirmForgotPassword(@Valid @RequestBody ForgotPasswordConfirmRequest request) {
+        authService.confirmForgotPassword(request);
+        return ResponseEntity.ok("Đặt lại mật khẩu thành công!");
     }
 }

@@ -3,24 +3,33 @@ package com.shop.service.impl;
 import com.shop.dto.AuthResponse;
 import com.shop.dto.LoginRequest;
 import com.shop.dto.RegisterRequest;
+import com.shop.dto.ChangePasswordRequest;
+import com.shop.dto.ChangePasswordConfirmRequest;
+import com.shop.dto.ForgotPasswordRequest;
+import com.shop.dto.ForgotPasswordConfirmRequest;
 import com.shop.entity.Role;
 import com.shop.entity.User;
 import com.shop.exception.BadRequestException;
 import com.shop.repository.UserRepository;
+import com.shop.repository.OtpRepository;
 import com.shop.security.JwtService;
 import com.shop.service.AuthService;
+import com.shop.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
+    private final OtpRepository otpRepository;
+    private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
@@ -89,5 +98,105 @@ public class AuthServiceImpl implements AuthService {
                 .email(user.getEmail())
                 .role(user.getRole().name())
                 .build();
+    }
+
+    private String generateOtpCode() {
+        return String.format("%06d", new java.util.Random().nextInt(1000000));
+    }
+
+    @Override
+    @Transactional
+    public void requestChangePassword(User currentUser, ChangePasswordRequest request) {
+        if (!passwordEncoder.matches(request.getCurrentPassword(), currentUser.getPassword())) {
+            throw new BadRequestException("Mật khẩu hiện tại không chính xác!");
+        }
+        if (request.getNewPassword().equals(request.getCurrentPassword())) {
+            throw new BadRequestException("Mật khẩu mới không được trùng với mật khẩu hiện tại!");
+        }
+        if (!request.getNewPassword().equals(request.getConfirmNewPassword())) {
+            throw new BadRequestException("Xác nhận mật khẩu mới không khớp!");
+        }
+
+        otpRepository.deleteByEmailAndType(currentUser.getEmail(), "CHANGE_PASSWORD");
+
+        String otpCode = generateOtpCode();
+        com.shop.entity.Otp otp = com.shop.entity.Otp.builder()
+                .email(currentUser.getEmail())
+                .otpCode(otpCode)
+                .type("CHANGE_PASSWORD")
+                .expiryTime(LocalDateTime.now().plusMinutes(5))
+                .build();
+        otpRepository.save(otp);
+
+        emailService.sendOtpEmail(currentUser.getEmail(), otpCode, "Đổi mật khẩu tài khoản BMart");
+    }
+
+    @Override
+    @Transactional
+    public void confirmChangePassword(User currentUser, ChangePasswordConfirmRequest request) {
+        if (!passwordEncoder.matches(request.getCurrentPassword(), currentUser.getPassword())) {
+            throw new BadRequestException("Mật khẩu hiện tại không chính xác!");
+        }
+        if (request.getNewPassword().equals(request.getCurrentPassword())) {
+            throw new BadRequestException("Mật khẩu mới không được trùng với mật khẩu hiện tại!");
+        }
+        if (!request.getNewPassword().equals(request.getConfirmNewPassword())) {
+            throw new BadRequestException("Xác nhận mật khẩu mới không khớp!");
+        }
+
+        com.shop.entity.Otp otp = otpRepository.findByEmailAndOtpCodeAndType(
+                currentUser.getEmail(), request.getOtpCode(), "CHANGE_PASSWORD")
+                .orElseThrow(() -> new BadRequestException("Mã OTP không chính xác!"));
+
+        if (otp.getExpiryTime().isBefore(LocalDateTime.now())) {
+            throw new BadRequestException("Mã OTP đã hết hạn (hiệu lực 5 phút)!");
+        }
+
+        currentUser.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(currentUser);
+        otpRepository.delete(otp);
+    }
+
+    @Override
+    @Transactional
+    public void requestForgotPassword(ForgotPasswordRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new BadRequestException("Email không tồn tại trên hệ thống!"));
+
+        otpRepository.deleteByEmailAndType(user.getEmail(), "FORGOT_PASSWORD");
+
+        String otpCode = generateOtpCode();
+        com.shop.entity.Otp otp = com.shop.entity.Otp.builder()
+                .email(user.getEmail())
+                .otpCode(otpCode)
+                .type("FORGOT_PASSWORD")
+                .expiryTime(LocalDateTime.now().plusMinutes(5))
+                .build();
+        otpRepository.save(otp);
+
+        emailService.sendOtpEmail(user.getEmail(), otpCode, "Khôi phục mật khẩu tài khoản BMart");
+    }
+
+    @Override
+    @Transactional
+    public void confirmForgotPassword(ForgotPasswordConfirmRequest request) {
+        if (!request.getNewPassword().equals(request.getConfirmNewPassword())) {
+            throw new BadRequestException("Xác nhận mật khẩu mới không khớp!");
+        }
+
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new BadRequestException("Email không tồn tại trên hệ thống!"));
+
+        com.shop.entity.Otp otp = otpRepository.findByEmailAndOtpCodeAndType(
+                request.getEmail(), request.getOtpCode(), "FORGOT_PASSWORD")
+                .orElseThrow(() -> new BadRequestException("Mã OTP hoặc email xác thực không chính xác!"));
+
+        if (otp.getExpiryTime().isBefore(LocalDateTime.now())) {
+            throw new BadRequestException("Mã OTP đã hết hạn (hiệu lực 5 phút)!");
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+        otpRepository.delete(otp);
     }
 }

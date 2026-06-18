@@ -27,6 +27,9 @@ dependencies {
     // Spring Boot Core Starter Web
     implementation 'org.springframework.boot:spring-boot-starter-web'
     
+    // Spring Boot Starter Mail for sending OTP emails
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    
     // Spring Boot Data JPA for database operations
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     
