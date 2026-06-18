@@ -15,7 +15,8 @@ import {
   CheckCircle,
   Truck,
   FileText,
-  UserCheck
+  UserCheck,
+  Key
 } from 'lucide-react';
 import { Order } from '../../types';
 
@@ -37,6 +38,83 @@ const Profile = () => {
 
   // Invoice view state
   const [selectedInvoice, setSelectedInvoice] = useState<Order | null>(null);
+
+  // Change password states
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [passwordStep, setPasswordStep] = useState(1); // 1: inputs, 2: OTP
+  const [passwordOtp, setPasswordOtp] = useState('');
+
+  const handleChangePasswordRequest = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!currentPassword || !newPassword || !confirmNewPassword) {
+      showToast('Vui lòng nhập đầy đủ thông tin!', 'error');
+      return;
+    }
+    if (newPassword !== confirmNewPassword) {
+      showToast('Mật khẩu xác nhận không khớp!', 'error');
+      return;
+    }
+    if (newPassword.length < 6) {
+      showToast('Mật khẩu mới phải có ít nhất 6 ký tự!', 'error');
+      return;
+    }
+    if (currentPassword === newPassword) {
+      showToast('Mật khẩu mới không được trùng mật khẩu cũ!', 'error');
+      return;
+    }
+
+    setPasswordLoading(true);
+    try {
+      const response = await API.post('/auth/change-password/request', {
+        currentPassword,
+        newPassword,
+        confirmNewPassword
+      });
+      showToast(response.data || 'Mã OTP đã được gửi về email của bạn.', 'success');
+      setPasswordStep(2);
+    } catch (error: any) {
+      console.error(error);
+      const msg = error.response?.data || 'Không thể thực hiện yêu cầu đổi mật khẩu. Vui lòng kiểm tra lại mật khẩu hiện tại!';
+      showToast(typeof msg === 'string' ? msg : JSON.stringify(msg), 'error');
+    } finally {
+      setPasswordLoading(false);
+    }
+  };
+
+  const handleChangePasswordConfirm = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!passwordOtp) {
+      showToast('Vui lòng nhập mã OTP!', 'error');
+      return;
+    }
+
+    setPasswordLoading(true);
+    try {
+      const response = await API.post('/auth/change-password/confirm', {
+        currentPassword,
+        newPassword,
+        confirmNewPassword,
+        otpCode: passwordOtp
+      });
+      showToast(response.data || 'Đổi mật khẩu thành công!', 'success');
+      // Reset state and clear forms
+      setPasswordStep(1);
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmNewPassword('');
+      setPasswordOtp('');
+      setSearchParams({ tab: 'profile' });
+    } catch (error: any) {
+      console.error(error);
+      const msg = error.response?.data || 'Mã OTP không chính xác hoặc đã hết hạn!';
+      showToast(typeof msg === 'string' ? msg : JSON.stringify(msg), 'error');
+    } finally {
+      setPasswordLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchMyOrders();
@@ -187,7 +265,7 @@ const Profile = () => {
             </button>
             <button 
               onClick={() => setSearchParams({ tab: 'orders' })}
-              className={`flex-1 md:flex-initial text-left px-4 py-3 flex items-center justify-center md:justify-start gap-2.5 transition-all focus:outline-none ${
+              className={`flex-1 md:flex-initial text-left px-4 py-3 flex items-center justify-center md:justify-start gap-2.5 transition-all border-b md:border-b-0 border-r md:border-r-0 md:border-b border-gray-100 dark:border-gray-700 focus:outline-none ${
                 activeTab === 'orders' 
                   ? 'bg-orange-50/40 dark:bg-orange-950/20 text-shopee font-bold border-l-0 md:border-l-4 border-l-shopee' 
                   : 'hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200'
@@ -195,6 +273,17 @@ const Profile = () => {
             >
               <ShoppingBag size={16} />
               <span>Đơn mua hàng</span>
+            </button>
+            <button 
+              onClick={() => setSearchParams({ tab: 'password' })}
+              className={`flex-1 md:flex-initial text-left px-4 py-3 flex items-center justify-center md:justify-start gap-2.5 transition-all focus:outline-none ${
+                activeTab === 'password' 
+                  ? 'bg-orange-50/40 dark:bg-orange-950/20 text-shopee font-bold border-l-0 md:border-l-4 border-l-shopee' 
+                  : 'hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200'
+              }`}
+            >
+              <Key size={16} />
+              <span>Đổi mật khẩu</span>
             </button>
           </div>
         </div>
@@ -440,6 +529,100 @@ const Profile = () => {
                     );
                   })}
                 </div>
+              )}
+            </div>
+          )}
+
+          {/* TAB 3: CHANGE PASSWORD */}
+          {activeTab === 'password' && (
+            <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-4 md:p-8 shadow-xs animate-fade-in">
+              <div className="border-b border-gray-105 dark:border-gray-700 pb-3 mb-6">
+                <h2 className="text-base md:text-lg font-black text-gray-900 dark:text-white">Đổi Mật Khẩu</h2>
+                <p className="text-[11px] text-gray-400 mt-1">Để bảo mật tài khoản, vui lòng không chia sẻ mật khẩu cho người khác.</p>
+              </div>
+
+              {passwordStep === 1 ? (
+                <form onSubmit={handleChangePasswordRequest} className="max-w-md flex flex-col gap-4">
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[11px] text-gray-500 font-bold">Mật khẩu hiện tại</label>
+                    <input 
+                      type="password" 
+                      placeholder="Nhập mật khẩu hiện tại..."
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      className="text-xs px-3.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 focus:outline-none focus:border-shopee"
+                      required
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[11px] text-gray-500 font-bold">Mật khẩu mới</label>
+                    <input 
+                      type="password" 
+                      placeholder="Mật khẩu mới (tối thiểu 6 ký tự)..."
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      className="text-xs px-3.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 focus:outline-none focus:border-shopee"
+                      required
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[11px] text-gray-500 font-bold">Xác nhận mật khẩu mới</label>
+                    <input 
+                      type="password" 
+                      placeholder="Nhập lại mật khẩu mới..."
+                      value={confirmNewPassword}
+                      onChange={(e) => setConfirmNewPassword(e.target.value)}
+                      className="text-xs px-3.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 focus:outline-none focus:border-shopee"
+                      required
+                    />
+                  </div>
+
+                  <button 
+                    type="submit" 
+                    disabled={passwordLoading}
+                    className="bg-shopee hover:bg-shopee-hover text-white text-xs font-bold px-6 py-3 rounded-xl shadow-xs transition-all self-start mt-2 focus:outline-none"
+                  >
+                    {passwordLoading ? 'Đang gửi OTP...' : 'Xác nhận đổi mật khẩu'}
+                  </button>
+                </form>
+              ) : (
+                <form onSubmit={handleChangePasswordConfirm} className="max-w-md flex flex-col gap-4 animate-scale-in">
+                  <div className="bg-orange-50/50 dark:bg-orange-950/20 text-shopee border border-orange-100 dark:border-orange-900/30 rounded-xl p-4 text-xs leading-relaxed mb-2">
+                    Mã xác thực OTP gồm 6 chữ số đã được gửi tới email liên kết với tài khoản của bạn.
+                  </div>
+
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[11px] text-gray-500 font-bold">Nhập mã xác thực OTP</label>
+                    <input 
+                      type="text" 
+                      placeholder="Nhập 6 chữ số OTP..."
+                      maxLength={6}
+                      value={passwordOtp}
+                      onChange={(e) => setPasswordOtp(e.target.value)}
+                      className="text-xs px-3.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 focus:outline-none focus:border-shopee text-center font-bold tracking-widest"
+                      required
+                    />
+                  </div>
+
+                  <div className="flex gap-3 mt-2">
+                    <button 
+                      type="button" 
+                      onClick={() => setPasswordStep(1)}
+                      className="border border-gray-250 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-750 dark:text-gray-300 text-xs font-bold px-6 py-3 rounded-xl focus:outline-none"
+                    >
+                      Quay lại
+                    </button>
+                    <button 
+                      type="submit" 
+                      disabled={passwordLoading}
+                      className="bg-shopee hover:bg-shopee-hover text-white text-xs font-bold px-6 py-3 rounded-xl shadow-xs transition-all focus:outline-none"
+                    >
+                      {passwordLoading ? 'Đang xác thực...' : 'Hoàn tất đổi mật khẩu'}
+                    </button>
+                  </div>
+                </form>
               )}
             </div>
           )}
