@@ -49,6 +49,15 @@ public class User implements UserDetails {
     @Builder.Default
     private boolean isEnabled = false;
 
+    @Column(name = "phone_number", length = 20)
+    private String phoneNumber;
+
+    @Column(name = "address", length = 500)
+    private String address;
+
+    @Column(name = "avatar_url", length = 255)
+    private String avatarUrl;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 

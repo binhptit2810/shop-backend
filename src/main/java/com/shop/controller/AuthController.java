@@ -67,6 +67,9 @@ public class AuthController {
                 .isLocked(user.isLocked())
                 .statusReason(user.getStatusReason())
                 .createdAt(user.getCreatedAt())
+                .phoneNumber(user.getPhoneNumber())
+                .address(user.getAddress())
+                .avatarUrl(user.getAvatarUrl())
                 .build();
         return ResponseEntity.ok(response);
     }

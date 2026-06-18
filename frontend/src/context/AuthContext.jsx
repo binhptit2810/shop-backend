@@ -19,7 +19,15 @@ export const AuthProvider = ({ children }) => {
           // Gửi request lên backend để kiểm tra xem token còn hợp lệ và tài khoản có bị khóa/xóa không
           const response = await API.get('/auth/me');
           const data = response.data;
-          setUser({ id: data.id, username: data.username, email: data.email, role: data.role });
+          setUser({
+            id: data.id,
+            username: data.username,
+            email: data.email,
+            role: data.role,
+            phoneNumber: data.phoneNumber,
+            address: data.address,
+            avatarUrl: data.avatarUrl
+          });
           if (data.id) localStorage.setItem('userId', data.id);
         } catch (error) {
           console.error("Xác thực token thất bại hoặc tài khoản bị khóa/xóa:", error);
@@ -27,6 +35,7 @@ export const AuthProvider = ({ children }) => {
           localStorage.removeItem('username');
           localStorage.removeItem('email');
           localStorage.removeItem('role');
+          localStorage.removeItem('userId');
           setUser(null);
         }
       } else {
@@ -38,6 +47,17 @@ export const AuthProvider = ({ children }) => {
     checkUserSession();
   }, []);
 
+  const updateUser = (updatedFields) => {
+    setUser((prev) => {
+      if (!prev) return null;
+      const newUser = { ...prev, ...updatedFields };
+      if (updatedFields.email) {
+        localStorage.setItem('email', updatedFields.email);
+      }
+      return newUser;
+    });
+  };
+
   const login = async (username, password) => {
     try {
       const response = await API.post('/auth/login', { username, password });
@@ -47,9 +67,21 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('username', username);
       localStorage.setItem('email', email);
       localStorage.setItem('role', role);
-      if (response.data.id) localStorage.setItem('userId', response.data.id);
       
-      setUser({ id: response.data.id, username, email, role });
+      // Fetch complete user profile
+      const meResponse = await API.get('/auth/me');
+      const data = meResponse.data;
+      if (data.id) localStorage.setItem('userId', data.id);
+      
+      setUser({
+        id: data.id,
+        username: data.username,
+        email: data.email,
+        role: data.role,
+        phoneNumber: data.phoneNumber,
+        address: data.address,
+        avatarUrl: data.avatarUrl
+      });
       return { success: true, role };
     } catch (error) {
       console.error("Login error:", error);
@@ -81,15 +113,27 @@ export const AuthProvider = ({ children }) => {
   const verifyRegister = async (email, otpCode) => {
     try {
       const response = await API.post('/auth/verify-register', { email, otpCode });
-      const { accessToken, role, username, id } = response.data;
+      const { accessToken, role, username } = response.data;
       
       localStorage.setItem('token', accessToken);
       localStorage.setItem('username', username);
       localStorage.setItem('email', email);
       localStorage.setItem('role', role);
-      if (id) localStorage.setItem('userId', id);
       
-      setUser({ id, username, email, role });
+      // Fetch complete user profile
+      const meResponse = await API.get('/auth/me');
+      const data = meResponse.data;
+      if (data.id) localStorage.setItem('userId', data.id);
+      
+      setUser({
+        id: data.id,
+        username: data.username,
+        email: data.email,
+        role: data.role,
+        phoneNumber: data.phoneNumber,
+        address: data.address,
+        avatarUrl: data.avatarUrl
+      });
       return { success: true, message: response.data?.message || 'Kích hoạt tài khoản thành công!' };
     } catch (error) {
       return {
@@ -117,7 +161,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, verifyRegister, logout, isAdmin, isSeller }}>
+    <AuthContext.Provider value={{ user, loading, login, register, verifyRegister, logout, isAdmin, isSeller, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

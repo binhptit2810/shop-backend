@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { useThemeStore } from '../store/useThemeStore';
 import { useNotificationStore } from '../store/useNotificationStore';
-import API from '../services/api';
+import API, { getProductImageUrl } from '../services/api';
 import { 
   Search, 
   ShoppingCart, 
@@ -277,9 +277,17 @@ const Navbar = () => {
               {/* User profile dropdown */}
               {user ? (
                 <div className="group relative flex items-center gap-1.5 cursor-pointer py-1">
-                  <div className="h-5 w-5 bg-white/20 rounded-full flex items-center justify-center border border-white/40 text-white font-bold text-[10px] uppercase shadow-xs">
-                    {user.username.charAt(0)}
-                  </div>
+                  {user.avatarUrl ? (
+                    <img 
+                      src={getProductImageUrl(user.avatarUrl)} 
+                      alt={user.username} 
+                      className="h-5 w-5 rounded-full object-cover border border-white/40 shadow-xs" 
+                    />
+                  ) : (
+                    <div className="h-5 w-5 bg-white/20 rounded-full flex items-center justify-center border border-white/40 text-white font-bold text-[10px] uppercase shadow-xs">
+                      {user.username.charAt(0)}
+                    </div>
+                  )}
                   <span className="font-bold hover:text-amber-200 transition-colors flex items-center gap-0.5">
                     {user.username}
                     <ChevronDown size={12} className="opacity-70 group-hover:rotate-180 transition-transform duration-200" />
@@ -562,9 +570,17 @@ const Navbar = () => {
               
               {user ? (
                 <div className="flex items-center gap-3 mt-2">
-                  <div className="h-11 w-11 bg-white/20 rounded-2xl flex items-center justify-center border border-white/30 text-white text-base font-bold uppercase shadow-sm">
-                    {user.username.charAt(0)}
-                  </div>
+                  {user.avatarUrl ? (
+                    <img 
+                      src={getProductImageUrl(user.avatarUrl)} 
+                      alt={user.username} 
+                      className="h-11 w-11 rounded-2xl object-cover border border-white/30 shadow-sm" 
+                    />
+                  ) : (
+                    <div className="h-11 w-11 bg-white/20 rounded-2xl flex items-center justify-center border border-white/30 text-white text-base font-bold uppercase shadow-sm">
+                      {user.username.charAt(0)}
+                    </div>
+                  )}
                   <div>
                     <h3 className="font-bold text-sm tracking-wide line-clamp-1">{user.username}</h3>
                     <p className="text-[10px] text-white/80 uppercase tracking-wider font-bold">{user.role}</p>

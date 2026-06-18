@@ -21,7 +21,7 @@ import {
 import { Order } from '../../types';
 
 const Profile = () => {
-  const { user } = useContext(AuthContext);
+  const { user, updateUser } = useContext(AuthContext);
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get('tab') || 'profile';
 
@@ -32,9 +32,28 @@ const Profile = () => {
   // Profile settings state
   const [fullName, setFullName] = useState(user?.username || '');
   const [email, setEmail] = useState(user?.email || '');
-  const [phone, setPhone] = useState('0987654321');
-  const [address, setAddress] = useState('123 Đường Trần Duy Hưng, Hà Nội');
+  const [phone, setPhone] = useState(user?.phoneNumber || '');
+  const [address, setAddress] = useState(user?.address || '');
   const [savingProfile, setSavingProfile] = useState(false);
+
+  // Map state
+  const [leafletLoaded, setLeafletLoaded] = useState(false);
+  const [showMap, setShowMap] = useState(false);
+  const [mapSearch, setMapSearch] = useState('');
+  const [mapLoading, setMapLoading] = useState(false);
+
+  const mapRef = React.useRef<any>(null);
+  const markerRef = React.useRef<any>(null);
+
+  // Avatar ref & state
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+
+  // OTP email verification state
+  const [showOtpModal, setShowOtpModal] = useState(false);
+  const [newEmailVerify, setNewEmailVerify] = useState('');
+  const [emailOtp, setEmailOtp] = useState('');
+  const [verifyingEmail, setVerifyingEmail] = useState(false);
 
   // Invoice view state
   const [selectedInvoice, setSelectedInvoice] = useState<Order | null>(null);
@@ -46,6 +65,65 @@ const Profile = () => {
   const [passwordLoading, setPasswordLoading] = useState(false);
   const [passwordStep, setPasswordStep] = useState(1); // 1: inputs, 2: OTP
   const [passwordOtp, setPasswordOtp] = useState('');
+
+  const handleAvatarClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const file = files[0];
+    if (file.size > 1024 * 1024) {
+      showToast("Kích thước tệp tin vượt quá 1MB!", "error");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    setUploadingAvatar(true);
+    try {
+      const response = await API.post('/users/profile/avatar', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      updateUser(response.data);
+      showToast("Tải lên ảnh đại diện thành công!", "success");
+    } catch (error: any) {
+      console.error(error);
+      const msg = error.response?.data?.message || "Tải lên ảnh đại diện thất bại!";
+      showToast(msg, "error");
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
+
+  const handleVerifyEmailConfirm = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!emailOtp.trim()) {
+      showToast("Vui lòng nhập mã OTP!", "error");
+      return;
+    }
+    setVerifyingEmail(true);
+    try {
+      const response = await API.post(`/users/profile/verify-email?newEmail=${encodeURIComponent(newEmailVerify)}&otpCode=${emailOtp.trim()}`);
+      updateUser(response.data);
+      showToast("Xác thực đổi email thành công!", "success");
+      setShowOtpModal(false);
+      setEmailOtp('');
+    } catch (error: any) {
+      console.error(error);
+      const msg = error.response?.data?.message || "Mã OTP không chính xác hoặc đã hết hạn!";
+      showToast(msg, "error");
+    } finally {
+      setVerifyingEmail(false);
+    }
+  };
 
   const handleChangePasswordRequest = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -119,10 +197,151 @@ const Profile = () => {
   useEffect(() => {
     fetchMyOrders();
     if (user) {
-      setFullName(user.username);
-      setEmail(user.email);
+      setFullName(user.username || '');
+      setEmail(user.email || '');
+      setPhone(user.phoneNumber || '');
+      setAddress(user.address || '');
     }
   }, [user]);
+
+  // Dynamically load Leaflet script and stylesheet if not already loaded
+  useEffect(() => {
+    if ((window as any).L) {
+      setLeafletLoaded(true);
+      return;
+    }
+
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+    link.id = 'leaflet-css';
+    document.head.appendChild(link);
+
+    const script = document.createElement('script');
+    script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+    script.id = 'leaflet-js';
+    script.onload = () => {
+      setLeafletLoaded(true);
+    };
+    document.body.appendChild(script);
+  }, []);
+
+  useEffect(() => {
+    if (showMap && leafletLoaded) {
+      const timer = setTimeout(() => {
+        initMap();
+      }, 200);
+      return () => clearTimeout(timer);
+    } else {
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+        markerRef.current = null;
+      }
+    }
+  }, [showMap, leafletLoaded]);
+
+  const initMap = () => {
+    const L = (window as any).L;
+    if (!L || mapRef.current) return;
+
+    // Fix default marker icon path issue in leaflet
+    delete L.Icon.Default.prototype._getIconUrl;
+    L.Icon.Default.mergeOptions({
+      iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+      iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+    });
+
+    const defaultCenter = [21.0285, 105.8542]; // Ha Noi
+    
+    const map = L.map('profile-map').setView(defaultCenter, 13);
+    mapRef.current = map;
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    const marker = L.marker(defaultCenter, { draggable: true }).addTo(map);
+    markerRef.current = marker;
+
+    map.on('click', (e: any) => {
+      updateLocation(e.latlng.lat, e.latlng.lng);
+    });
+
+    marker.on('dragend', () => {
+      const pos = marker.getLatLng();
+      updateLocation(pos.lat, pos.lng);
+    });
+
+    // Request GPS location
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          updateLocation(pos.coords.latitude, pos.coords.longitude);
+        },
+        (err) => {
+          console.warn("Lỗi định vị GPS:", err);
+          updateLocation(defaultCenter[0], defaultCenter[1]);
+        }
+      );
+    } else {
+      updateLocation(defaultCenter[0], defaultCenter[1]);
+    }
+  };
+
+  const updateLocation = async (lat: number, lng: number) => {
+    const L = (window as any).L;
+    if (!L) return;
+
+    if (markerRef.current) {
+      markerRef.current.setLatLng([lat, lng]);
+    }
+    if (mapRef.current) {
+      mapRef.current.panTo([lat, lng]);
+    }
+
+    setMapLoading(true);
+    try {
+      const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=vi`);
+      const data = await response.json();
+      if (data && data.display_name) {
+        setAddress(data.display_name);
+      }
+    } catch (err) {
+      console.error("Lỗi chuyển đổi tọa độ sang địa chỉ:", err);
+    } finally {
+      setMapLoading(false);
+    }
+  };
+
+  const handleMapSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!mapSearch.trim() || !leafletLoaded) return;
+
+    setMapLoading(true);
+    try {
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(mapSearch.trim())}&limit=1&accept-language=vi`);
+      const data = await response.json();
+      if (data && data.length > 0) {
+        const { lat, lon } = data[0];
+        const latitude = parseFloat(lat);
+        const longitude = parseFloat(lon);
+        
+        updateLocation(latitude, longitude);
+        if (mapRef.current) {
+          mapRef.current.setZoom(16);
+        }
+      } else {
+        showToast("Không tìm thấy địa điểm trên bản đồ!", "error");
+      }
+    } catch (err) {
+      console.error("Lỗi tìm kiếm bản đồ:", err);
+      showToast("Có lỗi xảy ra khi tìm địa chỉ.", "error");
+    } finally {
+      setMapLoading(false);
+    }
+  };
 
   const fetchMyOrders = async () => {
     setLoadingOrders(true);
@@ -151,13 +370,31 @@ const Profile = () => {
     }
   };
 
-  const handleUpdateProfile = (e: React.FormEvent) => {
+  const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     setSavingProfile(true);
-    setTimeout(() => {
+    try {
+      const response = await API.put('/users/profile', {
+        email: email.trim(),
+        phoneNumber: phone.trim(),
+        address: address.trim()
+      });
+
+      if (response.data.email !== email.trim()) {
+        setNewEmailVerify(email.trim());
+        setShowOtpModal(true);
+        showToast("Yêu cầu thay đổi email thành công! Vui lòng kiểm tra mã OTP gửi tới email mới.", "success");
+      } else {
+        updateUser(response.data);
+        showToast("Cập nhật thông tin hồ sơ thành công!", "success");
+      }
+    } catch (error: any) {
+      console.error(error);
+      const msg = error.response?.data?.message || "Cập nhật thông tin thất bại. Vui lòng kiểm tra lại!";
+      showToast(msg, "error");
+    } finally {
       setSavingProfile(false);
-      showToast("Cập nhật thông tin tài khoản thành công!", "success");
-    }, 800);
+    }
   };
 
   const handlePrintInvoice = (order: Order) => {
@@ -345,13 +582,66 @@ const Profile = () => {
                   </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] text-gray-500 font-bold">Địa chỉ giao hàng mặc định</label>
+                    <div className="flex justify-between items-center mb-1">
+                      <label className="text-[11px] text-gray-500 font-bold">Địa chỉ giao hàng mặc định</label>
+                      <button
+                        type="button"
+                        onClick={() => setShowMap(!showMap)}
+                        className="text-[10px] md:text-xs font-bold text-shopee bg-orange-50 dark:bg-orange-950/20 hover:bg-orange-100/70 font-bold px-2.5 py-1.5 rounded-lg border border-shopee/10 flex items-center gap-1 transition-all focus:outline-none"
+                      >
+                        📍 {showMap ? "Ẩn bản đồ" : "Chọn từ Bản đồ / Định vị GPS"}
+                      </button>
+                    </div>
+                    
                     <textarea 
                       rows={3}
                       value={address}
                       onChange={(e) => setAddress(e.target.value)}
                       className="text-xs px-3.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 focus:outline-none focus:border-shopee resize-y"
                     />
+
+                    {showMap && (
+                      <div className="border border-gray-150 dark:border-gray-700 rounded-xl p-3 bg-gray-50 dark:bg-gray-900/50 flex flex-col gap-2.5 animate-fade-in mt-1">
+                        {/* Search Bar for Map */}
+                        <div className="flex gap-1.5">
+                          <input 
+                            type="text" 
+                            placeholder="Tìm địa điểm trên bản đồ (ví dụ: Nguyễn Trãi, Hà Nội)..."
+                            value={mapSearch}
+                            onChange={(e) => setMapSearch(e.target.value)}
+                            className="flex-1 text-xs px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 focus:outline-none"
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                e.preventDefault();
+                                handleMapSearch(e);
+                              }
+                            }}
+                          />
+                          <button
+                            type="button"
+                            onClick={handleMapSearch}
+                            disabled={mapLoading}
+                            className="bg-shopee hover:bg-shopee-hover text-white text-xs font-bold px-4 rounded-lg focus:outline-none flex-shrink-0 py-2"
+                          >
+                            {mapLoading ? 'Đang tìm...' : 'Tìm kiếm'}
+                          </button>
+                        </div>
+
+                        {/* Map Container */}
+                        <div className="relative w-full h-[280px] rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 bg-gray-200 dark:bg-gray-800">
+                          <div id="profile-map" className="w-full h-full z-10" />
+                          
+                          {mapLoading && (
+                            <div className="absolute inset-0 bg-white/60 dark:bg-black/60 flex items-center justify-center z-20">
+                              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-shopee" />
+                            </div>
+                          )}
+                        </div>
+                        <span className="text-[10px] text-gray-400 italic">
+                          * Hướng dẫn: Click chuột lên vị trí bất kỳ trên bản đồ hoặc kéo marker để chọn vị trí. Hệ thống sẽ tự động điền địa chỉ vào ô bên trên.
+                        </span>
+                      </div>
+                    )}
                   </div>
 
                   <button 
@@ -363,23 +653,102 @@ const Profile = () => {
                   </button>
                 </div>
 
-                {/* Avatar uploader (Mocked display) */}
+                {/* Avatar uploader (Active) */}
                 <div className="w-full md:w-1/3 flex flex-col items-center justify-center border-t md:border-t-0 md:border-l border-gray-100 dark:border-gray-700 pt-6 md:pt-0 md:pl-8 py-4 gap-3 self-center">
-                  <div className="h-24 w-24 md:h-28 md:w-28 rounded-full border-2 border-gray-200 dark:border-gray-700 overflow-hidden bg-gray-50 dark:bg-gray-900 flex items-center justify-center text-gray-400">
-                    <UserIcon size={48} className="md:w-16 md:h-16" />
+                  <div className="h-24 w-24 md:h-28 md:w-28 rounded-full border-2 border-gray-200 dark:border-gray-700 overflow-hidden bg-gray-50 dark:bg-gray-900 flex items-center justify-center text-gray-400 relative group">
+                    {user?.avatarUrl ? (
+                      <img 
+                        src={getProductImageUrl(user.avatarUrl)} 
+                        alt="Avatar" 
+                        className="w-full h-full object-cover" 
+                      />
+                    ) : (
+                      <UserIcon size={48} className="md:w-16 md:h-16" />
+                    )}
+                    {uploadingAvatar && (
+                      <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                        <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-white" />
+                      </div>
+                    )}
                   </div>
+                  <input 
+                    type="file" 
+                    ref={fileInputRef} 
+                    onChange={handleAvatarChange} 
+                    className="hidden" 
+                    accept="image/*" 
+                  />
                   <button 
                     type="button" 
-                    onClick={() => showToast("Chức năng tải lên avatar sẽ được liên kết ở phiên bản tiếp theo!", "info")}
+                    onClick={handleAvatarClick}
+                    disabled={uploadingAvatar}
                     className="border border-gray-250 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 px-4 py-2 text-[10px] font-bold rounded-xl shadow-xs transition-all bg-white dark:bg-gray-800 focus:outline-none"
                   >
-                    Chọn ảnh đại diện
+                    {uploadingAvatar ? 'Đang tải lên...' : 'Chọn ảnh đại diện'}
                   </button>
                   <span className="text-[9px] text-gray-400 text-center leading-normal">
-                    Dụng lượng file tối đa 1 MB<br />Định dạng:.JPEG, .PNG
+                    Dung lượng file tối đa 1 MB<br />Định dạng:.JPEG, .PNG, .JPG, .GIF, .WEBP
                   </span>
                 </div>
               </form>
+
+              {/* OTP verification Modal for changing email */}
+              {showOtpModal && (
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-[9999] p-4 animate-fade-in">
+                  <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-2xl p-6 md:p-8 max-w-md w-full animate-scale-in relative text-gray-800 dark:text-gray-200">
+                    <button 
+                      type="button"
+                      onClick={() => {
+                        setShowOtpModal(false);
+                        setEmailOtp('');
+                      }}
+                      className="absolute top-4 right-4 p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                    >
+                      <X size={18} />
+                    </button>
+
+                    <h3 className="text-base md:text-lg font-black text-gray-900 dark:text-white mb-2">Xác Thực Đổi Email</h3>
+                    <p className="text-xs text-gray-400 leading-relaxed mb-4">
+                      Mã xác thực OTP đã được gửi tới địa chỉ email mới của bạn: <strong className="text-gray-900 dark:text-white font-extrabold">{newEmailVerify}</strong>. Vui lòng kiểm tra hộp thư đến (hoặc hòm thư rác) để lấy mã xác nhận.
+                    </p>
+
+                    <form onSubmit={handleVerifyEmailConfirm} className="flex flex-col gap-4">
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-[11px] text-gray-500 font-bold">Mã xác thực OTP (6 chữ số)</label>
+                        <input 
+                          type="text" 
+                          placeholder="Nhập 6 chữ số OTP..."
+                          maxLength={6}
+                          value={emailOtp}
+                          onChange={(e) => setEmailOtp(e.target.value)}
+                          className="text-xs px-3.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 focus:outline-none focus:border-shopee text-center font-bold tracking-widest"
+                          required
+                        />
+                      </div>
+
+                      <div className="flex gap-3 mt-2">
+                        <button 
+                          type="button"
+                          onClick={() => {
+                            setShowOtpModal(false);
+                            setEmailOtp('');
+                          }}
+                          className="flex-1 border border-gray-250 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-750 dark:text-gray-300 text-xs font-bold py-3 rounded-xl focus:outline-none"
+                        >
+                          Hủy bỏ
+                        </button>
+                        <button 
+                          type="submit" 
+                          disabled={verifyingEmail}
+                          className="flex-1 bg-shopee hover:bg-shopee-hover text-white text-xs font-bold py-3 rounded-xl shadow-xs transition-all focus:outline-none"
+                        >
+                          {verifyingEmail ? 'Đang xác thực...' : 'Xác nhận'}
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
