@@ -66,6 +66,70 @@ const Profile = () => {
   const [passwordLoading, setPasswordLoading] = useState(false);
   const [passwordStep, setPasswordStep] = useState(1); // 1: inputs, 2: OTP
   const [passwordOtp, setPasswordOtp] = useState('');
+  const [isForgotMode, setIsForgotMode] = useState(false);
+
+  const handleForgotCurrentPassword = async () => {
+    if (!user?.email) {
+      showToast("Không tìm thấy địa chỉ email tài khoản!", "error");
+      return;
+    }
+    setPasswordLoading(true);
+    try {
+      await API.post('/auth/forgot-password/request', {
+        email: user.email
+      });
+      showToast("Mã OTP khôi phục mật khẩu đã được gửi tới email của bạn.", "success");
+      setIsForgotMode(true);
+      setPasswordStep(2);
+    } catch (error: any) {
+      console.error(error);
+      const msg = error.response?.data?.message || "Không thể gửi yêu cầu khôi phục mật khẩu. Vui lòng thử lại!";
+      showToast(msg, "error");
+    } finally {
+      setPasswordLoading(false);
+    }
+  };
+
+  const handleForgotPasswordConfirm = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newPassword || !confirmNewPassword || !passwordOtp) {
+      showToast("Vui lòng nhập đầy đủ thông tin!", "error");
+      return;
+    }
+    if (newPassword !== confirmNewPassword) {
+      showToast("Mật khẩu xác nhận không khớp!", "error");
+      return;
+    }
+    if (newPassword.length < 6) {
+      showToast("Mật khẩu mới phải có ít nhất 6 ký tự!", "error");
+      return;
+    }
+
+    setPasswordLoading(true);
+    try {
+      await API.post('/auth/forgot-password/confirm', {
+        email: user.email,
+        otpCode: passwordOtp,
+        newPassword,
+        confirmNewPassword
+      });
+      showToast("Đặt lại mật khẩu thành công!", "success");
+      // Clear password form
+      setIsForgotMode(false);
+      setPasswordStep(1);
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmNewPassword('');
+      setPasswordOtp('');
+      setSearchParams({ tab: 'profile' });
+    } catch (error: any) {
+      console.error(error);
+      const msg = error.response?.data?.message || "Mã OTP không chính xác hoặc đã hết hạn!";
+      showToast(msg, "error");
+    } finally {
+      setPasswordLoading(false);
+    }
+  };
 
   const handleAvatarClick = () => {
     if (fileInputRef.current) {
@@ -914,7 +978,17 @@ const Profile = () => {
               {passwordStep === 1 ? (
                 <form onSubmit={handleChangePasswordRequest} className="max-w-md flex flex-col gap-4">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] text-gray-500 font-bold">Mật khẩu hiện tại</label>
+                    <div className="flex justify-between items-center">
+                      <label className="text-[11px] text-gray-500 font-bold">Mật khẩu hiện tại</label>
+                      <button
+                        type="button"
+                        onClick={handleForgotCurrentPassword}
+                        disabled={passwordLoading}
+                        className="text-[10px] text-shopee hover:underline focus:outline-none font-bold"
+                      >
+                        Quên mật khẩu hiện tại?
+                      </button>
+                    </div>
                     <input 
                       type="password" 
                       placeholder="Nhập mật khẩu hiện tại..."
@@ -957,7 +1031,72 @@ const Profile = () => {
                     {passwordLoading ? 'Đang gửi OTP...' : 'Xác nhận đổi mật khẩu'}
                   </button>
                 </form>
+              ) : isForgotMode ? (
+                // Forgot password mode confirm form (requires no currentPassword)
+                <form onSubmit={handleForgotPasswordConfirm} className="max-w-md flex flex-col gap-4 animate-scale-in">
+                  <div className="bg-orange-50/50 dark:bg-orange-950/20 text-shopee border border-orange-100 dark:border-orange-900/30 rounded-xl p-4 text-xs leading-relaxed mb-2">
+                    Mã xác thực OTP khôi phục mật khẩu gồm 6 chữ số đã được gửi tới email của bạn: <strong>{user?.email}</strong>.
+                  </div>
+
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[11px] text-gray-500 font-bold">Mật khẩu mới</label>
+                    <input 
+                      type="password" 
+                      placeholder="Mật khẩu mới (tối thiểu 6 ký tự)..."
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      className="text-xs px-3.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 focus:outline-none focus:border-shopee"
+                      required
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[11px] text-gray-500 font-bold">Xác nhận mật khẩu mới</label>
+                    <input 
+                      type="password" 
+                      placeholder="Nhập lại mật khẩu mới..."
+                      value={confirmNewPassword}
+                      onChange={(e) => setConfirmNewPassword(e.target.value)}
+                      className="text-xs px-3.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 focus:outline-none focus:border-shopee"
+                      required
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[11px] text-gray-500 font-bold">Nhập mã xác thực OTP</label>
+                    <input 
+                      type="text" 
+                      placeholder="Nhập 6 chữ số OTP..."
+                      maxLength={6}
+                      value={passwordOtp}
+                      onChange={(e) => setPasswordOtp(e.target.value)}
+                      className="text-xs px-3.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 focus:outline-none focus:border-shopee text-center font-bold tracking-widest"
+                      required
+                    />
+                  </div>
+
+                  <div className="flex gap-3 mt-2">
+                    <button 
+                      type="button" 
+                      onClick={() => {
+                        setIsForgotMode(false);
+                        setPasswordStep(1);
+                      }}
+                      className="border border-gray-250 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-750 dark:text-gray-300 text-xs font-bold px-6 py-3 rounded-xl focus:outline-none"
+                    >
+                      Quay lại
+                    </button>
+                    <button 
+                      type="submit" 
+                      disabled={passwordLoading}
+                      className="bg-shopee hover:bg-shopee-hover text-white text-xs font-bold px-6 py-3 rounded-xl shadow-xs transition-all focus:outline-none"
+                    >
+                      {passwordLoading ? 'Đang đặt lại...' : 'Hoàn tất đặt lại mật khẩu'}
+                    </button>
+                  </div>
+                </form>
               ) : (
+                // Normal change password mode confirm form
                 <form onSubmit={handleChangePasswordConfirm} className="max-w-md flex flex-col gap-4 animate-scale-in">
                   <div className="bg-orange-50/50 dark:bg-orange-950/20 text-shopee border border-orange-100 dark:border-orange-900/30 rounded-xl p-4 text-xs leading-relaxed mb-2">
                     Mã xác thực OTP gồm 6 chữ số đã được gửi tới email liên kết với tài khoản của bạn.
