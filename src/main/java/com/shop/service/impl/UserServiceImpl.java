@@ -142,8 +142,26 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(currentUser.getId())
                 .orElseThrow(() -> new BadRequestException("Người dùng không tồn tại!"));
 
-        user.setPhoneNumber(request.getPhoneNumber());
-        user.setAddress(request.getAddress());
+        boolean profileUpdated = false;
+        StringBuilder changes = new StringBuilder("Thông tin hồ sơ của bạn tại BMart đã được cập nhật thành công:\n\n");
+
+        String newPhone = request.getPhoneNumber();
+        if (newPhone != null && !newPhone.equals(user.getPhoneNumber())) {
+            changes.append("- Số điện thoại: từ \"")
+                   .append(user.getPhoneNumber() != null ? user.getPhoneNumber() : "Trống")
+                   .append("\" thành \"").append(newPhone).append("\"\n");
+            user.setPhoneNumber(newPhone);
+            profileUpdated = true;
+        }
+
+        String newAddress = request.getAddress();
+        if (newAddress != null && !newAddress.equals(user.getAddress())) {
+            changes.append("- Địa chỉ giao hàng: từ \"")
+                   .append(user.getAddress() != null ? user.getAddress() : "Trống")
+                   .append("\" thành \"").append(newAddress).append("\"\n");
+            user.setAddress(newAddress);
+            profileUpdated = true;
+        }
 
         String newEmail = request.getEmail();
         if (newEmail != null && !newEmail.trim().isEmpty() && !newEmail.equalsIgnoreCase(user.getEmail())) {
@@ -170,6 +188,17 @@ public class UserServiceImpl implements UserService {
         }
 
         User updatedUser = userRepository.save(user);
+
+        // Gửi thông báo thay đổi nếu có cập nhật số điện thoại hoặc địa chỉ
+        if (profileUpdated) {
+            String subject = "Cập nhật thông tin hồ sơ tài khoản BMart";
+            String content = "Xin chào " + user.getUsername() + ",\n\n"
+                    + changes.toString() + "\n"
+                    + "Nếu bạn không thực hiện hành động này, vui lòng kiểm tra lại bảo mật hoặc liên hệ bộ phận hỗ trợ của chúng tôi.\n\n"
+                    + "Trân trọng,\nBMart Support Team";
+            emailService.sendNotificationEmail(user.getEmail(), subject, content);
+        }
+
         return mapToUserResponse(updatedUser);
     }
 
@@ -192,9 +221,22 @@ public class UserServiceImpl implements UserService {
             throw new BadRequestException("Email đã được sử dụng bởi tài khoản khác!");
         }
 
+        String oldEmail = user.getEmail();
         user.setEmail(newEmail);
         otpRepository.delete(otp);
         User updatedUser = userRepository.save(user);
+
+        // Gửi email thông báo cho cả hai địa chỉ thư để đảm bảo an toàn bảo mật
+        String subject = "Thông báo thay đổi địa chỉ email tài khoản BMart";
+        String content = "Xin chào " + user.getUsername() + ",\n\n"
+                + "Địa chỉ email của bạn trên hệ thống BMart đã được cập nhật thành công:\n"
+                + "- Email cũ: " + oldEmail + "\n"
+                + "- Email mới: " + newEmail + "\n\n"
+                + "Từ bây giờ, vui lòng sử dụng địa chỉ email mới này để nhận thông báo và liên lạc với hệ thống.\n\n"
+                + "Trân trọng,\nBMart Support Team";
+
+        emailService.sendNotificationEmail(oldEmail, subject, content);
+        emailService.sendNotificationEmail(newEmail, subject, content);
 
         return mapToUserResponse(updatedUser);
     }
@@ -217,6 +259,14 @@ public class UserServiceImpl implements UserService {
         // Update avatar URL in DB
         user.setAvatarUrl(newAvatarUrl);
         User updatedUser = userRepository.save(user);
+
+        // Gửi email thông báo
+        String subject = "Cập nhật ảnh đại diện tài khoản BMart";
+        String content = "Xin chào " + user.getUsername() + ",\n\n"
+                + "Ảnh đại diện (avatar) của bạn trên hệ thống BMart đã được thay đổi thành công.\n\n"
+                + "Nếu bạn không thực hiện thay đổi này, vui lòng kiểm tra lại bảo mật tài khoản.\n\n"
+                + "Trân trọng,\nBMart Support Team";
+        emailService.sendNotificationEmail(user.getEmail(), subject, content);
 
         return mapToUserResponse(updatedUser);
     }

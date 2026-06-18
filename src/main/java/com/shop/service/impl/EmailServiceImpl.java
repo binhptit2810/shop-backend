@@ -42,6 +42,22 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
+    @Override
+    public void sendNotificationEmail(String toEmail, String subject, String content) {
+        log.info("========== NOTIFICATION EMAIL SENT ==========");
+        log.info("To: {}", toEmail);
+        log.info("Subject: {}", subject);
+        log.info("Content: {}", content);
+        log.info("=============================================");
+
+        String brevoApiKey = System.getenv("BREVO_API_KEY");
+        if (brevoApiKey != null && !brevoApiKey.isBlank()) {
+            sendViaBrevoApi(toEmail, subject, content, brevoApiKey);
+        } else {
+            sendViaSmtp(toEmail, subject, content);
+        }
+    }
+
     private void sendViaSmtp(String toEmail, String subject, String content) {
         if (mailSender == null) {
             log.warn("JavaMailSender is not configured. Email NOT sent via SMTP. OTP code logged above.");
