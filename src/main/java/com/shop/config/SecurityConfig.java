@@ -71,6 +71,9 @@ public class SecurityConfig {
                         // API Tin nhắn - yêu cầu xác thực
                         .requestMatchers("/api/v1/messages/**").authenticated()
                         
+                        // Người dùng tự cập nhật thông tin cá nhân (yêu cầu đăng nhập)
+                        .requestMatchers("/api/v1/users/profile/**").authenticated()
+                        
                         // Quản trị người dùng chỉ dành cho Admin
                         .requestMatchers("/api/v1/users/**").hasRole("ADMIN")
                         
