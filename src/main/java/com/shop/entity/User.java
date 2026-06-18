@@ -45,6 +45,10 @@ public class User implements UserDetails {
     @Column(name = "status_reason", length = 500)
     private String statusReason;
 
+    @Column(name = "is_enabled", nullable = false)
+    @Builder.Default
+    private boolean isEnabled = false;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -87,6 +91,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return this.isEnabled;
     }
 }

@@ -55,16 +55,65 @@ public class AuthServiceImpl implements AuthService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .email(request.getEmail())
                 .role(role)
+                .isEnabled(false) // Mặc định chưa kích hoạt
                 .build();
 
         User savedUser = userRepository.save(user);
-        String token = jwtService.generateToken(savedUser);
+
+        // Sinh mã OTP kích hoạt tài khoản
+        otpRepository.deleteByEmailAndType(savedUser.getEmail(), "VERIFY_REGISTER");
+        String otpCode = generateOtpCode();
+        com.shop.entity.Otp otp = com.shop.entity.Otp.builder()
+                .email(savedUser.getEmail())
+                .otpCode(otpCode)
+                .type("VERIFY_REGISTER")
+                .expiryTime(LocalDateTime.now().plusMinutes(5))
+                .build();
+        otpRepository.save(otp);
+
+        // Gửi email chứa mã OTP kích hoạt
+        emailService.sendOtpEmail(savedUser.getEmail(), otpCode, "Xác thực kích hoạt tài khoản BMart");
 
         return AuthResponse.builder()
-                .accessToken(token)
                 .username(savedUser.getUsername())
                 .email(savedUser.getEmail())
                 .role(savedUser.getRole().name())
+                .message("Đăng ký thành công! Vui lòng kiểm tra email để lấy mã OTP xác thực tài khoản.")
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public AuthResponse verifyRegister(String email, String otpCode) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new BadRequestException("Email không tồn tại trên hệ thống!"));
+
+        if (user.isEnabled()) {
+            throw new BadRequestException("Tài khoản của bạn đã được kích hoạt trước đó rồi!");
+        }
+
+        com.shop.entity.Otp otp = otpRepository.findByEmailAndOtpCodeAndType(
+                email, otpCode, "VERIFY_REGISTER")
+                .orElseThrow(() -> new BadRequestException("Mã OTP xác thực không chính xác!"));
+
+        if (otp.getExpiryTime().isBefore(LocalDateTime.now())) {
+            throw new BadRequestException("Mã OTP đã hết hạn kích hoạt (hiệu lực 5 phút)!");
+        }
+
+        // Kích hoạt tài khoản
+        user.setEnabled(true);
+        userRepository.save(user);
+        otpRepository.delete(otp);
+
+        // Tạo JWT token sau khi kích hoạt thành công để đăng nhập luôn
+        String token = jwtService.generateToken(user);
+
+        return AuthResponse.builder()
+                .accessToken(token)
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .role(user.getRole().name())
+                .message("Kích hoạt tài khoản thành công!")
                 .build();
     }
 
@@ -86,6 +135,8 @@ public class AuthServiceImpl implements AuthService {
                     (user.getStatusReason() != null && !user.getStatusReason().trim().isEmpty() 
                             ? user.getStatusReason() 
                             : "Không có lý do cụ thể."));
+        } catch (org.springframework.security.authentication.DisabledException e) {
+            throw new BadRequestException("Tài khoản của bạn chưa được kích hoạt! Vui lòng kiểm tra email để lấy mã OTP kích hoạt tài khoản.");
         } catch (org.springframework.security.core.AuthenticationException e) {
             throw new BadRequestException("Tài khoản hoặc mật khẩu không chính xác!");
         }

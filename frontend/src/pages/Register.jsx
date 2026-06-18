@@ -4,13 +4,15 @@ import { AuthContext } from '../context/AuthContext';
 import { showToast } from '../services/toast';
 
 const Register = () => {
-  const { register } = useContext(AuthContext);
+  const { register, verifyRegister } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('USER');
+  const [otpCode, setOtpCode] = useState('');
+  const [showOtp, setShowOtp] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -35,9 +37,28 @@ const Register = () => {
     setLoading(false);
 
     if (res.success) {
-      showToast('Đăng ký thành công! Đang chuyển hướng sang đăng nhập...');
+      showToast('Đăng ký thành công! Mã OTP đã được gửi về email của bạn.');
+      setShowOtp(true);
+    } else {
+      showToast(res.message, 'error');
+    }
+  };
+
+  const handleOtpSubmit = async (e) => {
+    e.preventDefault();
+    if (!otpCode.trim()) {
+      showToast('Vui lòng nhập mã OTP xác thực!', 'error');
+      return;
+    }
+
+    setLoading(true);
+    const res = await verifyRegister(email, otpCode);
+    setLoading(false);
+
+    if (res.success) {
+      showToast('Kích hoạt tài khoản và đăng nhập thành công!');
       setTimeout(() => {
-        navigate('/login');
+        navigate('/');
       }, 1500);
     } else {
       showToast(res.message, 'error');
@@ -54,82 +75,132 @@ const Register = () => {
   return (
     <div className="auth-container">
       <div className="glass-panel auth-card">
-        <div className="auth-header">
-          <h2>Đăng Ký Tài Khoản</h2>
-          <p style={{ color: 'var(--text-secondary)' }}>Tạo tài khoản mới để trải nghiệm mua sắm</p>
-        </div>
-
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="username">Tên đăng nhập</label>
-            <input 
-              type="text" 
-              id="username" 
-              className="input-field"
-              placeholder="Ít nhất 4 ký tự..."
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="email">Địa chỉ Email</label>
-            <input 
-              type="email" 
-              id="email" 
-              className="input-field"
-              placeholder="email@example.com..."
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Mật khẩu</label>
-            <input 
-              type="password" 
-              id="password" 
-              className="input-field"
-              placeholder="Ít nhất 6 ký tự..."
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Loại tài khoản</label>
-            <div style={{ display: 'flex', background: '#f3f4f6', borderRadius: '10px', padding: '4px', gap: '4px' }}>
-              <button type="button" onClick={() => setRole('USER')} style={roleToggleStyle(role === 'USER')}>
-                🛍️ Người mua
-              </button>
-              <button type="button" onClick={() => setRole('SELLER')} style={roleToggleStyle(role === 'SELLER')}>
-                🏪 Người bán
-              </button>
+        
+        {!showOtp ? (
+          <>
+            <div className="auth-header">
+              <h2>Đăng Ký Tài Khoản</h2>
+              <p style={{ color: 'var(--text-secondary)' }}>Tạo tài khoản mới để trải nghiệm mua sắm</p>
             </div>
-            {role === 'SELLER' && (
-              <p style={{ margin: '6px 0 0', fontSize: '12px', color: '#888', fontStyle: 'italic' }}>
-                ℹ️ Tài khoản Người bán có thể đăng sản phẩm và quản lý cửa hàng.
+
+            <form onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label htmlFor="username">Tên đăng nhập</label>
+                <input 
+                  type="text" 
+                  id="username" 
+                  className="input-field"
+                  placeholder="Ít nhất 4 ký tự..."
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="email">Địa chỉ Email</label>
+                <input 
+                  type="email" 
+                  id="email" 
+                  className="input-field"
+                  placeholder="email@example.com..."
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Mật khẩu</label>
+                <input 
+                  type="password" 
+                  id="password" 
+                  className="input-field"
+                  placeholder="Ít nhất 6 ký tự..."
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Loại tài khoản</label>
+                <div style={{ display: 'flex', background: '#f3f4f6', borderRadius: '10px', padding: '4px', gap: '4px' }}>
+                  <button type="button" onClick={() => setRole('USER')} style={roleToggleStyle(role === 'USER')}>
+                    🛍️ Người mua
+                  </button>
+                  <button type="button" onClick={() => setRole('SELLER')} style={roleToggleStyle(role === 'SELLER')}>
+                    🏪 Người bán
+                  </button>
+                </div>
+                {role === 'SELLER' && (
+                  <p style={{ margin: '6px 0 0', fontSize: '12px', color: '#888', fontStyle: 'italic' }}>
+                    ℹ️ Tài khoản Người bán có thể đăng sản phẩm và quản lý cửa hàng.
+                  </p>
+                )}
+              </div>
+
+              <button 
+                type="submit" 
+                className="btn btn-primary" 
+                style={{ width: '100%', marginTop: '12px', padding: '12px' }}
+                disabled={loading}
+              >
+                {loading ? 'Đang xử lý...' : 'Đăng ký'}
+              </button>
+            </form>
+
+            <div className="auth-footer">
+              <span>Đã có tài khoản? </span>
+              <Link to="/login" className="auth-link">Đăng nhập</Link>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="auth-header">
+              <h2>Xác Thực Tài Khoản</h2>
+              <p style={{ color: 'var(--text-secondary)' }}>
+                Vui lòng nhập mã OTP 6 chữ số đã được gửi đến email <strong style={{ color: 'var(--text-primary)' }}>{email}</strong>
               </p>
-            )}
-          </div>
+            </div>
 
-          <button 
-            type="submit" 
-            className="btn btn-primary" 
-            style={{ width: '100%', marginTop: '12px', padding: '12px' }}
-            disabled={loading}
-          >
-            {loading ? 'Đang xử lý...' : 'Đăng ký'}
-          </button>
-        </form>
+            <form onSubmit={handleOtpSubmit}>
+              <div className="form-group">
+                <label htmlFor="otpCode">Mã xác thực OTP</label>
+                <input 
+                  type="text" 
+                  id="otpCode" 
+                  className="input-field"
+                  placeholder="Nhập 6 chữ số OTP..."
+                  maxLength="6"
+                  style={{ textAlign: 'center', fontSize: '20px', letterSpacing: '8px', fontWeight: 'bold' }}
+                  value={otpCode}
+                  onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
+                  required
+                />
+              </div>
 
-        <div className="auth-footer">
-          <span>Đã có tài khoản? </span>
-          <Link to="/login" className="auth-link">Đăng nhập</Link>
-        </div>
+              <button 
+                type="submit" 
+                className="btn btn-primary" 
+                style={{ width: '100%', marginTop: '20px', padding: '12px' }}
+                disabled={loading}
+              >
+                {loading ? 'Đang xác thực...' : 'Kích Hoạt Tài Khoản'}
+              </button>
+
+              <button
+                type="button"
+                className="btn"
+                style={{ width: '100%', marginTop: '10px', background: 'transparent', color: 'var(--text-secondary)', border: '1px solid rgba(255,255,255,0.1)' }}
+                onClick={() => setShowOtp(false)}
+              >
+                Quay lại đăng ký
+              </button>
+            </form>
+          </>
+        )}
+
       </div>
     </div>
   );

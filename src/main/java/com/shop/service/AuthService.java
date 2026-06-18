@@ -17,6 +17,11 @@ public interface AuthService {
     AuthResponse register(RegisterRequest request);
 
     /**
+     * Xác nhận OTP để kích hoạt tài khoản
+     */
+    AuthResponse verifyRegister(String email, String otpCode);
+
+    /**
      * Xác thực thông tin người dùng và phát hành mã JWT
      */
     AuthResponse login(LoginRequest request);

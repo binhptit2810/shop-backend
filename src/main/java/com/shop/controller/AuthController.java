@@ -3,6 +3,7 @@ package com.shop.controller;
 import com.shop.dto.AuthResponse;
 import com.shop.dto.LoginRequest;
 import com.shop.dto.RegisterRequest;
+import com.shop.dto.VerifyRegisterRequest;
 import com.shop.dto.UserResponse;
 import com.shop.dto.ChangePasswordRequest;
 import com.shop.dto.ChangePasswordConfirmRequest;
@@ -36,6 +37,13 @@ public class AuthController {
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
         AuthResponse response = authService.register(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/verify-register")
+    @Operation(summary = "Xác nhận mã OTP để kích hoạt tài khoản")
+    public ResponseEntity<AuthResponse> verifyRegister(@Valid @RequestBody VerifyRegisterRequest request) {
+        AuthResponse response = authService.verifyRegister(request.getEmail(), request.getOtpCode());
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/login")

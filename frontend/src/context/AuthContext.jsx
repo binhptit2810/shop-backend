@@ -68,12 +68,33 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (username, email, password, role = 'USER') => {
     try {
-      await API.post('/auth/register', { username, email, password, role });
-      return { success: true };
+      const response = await API.post('/auth/register', { username, email, password, role });
+      return { success: true, message: response.data?.message };
     } catch (error) {
       return {
         success: false,
         message: error.response?.data?.message || 'Đăng ký thất bại. Tên đăng nhập hoặc email có thể đã trùng lặp.'
+      };
+    }
+  };
+
+  const verifyRegister = async (email, otpCode) => {
+    try {
+      const response = await API.post('/auth/verify-register', { email, otpCode });
+      const { accessToken, role, username, id } = response.data;
+      
+      localStorage.setItem('token', accessToken);
+      localStorage.setItem('username', username);
+      localStorage.setItem('email', email);
+      localStorage.setItem('role', role);
+      if (id) localStorage.setItem('userId', id);
+      
+      setUser({ id, username, email, role });
+      return { success: true, message: response.data?.message || 'Kích hoạt tài khoản thành công!' };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.response?.data?.message || 'Xác thực mã OTP thất bại.'
       };
     }
   };
@@ -96,7 +117,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, isAdmin, isSeller }}>
+    <AuthContext.Provider value={{ user, loading, login, register, verifyRegister, logout, isAdmin, isSeller }}>
       {children}
     </AuthContext.Provider>
   );
