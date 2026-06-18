@@ -75,3 +75,22 @@ tasks.withType(JavaCompile).configureEach {
     options.fork = false
 }
 
+bootRun {
+    if (file(".env").exists()) {
+        file(".env").readLines().each {
+            def line = it.trim()
+            if (!line.isEmpty() && !line.startsWith("#")) {
+                def pos = line.indexOf("=")
+                if (pos > 0) {
+                    def key = line.substring(0, pos).trim()
+                    def value = line.substring(pos + 1).trim()
+                    if ((value.startsWith("\"") && value.endsWith("\"")) || (value.startsWith("'") && value.endsWith("'"))) {
+                        value = value.substring(1, value.length() - 1)
+                    }
+                    environment key, value
+                }
+            }
+        }
+    }
+}
+
