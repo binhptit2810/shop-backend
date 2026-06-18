@@ -226,7 +226,7 @@ public class UserServiceImpl implements UserService {
         otpRepository.delete(otp);
         User updatedUser = userRepository.save(user);
 
-        // Gửi email thông báo cho cả hai địa chỉ thư để đảm bảo an toàn bảo mật
+        // Gửi email thông báo cho địa chỉ email mới để xác nhận hoàn tất
         String subject = "Thông báo thay đổi địa chỉ email tài khoản BMart";
         String content = "Xin chào " + user.getUsername() + ",\n\n"
                 + "Địa chỉ email của bạn trên hệ thống BMart đã được cập nhật thành công:\n"
@@ -235,7 +235,6 @@ public class UserServiceImpl implements UserService {
                 + "Từ bây giờ, vui lòng sử dụng địa chỉ email mới này để nhận thông báo và liên lạc với hệ thống.\n\n"
                 + "Trân trọng,\nBMart Support Team";
 
-        emailService.sendNotificationEmail(oldEmail, subject, content);
         emailService.sendNotificationEmail(newEmail, subject, content);
 
         return mapToUserResponse(updatedUser);
