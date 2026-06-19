@@ -224,7 +224,7 @@ public class UserServiceImpl implements UserService {
         String oldEmail = user.getEmail();
         user.setEmail(newEmail);
         otpRepository.delete(otp);
-        User updatedUser = userRepository.save(user);
+        User updatedUser = userRepository.saveAndFlush(user);
 
         // Gửi email thông báo cho địa chỉ email mới để xác nhận hoàn tất
         String subject = "Thông báo thay đổi địa chỉ email tài khoản BMart";

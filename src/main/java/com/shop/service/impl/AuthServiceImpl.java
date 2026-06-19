@@ -12,6 +12,7 @@ import com.shop.entity.User;
 import com.shop.exception.BadRequestException;
 import com.shop.repository.UserRepository;
 import com.shop.repository.OtpRepository;
+import com.shop.repository.CartRepository;
 import com.shop.security.JwtService;
 import com.shop.service.AuthService;
 import com.shop.service.EmailService;
@@ -29,6 +30,7 @@ public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
     private final OtpRepository otpRepository;
+    private final CartRepository cartRepository;
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
@@ -37,6 +39,26 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public AuthResponse register(RegisterRequest request) {
+        // Nếu tên đăng nhập đã được sử dụng nhưng tài khoản chưa được kích hoạt, xóa nó đi để đăng ký lại
+        userRepository.findByUsername(request.getUsername()).ifPresent(existingUser -> {
+            if (!existingUser.isEnabled()) {
+                otpRepository.deleteByEmailAndType(existingUser.getEmail(), "VERIFY_REGISTER");
+                cartRepository.findByUserId(existingUser.getId()).ifPresent(cartRepository::delete);
+                userRepository.delete(existingUser);
+                userRepository.flush(); // đồng bộ ngay lập tức để không lỗi unique constraint
+            }
+        });
+
+        // Nếu email đã được sử dụng nhưng tài khoản chưa được kích hoạt, xóa nó đi để đăng ký lại
+        userRepository.findByEmail(request.getEmail()).ifPresent(existingUser -> {
+            if (!existingUser.isEnabled()) {
+                otpRepository.deleteByEmailAndType(existingUser.getEmail(), "VERIFY_REGISTER");
+                cartRepository.findByUserId(existingUser.getId()).ifPresent(cartRepository::delete);
+                userRepository.delete(existingUser);
+                userRepository.flush(); // đồng bộ ngay lập tức
+            }
+        });
+
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new BadRequestException("Tên đăng nhập '" + request.getUsername() + "' đã tồn tại!");
         }
