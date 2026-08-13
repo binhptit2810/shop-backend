@@ -53,7 +53,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/reviews/**").permitAll()
                         
                         // Cho phép truy cập AI Chatbot công khai
-                        .requestMatchers("/api/ai/**").permitAll()
+                        .requestMatchers("/api/v1/ai/**").permitAll()
 
                         
                         // Chỉ Admin mới được thêm/sửa/xóa danh mục
