@@ -7,6 +7,13 @@ server:
     max-http-form-post-size: 10MB
 
 spring:
+  ai:
+    openai:
+      api-key: ${GEMINI_API_KEY}
+      base-url: https://generativelanguage.googleapis.com/v1beta/openai/
+      chat:
+        options:
+          model: gemini-1.5-flash
   application:
     name: shop-backend
   mail:
@@ -69,6 +76,8 @@ springdoc:
 jwt:
   secret: ${JWT_SECRET:9a6563c6e392d04a60032e67df146cf2418e38d79382103fbd82cd411794b823aa}
   expiration: ${JWT_EXPIRATION:86400000}
+
+# Spring AI / Google Gemini (via OpenAI compatibility)
 
 # Application custom configurations
 app:

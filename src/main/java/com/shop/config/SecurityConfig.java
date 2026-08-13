@@ -52,6 +52,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/reviews/**").permitAll()
                         
+                        // Cho phép truy cập AI Chatbot công khai
+                        .requestMatchers("/api/ai/**").permitAll()
+
+                        
                         // Chỉ Admin mới được thêm/sửa/xóa danh mục
                         .requestMatchers(HttpMethod.POST, "/api/v1/categories/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/v1/categories/**").hasRole("ADMIN")

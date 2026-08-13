@@ -3,6 +3,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import AppRoutes from './routes/AppRoutes';
+import AIChatbox from './components/AIChatbox';
 
 import './App.css';
 
@@ -40,6 +41,8 @@ function App() {
               </div>
             ))}
           </div>
+
+          <AIChatbox />
         </Router>
       </CartProvider>
     </AuthProvider>
