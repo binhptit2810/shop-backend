@@ -56,7 +56,7 @@ public class AIServiceImpl implements AIService {
 
             String requestBody = objectMapper.writeValueAsString(
                 Map.of(
-                    "systemInstruction", Map.of("parts", Map.of("text", systemPrompt)),
+                    "systemInstruction", Map.of("parts", List.of(Map.of("text", systemPrompt))),
                     "contents", List.of(Map.of("parts", List.of(Map.of("text", request.getMessage())))),
                     "generationConfig", Map.of("response_mime_type", "application/json")
                 )
