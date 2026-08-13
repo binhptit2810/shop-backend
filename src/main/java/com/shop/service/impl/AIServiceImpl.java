@@ -72,6 +72,7 @@ public class AIServiceImpl implements AIService {
             List parts = (List) content.get("parts");
             Map firstPart = (Map) parts.get(0);
             String aiResponseText = (String) firstPart.get("text");
+            aiResponseText = aiResponseText.replaceAll("```json", "").replaceAll("```", "").trim();
 
             AICriteria criteria = objectMapper.readValue(aiResponseText, AICriteria.class);
 
