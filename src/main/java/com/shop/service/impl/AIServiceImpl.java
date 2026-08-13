@@ -112,7 +112,7 @@ public class AIServiceImpl implements AIService {
         } catch (Exception e) {
             e.printStackTrace();
             return AIChatResponse.builder()
-                    .message("Xin lỗi, mình chưa hiểu rõ yêu cầu của bạn hoặc có lỗi kết nối. Bạn có thể mô tả chi tiết hơn không?")
+                    .message("Lỗi hệ thống: " + e.getMessage() + ". Xin vui lòng báo cho Admin.")
                     .products(List.of())
                     .build();
         }
