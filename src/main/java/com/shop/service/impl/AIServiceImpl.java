@@ -35,16 +35,16 @@ public class AIServiceImpl implements AIService {
     @Override
     public AIChatResponse chat(AIChatRequest request) {
         String systemPrompt = """
-                Bạn là một trợ lý bán hàng AI.
-                Nhiệm vụ của bạn là phân tích yêu cầu mua hàng của người dùng và trích xuất các tiêu chí tìm kiếm.
-                Chỉ phân tích và trả về đúng định dạng JSON, KHÔNG Markdown, KHÔNG chú thích.
+                Bạn là một trợ lý bán hàng AI. Nhiệm vụ của bạn là phân tích yêu cầu mua hàng của người dùng và trích xuất các tiêu chí tìm kiếm.
+                Chỉ trả về đúng định dạng JSON, KHÔNG Markdown.
+                Nếu người dùng không nhắc đến một tiêu chí nào đó, BẮT BUỘC phải đặt giá trị là null (tuyệt đối không dùng chuỗi rỗng "" hay số 0).
                 
                 Định dạng JSON:
                 {
-                  "keywords": "string",
-                  "categoryName": "string",
-                  "minPrice": number,
-                  "maxPrice": number
+                  "keywords": "từ khóa tên sản phẩm (vd: dép, điện thoại)",
+                  "categoryName": "tên danh mục",
+                  "minPrice": số_tiền_thấp_nhất,
+                  "maxPrice": số_tiền_cao_nhất
                 }
                 """;
 
@@ -88,12 +88,22 @@ public class AIServiceImpl implements AIService {
                 }
             }
 
+            // Chuẩn hóa dữ liệu từ AI (tránh chuỗi rỗng hoặc giá bằng 0 do lỗi AI parse)
+            String kw = criteria.getKeywords();
+            if (kw != null && kw.trim().isEmpty()) kw = null;
+
+            java.math.BigDecimal minP = criteria.getMinPrice();
+            if (minP != null && minP.compareTo(java.math.BigDecimal.ZERO) <= 0) minP = null;
+
+            java.math.BigDecimal maxP = criteria.getMaxPrice();
+            if (maxP != null && maxP.compareTo(java.math.BigDecimal.ZERO) <= 0) maxP = null;
+
             // Truy vấn database thật qua ProductService
             List<ProductResponse> products = productService.searchProducts(
-                    criteria.getKeywords(),
+                    kw,
                     categoryId,
-                    criteria.getMinPrice(),
-                    criteria.getMaxPrice(),
+                    minP,
+                    maxP,
                     "createdAt", 0, 5
             );
 
