@@ -86,12 +86,12 @@ const AIChatbox = () => {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 w-[380px] h-[600px] max-h-[85vh] bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl flex flex-col z-50 overflow-hidden border border-gray-200 dark:border-zinc-800 animate-slide-up">
+        <div className="fixed bottom-6 right-6 w-[380px] h-[600px] max-h-[85vh] bg-white dark:bg-zinc-900 rounded-sm shadow-lg flex flex-col z-50 overflow-hidden border border-gray-200 dark:border-zinc-800 animate-slide-up">
           
           {/* Header */}
           <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-4 flex justify-between items-center text-white">
             <div className="flex items-center gap-2">
-              <div className="bg-white/20 p-1.5 rounded-lg">
+              <div className="bg-white/20 p-1.5 rounded-sm">
                 <Bot size={20} />
               </div>
               <div>
@@ -101,7 +101,7 @@ const AIChatbox = () => {
             </div>
             <button 
               onClick={() => setIsOpen(false)}
-              className="text-white/80 hover:text-white bg-white/10 hover:bg-white/20 p-1.5 rounded-lg transition-colors"
+              className="text-white/80 hover:text-white bg-white/10 hover:bg-white/20 p-1.5 rounded-sm transition-colors"
             >
               <MinusCircle size={18} />
             </button>
@@ -112,7 +112,7 @@ const AIChatbox = () => {
             {messages.map((msg) => (
               <div key={msg.id} className={`flex flex-col ${msg.sender === 'USER' ? 'items-end' : 'items-start'}`}>
                 <div 
-                  className={`max-w-[85%] p-3 rounded-2xl text-sm ${
+                  className={`max-w-[85%] p-3 rounded-sm text-sm ${
                     msg.sender === 'USER' 
                       ? 'bg-indigo-600 text-white rounded-br-sm' 
                       : 'bg-white dark:bg-zinc-800 text-gray-800 dark:text-gray-200 border border-gray-100 dark:border-zinc-700 rounded-bl-sm shadow-sm'
@@ -130,7 +130,7 @@ const AIChatbox = () => {
                         <div 
                           key={p.id}
                           onClick={() => navigate(`/products/${p.id}`)}
-                          className="min-w-[140px] max-w-[140px] bg-white dark:bg-zinc-850 border border-gray-200 dark:border-zinc-700 rounded-xl overflow-hidden shadow-sm cursor-pointer hover:shadow-md hover:border-indigo-400 transition-all flex-shrink-0"
+                          className="min-w-[140px] max-w-[140px] bg-white dark:bg-zinc-850 border border-gray-200 dark:border-zinc-700 rounded-sm overflow-hidden shadow-sm cursor-pointer hover:shadow-md hover:border-indigo-400 transition-all flex-shrink-0"
                         >
                           <div className="aspect-square bg-gray-100 overflow-hidden relative">
                             {p.imageUrl ? (
@@ -157,7 +157,7 @@ const AIChatbox = () => {
             
             {loading && (
               <div className="flex items-start gap-2">
-                <div className="bg-white dark:bg-zinc-800 p-3 rounded-2xl rounded-bl-sm border border-gray-100 dark:border-zinc-700 shadow-sm flex items-center gap-2">
+                <div className="bg-white dark:bg-zinc-800 p-3 rounded-sm rounded-bl-sm border border-gray-100 dark:border-zinc-700 shadow-sm flex items-center gap-2">
                   <Loader2 size={16} className="animate-spin text-indigo-500" />
                   <span className="text-xs text-gray-500">AI đang suy nghĩ...</span>
                 </div>

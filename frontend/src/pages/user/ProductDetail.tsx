@@ -196,7 +196,7 @@ const ProductDetail = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-96">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-shopee"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -272,19 +272,19 @@ const ProductDetail = () => {
     <div className="max-w-7xl mx-auto px-2 md:px-4 py-4 md:py-6 dark:text-gray-100">
       {/* Breadcrumb / Navigation Back */}
       <div className="mb-4">
-        <Link to="/" className="inline-flex items-center gap-2 text-gray-500 hover:text-shopee text-xs md:text-sm font-bold transition-colors">
+        <Link to="/" className="inline-flex items-center gap-2 text-gray-500 hover:text-primary text-xs md:text-sm font-bold transition-colors">
           <ArrowLeft size={14} className="md:w-4 md:h-4" />
           <span>Quay lại trang chủ</span>
         </Link>
       </div>
 
       {/* Product Detail Panel */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xs border border-gray-100 dark:border-gray-700 p-4 md:p-8 flex flex-col md:flex-row gap-6 md:gap-8 mb-6">
+      <div className="bg-white dark:bg-gray-800 rounded-sm shadow-xs border border-gray-100 dark:border-gray-700 p-4 md:p-8 flex flex-col md:flex-row gap-6 md:gap-8 mb-6">
         {/* Left Side: Product Gallery */}
         <div className="w-full md:w-5/12 flex flex-col gap-4">
           {/* Main Display Image with Hover Zoom */}
           <div 
-            className="relative w-full aspect-square bg-gray-50 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700 cursor-zoom-in flex items-center justify-center"
+            className="relative w-full aspect-square bg-gray-50 rounded-sm overflow-hidden border border-gray-100 dark:border-gray-700 cursor-zoom-in flex items-center justify-center"
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
           >
@@ -301,7 +301,7 @@ const ProductDetail = () => {
 
             {/* Flash Sale Ribbon if applicable */}
             {product.isFlashSale && (
-              <div className="absolute top-2 left-2 bg-shopee text-white text-[10px] md:text-xs font-black px-2 py-1 rounded shadow flex items-center gap-1 animate-pulse">
+              <div className="absolute top-2 left-2 bg-primary text-white text-[10px] md:text-xs font-black px-2 py-1 rounded shadow flex items-center gap-1 animate-pulse">
                 <span>⚡ FLASH SALE</span>
               </div>
             )}
@@ -313,8 +313,8 @@ const ProductDetail = () => {
               <button 
                 key={idx}
                 onClick={() => setActiveImage(imgUrl)}
-                className={`w-16 h-16 md:w-20 md:h-20 bg-gray-50 rounded-xl border flex-shrink-0 p-1 overflow-hidden transition-all focus:outline-none ${
-                  activeImage === imgUrl ? 'border-shopee ring-1 ring-shopee' : 'border-gray-200 hover:border-gray-300'
+                className={`w-16 h-16 md:w-20 md:h-20 bg-gray-50 rounded-sm border flex-shrink-0 p-1 overflow-hidden transition-all focus:outline-none ${
+                  activeImage === imgUrl ? 'border-primary ring-1 ring-shopee' : 'border-gray-200 hover:border-gray-300'
                 }`}
               >
                 <img src={getProductImageUrl(imgUrl)} alt={`thumbnail-${idx}`} className="w-full h-full object-contain hover:opacity-100 rounded" />
@@ -352,14 +352,14 @@ const ProductDetail = () => {
             
             {/* Stars, Reviews count, Sold Count */}
             <div className="flex items-center gap-3 text-[11px] md:text-xs text-gray-500 divide-x divide-gray-200 dark:divide-gray-700 flex-wrap">
-              <div className="flex items-center gap-1 text-shopee">
+              <div className="flex items-center gap-1 text-primary">
                 <span className="underline font-bold text-xs md:text-sm">{avgRating}</span>
                 <div className="flex items-center">
                   {[1, 2, 3, 4, 5].map(star => (
                     <Star 
                       key={star} 
                       size={11} 
-                      className={`${star <= Math.round(parseFloat(avgRating)) ? 'fill-shopee text-shopee' : 'text-gray-300'}`} 
+                      className={`${star <= Math.round(parseFloat(avgRating)) ? 'fill-shopee text-primary' : 'text-gray-300'}`} 
                     />
                   ))}
                 </div>
@@ -374,29 +374,29 @@ const ProductDetail = () => {
           </div>
 
           {/* Pricing Box (Shopee Gradient tint background) */}
-          <div className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-xl flex flex-col gap-2 shadow-xs">
+          <div className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-sm flex flex-col gap-2 shadow-xs">
             <div className="flex items-baseline gap-3 md:gap-4 flex-wrap">
               {product.discountPrice ? (
                 <>
-                  <span className="text-xl md:text-3xl font-black text-shopee">
+                  <span className="text-xl md:text-3xl font-black text-primary">
                     {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.discountPrice)}
                   </span>
                   <span className="text-xs md:text-sm text-gray-400 line-through">
                     {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price)}
                   </span>
-                  <span className="bg-shopee/10 text-shopee text-[9px] md:text-[10px] font-black px-1.5 py-0.5 rounded">
+                  <span className="bg-primary/10 text-primary text-[9px] md:text-[10px] font-black px-1.5 py-0.5 rounded">
                     -{Math.round(((product.price - product.discountPrice) / product.price) * 100)}% GIẢM
                   </span>
                 </>
               ) : (
                 <>
-                  <span className="text-xl md:text-3xl font-black text-shopee">
+                  <span className="text-xl md:text-3xl font-black text-primary">
                     {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price)}
                   </span>
                   <span className="text-xs md:text-sm text-gray-400 line-through">
                     {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price * 1.25)}
                   </span>
-                  <span className="bg-shopee/10 text-shopee text-[9px] md:text-[10px] font-black px-1.5 py-0.5 rounded">
+                  <span className="bg-primary/10 text-primary text-[9px] md:text-[10px] font-black px-1.5 py-0.5 rounded">
                     -20% GIẢM
                   </span>
                 </>
@@ -416,7 +416,7 @@ const ProductDetail = () => {
                   </span>
                   <button
                     onClick={handleChatWithSeller}
-                    className="inline-flex items-center gap-1 text-[11px] font-bold text-shopee bg-orange-50 dark:bg-orange-950/20 hover:bg-orange-100 dark:hover:bg-orange-900/40 px-2.5 py-1 rounded-lg border border-orange-200 dark:border-orange-900/50 transition-all focus:outline-none ml-2"
+                    className="inline-flex items-center gap-1 text-[11px] font-bold text-primary bg-orange-50 dark:bg-orange-950/20 hover:bg-orange-100 dark:hover:bg-orange-900/40 px-2.5 py-1 rounded-sm border border-orange-200 dark:border-orange-900/50 transition-all focus:outline-none ml-2"
                   >
                     <span>💬</span>
                     <span>Chat với người bán</span>
@@ -444,9 +444,9 @@ const ProductDetail = () => {
                     <button
                       key={color}
                       onClick={() => setSelectedColor(color)}
-                      className={`px-3 py-1.5 text-xs font-bold rounded-xl border transition-all flex items-center gap-1 focus:outline-none ${
+                      className={`px-3 py-1.5 text-xs font-bold rounded-sm border transition-all flex items-center gap-1 focus:outline-none ${
                         selectedColor === color
-                          ? 'border-shopee text-shopee bg-shopee/5 ring-1 ring-shopee'
+                          ? 'border-primary text-primary bg-primary/5 ring-1 ring-shopee'
                           : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 text-gray-850 dark:text-gray-200'
                       }`}
                     >
@@ -467,9 +467,9 @@ const ProductDetail = () => {
                     <button
                       key={size}
                       onClick={() => setSelectedSize(size)}
-                      className={`px-3 py-1.5 text-xs font-bold rounded-xl border transition-all flex items-center gap-1 focus:outline-none ${
+                      className={`px-3 py-1.5 text-xs font-bold rounded-sm border transition-all flex items-center gap-1 focus:outline-none ${
                         selectedSize === size
-                          ? 'border-shopee text-shopee bg-shopee/5 ring-1 ring-shopee'
+                          ? 'border-primary text-primary bg-primary/5 ring-1 ring-shopee'
                           : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 text-gray-850 dark:text-gray-200'
                       }`}
                     >
@@ -485,7 +485,7 @@ const ProductDetail = () => {
             <div className="flex items-center gap-3 md:gap-4">
               <span className="text-xs md:text-sm text-gray-400 w-20 flex-shrink-0">Số lượng:</span>
               <div className="flex items-center gap-3 flex-wrap">
-                <div className="flex items-center border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                <div className="flex items-center border border-gray-200 dark:border-gray-700 rounded-sm overflow-hidden">
                   <button 
                     onClick={() => handleQuantityChange(-1)} 
                     className="px-3 py-1.5 bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 hover:bg-gray-100 disabled:opacity-50 text-gray-600 dark:text-gray-300 font-bold focus:outline-none"
@@ -514,7 +514,7 @@ const ProductDetail = () => {
             <div className="flex gap-3 mt-3 pt-3 border-t border-gray-100 dark:border-gray-800 flex-wrap sm:flex-nowrap">
               <button 
                 onClick={handleAddToCart}
-                className="flex-1 inline-flex items-center justify-center gap-2 border border-shopee bg-orange-50 dark:bg-orange-950/20 text-shopee hover:bg-orange-100/70 font-bold py-3.5 px-4 rounded-xl transition-all text-xs md:text-sm focus:outline-none"
+                className="flex-1 inline-flex items-center justify-center gap-2 border border-primary bg-orange-50 dark:bg-orange-950/20 text-primary hover:bg-orange-100/70 font-bold py-3.5 px-4 rounded-sm transition-all text-xs md:text-sm focus:outline-none"
               >
                 <ShoppingCart size={16} className="md:w-[18px] md:h-[18px]" />
                 <span>Thêm vào giỏ hàng</span>
@@ -530,13 +530,13 @@ const ProductDetail = () => {
                   await addToCart(product.id, quantity);
                   navigate('/cart');
                 }}
-                className="flex-1 bg-shopee hover:bg-shopee-hover text-white font-bold py-3.5 px-6 rounded-xl transition-all text-xs md:text-sm shadow-xs focus:outline-none"
+                className="flex-1 bg-primary hover:bg-primary-hover text-white font-bold py-3.5 px-6 rounded-sm transition-all text-xs md:text-sm shadow-xs focus:outline-none"
               >
                 Mua ngay
               </button>
             </div>
           ) : (
-            <div className="bg-red-50 dark:bg-red-950/20 text-red-500 font-bold p-3.5 rounded-xl text-center text-xs md:text-sm">
+            <div className="bg-red-50 dark:bg-red-950/20 text-red-500 font-bold p-3.5 rounded-sm text-center text-xs md:text-sm">
               Sản phẩm hiện đang tạm hết hàng
             </div>
           )}
@@ -544,7 +544,7 @@ const ProductDetail = () => {
       </div>
 
       {/* Description Panel */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xs border border-gray-100 dark:border-gray-700 p-4 md:p-8 mb-6 animate-fade-in">
+      <div className="bg-white dark:bg-gray-800 rounded-sm shadow-xs border border-gray-100 dark:border-gray-700 p-4 md:p-8 mb-6 animate-fade-in">
         <h3 className="text-sm md:text-lg font-bold text-gray-900 dark:text-white border-b border-gray-100 dark:border-gray-700 pb-2.5 mb-3.5">
           Chi tiết sản phẩm
         </h3>
@@ -554,7 +554,7 @@ const ProductDetail = () => {
       </div>
 
       {/* Reviews Panel */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xs border border-gray-100 dark:border-gray-700 p-4 md:p-8 animate-fade-in">
+      <div className="bg-white dark:bg-gray-800 rounded-sm shadow-xs border border-gray-100 dark:border-gray-700 p-4 md:p-8 animate-fade-in">
         <div className="flex justify-between items-center border-b border-gray-100 dark:border-gray-700 pb-3 mb-5">
           <h3 className="text-sm md:text-lg font-bold text-gray-900 dark:text-white">
             Đánh giá sản phẩm ({totalReviews})
@@ -562,12 +562,12 @@ const ProductDetail = () => {
           {canReview ? (
             <button 
               onClick={() => setShowReviewForm(!showReviewForm)}
-              className="text-[10px] md:text-xs font-bold text-shopee bg-orange-50 dark:bg-orange-950/20 hover:bg-orange-100 px-3 py-1.5 rounded-lg transition-all focus:outline-none"
+              className="text-[10px] md:text-xs font-bold text-primary bg-orange-50 dark:bg-orange-950/20 hover:bg-orange-100 px-3 py-1.5 rounded-sm transition-all focus:outline-none"
             >
               {showReviewForm ? "Đóng Form viết đánh giá" : "Viết đánh giá sản phẩm"}
             </button>
           ) : user ? (
-            <span className="text-[10px] md:text-xs font-medium text-gray-400 dark:text-gray-500 italic bg-gray-50 dark:bg-gray-900/50 px-3 py-1.5 rounded-lg border border-gray-100/50 dark:border-gray-800">
+            <span className="text-[10px] md:text-xs font-medium text-gray-400 dark:text-gray-500 italic bg-gray-50 dark:bg-gray-900/50 px-3 py-1.5 rounded-sm border border-gray-100/50 dark:border-gray-800">
               Bạn chỉ có thể đánh giá sản phẩm sau khi đã mua và nhận hàng thành công.
             </span>
           ) : null}
@@ -575,7 +575,7 @@ const ProductDetail = () => {
 
         {/* Submit Review Form */}
         {showReviewForm && (
-          <form onSubmit={handleSubmitReview} className="bg-gray-50 dark:bg-gray-950/20 p-4 rounded-xl mb-5 border border-gray-100 dark:border-gray-800 flex flex-col gap-3.5 animate-fade-in">
+          <form onSubmit={handleSubmitReview} className="bg-gray-50 dark:bg-gray-950/20 p-4 rounded-sm mb-5 border border-gray-100 dark:border-gray-800 flex flex-col gap-3.5 animate-fade-in">
             <h4 className="font-bold text-xs md:text-sm">Viết đánh giá của bạn</h4>
             
             <div className="flex items-center gap-2">
@@ -590,7 +590,7 @@ const ProductDetail = () => {
                   >
                     <Star 
                       size={18} 
-                      className={star <= ratingInput ? 'fill-shopee text-shopee' : 'text-gray-350 hover:text-orange-200'}
+                      className={star <= ratingInput ? 'fill-shopee text-primary' : 'text-gray-350 hover:text-orange-200'}
                     />
                   </button>
                 ))}
@@ -605,7 +605,7 @@ const ProductDetail = () => {
                 placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm này..."
                 value={commentInput}
                 onChange={(e) => setCommentInput(e.target.value)}
-                className="w-full text-xs p-3 rounded-lg border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-shopee bg-white dark:bg-gray-900"
+                className="w-full text-xs p-3 rounded-sm border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-primary bg-white dark:bg-gray-900"
               />
             </div>
 
@@ -618,12 +618,12 @@ const ProductDetail = () => {
                   placeholder="Nhập url hình ảnh..."
                   value={imageUrlInput}
                   onChange={(e) => setImageUrlInput(e.target.value)}
-                  className="flex-1 text-xs p-2.5 rounded-lg border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-shopee bg-white dark:bg-gray-900"
+                  className="flex-1 text-xs p-2.5 rounded-sm border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-primary bg-white dark:bg-gray-900"
                 />
                 <button
                   type="button"
                   onClick={() => setImageUrlInput("https://images.unsplash.com/photo-1542496658-e33a6d0d50f6?w=400")}
-                  className="bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 px-3 text-xs rounded-lg transition-all flex items-center gap-1 focus:outline-none font-bold"
+                  className="bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 px-3 text-xs rounded-sm transition-all flex items-center gap-1 focus:outline-none font-bold"
                   title="Sử dụng ảnh mẫu đẹp"
                 >
                   <Camera size={14} />
@@ -634,7 +634,7 @@ const ProductDetail = () => {
 
             <button 
               type="submit"
-              className="bg-shopee hover:bg-shopee-hover text-white text-xs font-bold px-4 py-2.5 rounded-lg self-end transition-all flex items-center gap-2 focus:outline-none shadow-xs"
+              className="bg-primary hover:bg-primary-hover text-white text-xs font-bold px-4 py-2.5 rounded-sm self-end transition-all flex items-center gap-2 focus:outline-none shadow-xs"
             >
               <Send size={11} />
               <span>Gửi đánh giá</span>
@@ -643,16 +643,16 @@ const ProductDetail = () => {
         )}
 
         {/* Rating filter stats */}
-        <div className="bg-orange-50/40 dark:bg-gray-950/20 p-4 md:p-5 rounded-xl border border-orange-500/5 flex flex-col md:flex-row gap-5 items-center mb-5">
+        <div className="bg-orange-50/40 dark:bg-gray-950/20 p-4 md:p-5 rounded-sm border border-orange-500/5 flex flex-col md:flex-row gap-5 items-center mb-5">
           <div className="text-center">
-            <span className="text-3xl font-extrabold text-shopee">{avgRating}</span>
+            <span className="text-3xl font-extrabold text-primary">{avgRating}</span>
             <span className="text-gray-400 text-[10px] block font-bold">trên 5</span>
             <div className="flex justify-center mt-1">
               {[1, 2, 3, 4, 5].map(star => (
                 <Star 
                   key={star} 
                   size={14} 
-                  className={`${star <= Math.round(parseFloat(avgRating)) ? 'fill-shopee text-shopee' : 'text-gray-300'}`} 
+                  className={`${star <= Math.round(parseFloat(avgRating)) ? 'fill-shopee text-primary' : 'text-gray-300'}`} 
                 />
               ))}
             </div>
@@ -663,7 +663,7 @@ const ProductDetail = () => {
               onClick={() => setReviewFilter('ALL')}
               className={`px-3 py-1.5 text-xs rounded-full border transition-all focus:outline-none ${
                 reviewFilter === 'ALL' 
-                  ? 'border-shopee text-shopee bg-white dark:bg-gray-800 font-bold shadow-xs' 
+                  ? 'border-primary text-primary bg-white dark:bg-gray-800 font-bold shadow-xs' 
                   : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 text-gray-500'
               }`}
             >
@@ -675,7 +675,7 @@ const ProductDetail = () => {
                 onClick={() => setReviewFilter(num)}
                 className={`px-3 py-1.5 text-xs rounded-full border transition-all focus:outline-none ${
                   reviewFilter === num 
-                    ? 'border-shopee text-shopee bg-white dark:bg-gray-800 font-bold shadow-xs' 
+                    ? 'border-primary text-primary bg-white dark:bg-gray-800 font-bold shadow-xs' 
                     : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 text-gray-500'
                 }`}
               >
@@ -695,7 +695,7 @@ const ProductDetail = () => {
             filteredReviews.map((review) => (
               <div key={review.id} className="py-4.5 flex gap-3 first:pt-0 last:pb-0">
                 {/* Avatar circle */}
-                <div className="h-8 w-8 bg-orange-100 dark:bg-gray-700 text-shopee font-black rounded-full flex items-center justify-center flex-shrink-0 text-xs select-none">
+                <div className="h-8 w-8 bg-orange-100 dark:bg-gray-700 text-primary font-black rounded-full flex items-center justify-center flex-shrink-0 text-xs select-none">
                   {review.username.charAt(0).toUpperCase()}
                 </div>
                 
@@ -712,7 +712,7 @@ const ProductDetail = () => {
                       <Star 
                         key={star} 
                         size={9} 
-                        className={`${star <= review.rating ? 'fill-shopee text-shopee' : 'text-gray-200'}`} 
+                        className={`${star <= review.rating ? 'fill-shopee text-primary' : 'text-gray-200'}`} 
                       />
                     ))}
                   </div>
@@ -723,7 +723,7 @@ const ProductDetail = () => {
 
                   {/* Review Attachment Image */}
                   {review.imageUrl && (
-                    <div className="mt-2 w-20 h-20 bg-gray-50 border border-gray-100 dark:border-gray-700 rounded-lg overflow-hidden cursor-zoom-in">
+                    <div className="mt-2 w-20 h-20 bg-gray-50 border border-gray-100 dark:border-gray-700 rounded-sm overflow-hidden cursor-zoom-in">
                       <img 
                         src={review.imageUrl} 
                         alt="review attachment" 

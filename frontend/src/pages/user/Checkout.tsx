@@ -223,17 +223,17 @@ const Checkout = () => {
   if (isSuccess && orderInfo) {
     return (
       <div className="max-w-xl mx-auto px-2 md:px-4 py-8 md:py-12 dark:text-gray-100 animate-fade-in">
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-6 md:p-8 text-center flex flex-col items-center justify-center shadow-md">
+        <div className="bg-white dark:bg-gray-800 rounded-sm border border-gray-100 dark:border-gray-700 p-6 md:p-8 text-center flex flex-col items-center justify-center shadow-md">
           <CheckCircle size={56} className="text-emerald-500 mb-4" />
           <h2 className="text-xl md:text-2xl font-black text-gray-900 dark:text-white mb-2">Đặt Hàng Thành Công!</h2>
           <p className="text-xs text-gray-400 mb-6 max-w-sm">
-            Đơn hàng của bạn đã được hệ thống tiếp nhận thành công. Trạng thái đơn hàng hiện tại là <strong className="text-shopee">Chờ xử lý (PENDING)</strong>.
+            Đơn hàng của bạn đã được hệ thống tiếp nhận thành công. Trạng thái đơn hàng hiện tại là <strong className="text-primary">Chờ xử lý (PENDING)</strong>.
           </p>
 
-          <div className="w-full bg-gray-50 dark:bg-gray-900/50 rounded-xl p-4 md:p-5 text-left border border-gray-100 dark:border-gray-800 mb-6 text-xs flex flex-col gap-3">
+          <div className="w-full bg-gray-50 dark:bg-gray-900/50 rounded-sm p-4 md:p-5 text-left border border-gray-100 dark:border-gray-800 mb-6 text-xs flex flex-col gap-3">
             <h4 className="font-bold text-gray-900 dark:text-white border-b border-gray-100 dark:border-gray-800 pb-2 flex items-center justify-between">
               <span>Thông tin chi tiết đơn hàng</span>
-              <span className="text-shopee font-extrabold">#{orderInfo.id}</span>
+              <span className="text-primary font-extrabold">#{orderInfo.id}</span>
             </h4>
             <div className="flex flex-col gap-2.5 text-gray-600 dark:text-gray-300">
               <div className="flex justify-between">
@@ -256,16 +256,16 @@ const Checkout = () => {
               )}
               <div className="flex justify-between border-t border-gray-100 dark:border-gray-800 pt-2.5 mt-1 font-bold text-gray-900 dark:text-white text-xs md:text-sm">
                 <span>Tổng thanh toán:</span>
-                <span className="text-shopee font-black">{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(orderInfo.totalPrice)}</span>
+                <span className="text-primary font-black">{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(orderInfo.totalPrice)}</span>
               </div>
             </div>
           </div>
 
           <div className="flex gap-3 w-full">
-            <Link to="/" className="flex-1 bg-gray-150 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 text-xs font-bold py-3 rounded-xl transition-colors text-center focus:outline-none">
+            <Link to="/" className="flex-1 bg-gray-150 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 text-xs font-bold py-3 rounded-sm transition-colors text-center focus:outline-none">
               Tiếp tục mua sắm
             </Link>
-            <Link to="/profile?tab=orders" className="flex-1 bg-shopee hover:bg-shopee-hover text-white text-xs font-bold py-3 rounded-xl transition-colors text-center shadow-xs focus:outline-none">
+            <Link to="/profile?tab=orders" className="flex-1 bg-primary hover:bg-primary-hover text-white text-xs font-bold py-3 rounded-sm transition-colors text-center shadow-xs focus:outline-none">
               Kiểm tra đơn hàng
             </Link>
           </div>
@@ -279,7 +279,7 @@ const Checkout = () => {
   return (
     <div className="max-w-7xl mx-auto px-2 md:px-4 py-4 md:py-6 dark:text-gray-100">
       <div className="mb-4">
-        <Link to="/cart" className="inline-flex items-center gap-2 text-gray-500 hover:text-shopee text-xs md:text-sm font-bold transition-colors">
+        <Link to="/cart" className="inline-flex items-center gap-2 text-gray-500 hover:text-primary text-xs md:text-sm font-bold transition-colors">
           <ArrowLeft size={14} className="md:w-4 md:h-4" />
           <span>Quay lại giỏ hàng</span>
         </Link>
@@ -289,9 +289,9 @@ const Checkout = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
         {/* Checkout Shipping Form */}
-        <form onSubmit={handleSubmit} className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 border border-gray-100 dark:border-gray-700 shadow-xs flex flex-col gap-4.5">
+        <form onSubmit={handleSubmit} className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-sm p-4 md:p-6 border border-gray-100 dark:border-gray-700 shadow-xs flex flex-col gap-4.5">
           <h3 className="text-xs md:text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2 border-b border-gray-100 dark:border-gray-700 pb-2.5">
-            <Truck size={16} className="text-shopee" />
+            <Truck size={16} className="text-primary" />
             <span>Địa chỉ nhận hàng BMart</span>
           </h3>
 
@@ -303,7 +303,7 @@ const Checkout = () => {
             <input 
               type="tel" 
               id="phone" 
-              className="text-xs px-3.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 focus:outline-none focus:border-shopee"
+              className="text-xs px-3.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-sm bg-white dark:bg-gray-900 focus:outline-none focus:border-primary"
               placeholder="Nhập số điện thoại người nhận..."
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
@@ -321,7 +321,7 @@ const Checkout = () => {
               <button
                 type="button"
                 onClick={() => setShowMap(!showMap)}
-                className="text-[10px] md:text-xs font-bold text-shopee bg-orange-50 dark:bg-orange-950/20 hover:bg-orange-100/70 font-bold px-2.5 py-1.5 rounded-lg border border-shopee/10 flex items-center gap-1 transition-all focus:outline-none"
+                className="text-[10px] md:text-xs font-bold text-primary bg-orange-50 dark:bg-orange-950/20 hover:bg-orange-100/70 font-bold px-2.5 py-1.5 rounded-sm border border-primary/10 flex items-center gap-1 transition-all focus:outline-none"
               >
                 📍 {showMap ? "Ẩn bản đồ" : "Chọn từ Bản đồ / Định vị GPS"}
               </button>
@@ -329,7 +329,7 @@ const Checkout = () => {
             
             <textarea 
               id="address" 
-              className="text-xs px-3.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 focus:outline-none focus:border-shopee resize-y"
+              className="text-xs px-3.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-sm bg-white dark:bg-gray-900 focus:outline-none focus:border-primary resize-y"
               placeholder="Ví dụ: Số 12, Ngõ 45, Đường Nguyễn Trãi, Quận Thanh Xuân, Hà Nội..."
               rows={3}
               value={shippingAddress}
@@ -338,7 +338,7 @@ const Checkout = () => {
             />
 
             {showMap && (
-              <div className="border border-gray-150 dark:border-gray-700 rounded-xl p-3 bg-gray-50 dark:bg-gray-900/50 flex flex-col gap-2.5 animate-fade-in mt-1">
+              <div className="border border-gray-150 dark:border-gray-700 rounded-sm p-3 bg-gray-50 dark:bg-gray-900/50 flex flex-col gap-2.5 animate-fade-in mt-1">
                 {/* Search Bar for Map */}
                 <div className="flex gap-1.5">
                   <input 
@@ -346,7 +346,7 @@ const Checkout = () => {
                     placeholder="Tìm địa điểm trên bản đồ (ví dụ: Nguyễn Trãi, Hà Nội)..."
                     value={mapSearch}
                     onChange={(e) => setMapSearch(e.target.value)}
-                    className="flex-1 text-xs px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 focus:outline-none"
+                    className="flex-1 text-xs px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-sm bg-white dark:bg-gray-900 focus:outline-none"
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') {
                         e.preventDefault();
@@ -358,19 +358,19 @@ const Checkout = () => {
                     type="button"
                     onClick={handleMapSearch}
                     disabled={mapLoading}
-                    className="bg-shopee hover:bg-shopee-hover text-white text-xs font-bold px-4 rounded-lg focus:outline-none flex-shrink-0"
+                    className="bg-primary hover:bg-primary-hover text-white text-xs font-bold px-4 rounded-sm focus:outline-none flex-shrink-0"
                   >
                     {mapLoading ? 'Đang tìm...' : 'Tìm kiếm'}
                   </button>
                 </div>
 
                 {/* Map Container */}
-                <div className="relative w-full h-[280px] rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 bg-gray-200 dark:bg-gray-800">
+                <div className="relative w-full h-[280px] rounded-sm overflow-hidden border border-gray-200 dark:border-gray-700 bg-gray-200 dark:bg-gray-800">
                   <div id="checkout-map" className="w-full h-full z-10" />
                   
                   {mapLoading && (
                     <div className="absolute inset-0 bg-white/60 dark:bg-black/60 flex items-center justify-center z-20">
-                      <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-shopee" />
+                      <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary" />
                     </div>
                   )}
                 </div>
@@ -390,14 +390,14 @@ const Checkout = () => {
               type="text" 
               id="voucher" 
               disabled
-              className="text-xs px-3.5 py-2.5 border border-gray-100 dark:border-gray-800 rounded-xl bg-gray-50 dark:bg-gray-900/50 text-gray-400 font-bold tracking-wider"
+              className="text-xs px-3.5 py-2.5 border border-gray-100 dark:border-gray-800 rounded-sm bg-gray-50 dark:bg-gray-900/50 text-gray-400 font-bold tracking-wider"
               value={voucherCode ? voucherCode : 'Không có voucher nào được áp dụng từ giỏ hàng'}
             />
           </div>
 
           <button 
             type="submit" 
-            className="w-full bg-shopee hover:bg-shopee-hover text-white font-bold py-3.5 px-4 rounded-xl transition-all text-xs flex items-center justify-center gap-2 shadow-xs mt-3 focus:outline-none"
+            className="w-full bg-primary hover:bg-primary-hover text-white font-bold py-3.5 px-4 rounded-sm transition-all text-xs flex items-center justify-center gap-2 shadow-xs mt-3 focus:outline-none"
             disabled={loading}
           >
             {loading ? 'Đang thực hiện giao dịch...' : 'Xác nhận Đặt hàng ngay'}
@@ -405,7 +405,7 @@ const Checkout = () => {
         </form>
 
         {/* Mini Order Summary */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-100 dark:border-gray-700 shadow-xs flex flex-col gap-3.5 self-start">
+        <div className="bg-white dark:bg-gray-800 rounded-sm p-4 border border-gray-100 dark:border-gray-700 shadow-xs flex flex-col gap-3.5 self-start">
           <h3 className="font-bold text-xs md:text-sm text-gray-900 dark:text-white border-b border-gray-100 dark:border-gray-700 pb-2 flex items-center gap-1">
             <span>Tóm tắt sản phẩm mua</span>
           </h3>
@@ -424,7 +424,7 @@ const Checkout = () => {
 
           <div className="border-t border-gray-100 dark:border-gray-700 pt-3 flex justify-between items-baseline font-bold text-gray-950 dark:text-white">
             <span className="text-xs">Tổng tiền tạm tính:</span>
-            <span className="text-shopee text-base font-extrabold">
+            <span className="text-primary text-base font-extrabold">
               {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(cart.totalPrice)}
             </span>
           </div>

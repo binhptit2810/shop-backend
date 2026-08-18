@@ -180,11 +180,11 @@ const SearchPage = () => {
       <div className="mb-4 md:mb-6 flex flex-col md:flex-row md:items-center justify-between gap-2.5">
         <div>
           <h1 className="text-lg md:text-2xl font-black text-gray-900 dark:text-white flex items-center gap-2">
-            <SearchIcon size={22} className="text-shopee" />
+            <SearchIcon size={22} className="text-primary" />
             {queryParam ? `Kết quả tìm kiếm cho: "${queryParam}"` : 'Tất cả sản phẩm'}
           </h1>
           <p className="text-[11px] md:text-xs text-gray-400 mt-0.5">
-            Tìm thấy <span className="font-bold text-shopee">{displayedProducts.length}</span> sản phẩm phù hợp.
+            Tìm thấy <span className="font-bold text-primary">{displayedProducts.length}</span> sản phẩm phù hợp.
           </p>
         </div>
         
@@ -192,16 +192,16 @@ const SearchPage = () => {
         <div className="flex items-center gap-2 md:hidden">
           <button 
             onClick={() => setIsMobileFilterOpen(true)}
-            className="flex-1 flex items-center justify-center gap-2 py-2 px-4 bg-white dark:bg-zinc-800 border border-gray-100 dark:border-zinc-700 rounded-xl text-xs font-bold text-gray-700 dark:text-gray-300 shadow-xs focus:outline-none"
+            className="flex-1 flex items-center justify-center gap-2 py-2 px-4 bg-white dark:bg-zinc-800 border border-gray-100 dark:border-zinc-700 rounded-sm text-xs font-bold text-gray-700 dark:text-gray-300 shadow-xs focus:outline-none"
           >
-            <SlidersHorizontal size={14} className="text-shopee" />
+            <SlidersHorizontal size={14} className="text-primary" />
             Bộ lọc & Tìm kiếm
           </button>
           
           {(categoryIdParam || flashSaleParam || minPriceParam || maxPriceParam) && (
             <button 
               onClick={handleClearAllFilters}
-              className="py-2 px-3 bg-red-50 dark:bg-red-950/20 text-red-500 rounded-xl text-xs font-bold focus:outline-none"
+              className="py-2 px-3 bg-red-50 dark:bg-red-950/20 text-red-500 rounded-sm text-xs font-bold focus:outline-none"
             >
               Xóa lọc
             </button>
@@ -211,9 +211,9 @@ const SearchPage = () => {
 
       <div className="flex gap-4 md:gap-6 items-start relative">
         {/* === DESKTOP SIDEBAR FILTER (>= 768px) === */}
-        <aside className="hidden md:block w-60 bg-white dark:bg-zinc-900 rounded-xl border border-gray-100 dark:border-zinc-800 p-4 shadow-xs flex-shrink-0 sticky top-24">
+        <aside className="hidden md:block w-60 bg-white dark:bg-zinc-900 rounded-sm border border-gray-100 dark:border-zinc-800 p-4 shadow-xs flex-shrink-0 sticky top-24">
           <h2 className="text-sm font-extrabold text-gray-900 dark:text-white flex items-center gap-2 border-b border-gray-50 dark:border-zinc-800 pb-3 mb-4 uppercase tracking-wider">
-            <Filter size={16} className="text-shopee" />
+            <Filter size={16} className="text-primary" />
             Bộ lọc tìm kiếm
           </h2>
 
@@ -223,7 +223,7 @@ const SearchPage = () => {
             <div className="flex flex-col gap-1.5 max-h-48 overflow-y-auto pr-1">
               <button 
                 onClick={() => updateFilter('categoryId', null)}
-                className={`w-full text-left text-xs h-9 px-2.5 rounded-lg font-bold transition-all flex items-center ${!categoryIdParam ? 'bg-orange-50 dark:bg-orange-950/30 text-shopee' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-zinc-800'}`}
+                className={`w-full text-left text-xs h-9 px-2.5 rounded-sm font-bold transition-all flex items-center ${!categoryIdParam ? 'bg-orange-50 dark:bg-orange-950/30 text-primary' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-zinc-800'}`}
               >
                 <span>Tất cả sản phẩm</span>
               </button>
@@ -231,7 +231,7 @@ const SearchPage = () => {
                 <button 
                   key={cat.id}
                   onClick={() => updateFilter('categoryId', cat.id.toString())}
-                  className={`w-full text-left text-xs h-9 px-2.5 rounded-lg font-bold transition-all flex items-center ${categoryIdParam === cat.id.toString() ? 'bg-orange-50 dark:bg-orange-950/30 text-shopee' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-zinc-800'}`}
+                  className={`w-full text-left text-xs h-9 px-2.5 rounded-sm font-bold transition-all flex items-center ${categoryIdParam === cat.id.toString() ? 'bg-orange-50 dark:bg-orange-950/30 text-primary' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-zinc-800'}`}
                   title={cat.name}
                 >
                   <span className="truncate">{cat.name}</span>
@@ -250,7 +250,7 @@ const SearchPage = () => {
                   placeholder="Từ" 
                   value={localMinPrice}
                   onChange={(e) => setLocalMinPrice(e.target.value)}
-                  className="w-full text-xs px-2.5 py-1.5 border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 rounded-lg focus:outline-none focus:border-shopee focus:ring-1 focus:ring-shopee"
+                  className="w-full text-xs px-2.5 py-1.5 border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 rounded-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-shopee"
                 />
                 <span className="text-gray-400 text-xs">-</span>
                 <input 
@@ -258,12 +258,12 @@ const SearchPage = () => {
                   placeholder="Đến" 
                   value={localMaxPrice}
                   onChange={(e) => setLocalMaxPrice(e.target.value)}
-                  className="w-full text-xs px-2.5 py-1.5 border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 rounded-lg focus:outline-none focus:border-shopee focus:ring-1 focus:ring-shopee"
+                  className="w-full text-xs px-2.5 py-1.5 border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 rounded-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-shopee"
                 />
               </div>
               <button 
                 type="submit"
-                className="w-full bg-shopee hover:bg-shopee-hover text-white text-xs font-bold py-2 rounded-lg shadow-sm transition-all focus:outline-none"
+                className="w-full bg-primary hover:bg-primary-hover text-white text-xs font-bold py-2 rounded-sm shadow-sm transition-all focus:outline-none"
               >
                 Áp dụng
               </button>
@@ -278,10 +278,10 @@ const SearchPage = () => {
                 type="checkbox" 
                 checked={flashSaleParam}
                 onChange={(e) => updateFilter('flashSale', e.target.checked ? 'true' : null)}
-                className="rounded border-gray-300 dark:border-zinc-700 text-shopee focus:ring-shopee h-4 w-4"
+                className="rounded border-gray-300 dark:border-zinc-700 text-primary focus:ring-shopee h-4 w-4"
               />
               <span className="text-xs font-bold text-gray-700 dark:text-gray-300 flex items-center gap-1">
-                <Flame size={13} className="text-shopee fill-shopee" />
+                <Flame size={13} className="text-primary fill-shopee" />
                 Flash Sale / Giảm giá
               </span>
             </label>
@@ -291,7 +291,7 @@ const SearchPage = () => {
           {(categoryIdParam || flashSaleParam || minPriceParam || maxPriceParam) && (
             <button 
               onClick={handleClearAllFilters}
-              className="w-full text-center py-2 border border-red-200 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-950/20 text-red-500 text-xs font-bold rounded-lg transition-all focus:outline-none"
+              className="w-full text-center py-2 border border-red-200 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-950/20 text-red-500 text-xs font-bold rounded-sm transition-all focus:outline-none"
             >
               Xóa tất cả bộ lọc
             </button>
@@ -302,30 +302,30 @@ const SearchPage = () => {
         <section className="flex-grow w-full flex flex-col gap-4">
           
           {/* Sorting / Toolbar (Desktop & Tablet) */}
-          <div className="bg-white dark:bg-zinc-900 p-2.5 md:p-3 rounded-xl border border-gray-100 dark:border-zinc-800 flex flex-wrap items-center justify-between gap-3 shadow-xs">
+          <div className="bg-white dark:bg-zinc-900 p-2.5 md:p-3 rounded-sm border border-gray-100 dark:border-zinc-800 flex flex-wrap items-center justify-between gap-3 shadow-xs">
             <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
               <span className="text-xs text-gray-500 dark:text-gray-400 font-medium whitespace-nowrap">Sắp xếp theo:</span>
               <button 
                 onClick={() => updateFilter('sortBy', 'newest')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${sortByParam === 'newest' ? 'bg-shopee text-white' : 'bg-gray-50 dark:bg-zinc-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-zinc-700'}`}
+                className={`px-3 py-1.5 rounded-sm text-xs font-bold whitespace-nowrap transition-all ${sortByParam === 'newest' ? 'bg-primary text-white' : 'bg-gray-50 dark:bg-zinc-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-zinc-700'}`}
               >
                 Mới nhất
               </button>
               <button 
                 onClick={() => updateFilter('sortBy', 'sold_desc')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${sortByParam === 'sold_desc' ? 'bg-shopee text-white' : 'bg-gray-50 dark:bg-zinc-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-zinc-700'}`}
+                className={`px-3 py-1.5 rounded-sm text-xs font-bold whitespace-nowrap transition-all ${sortByParam === 'sold_desc' ? 'bg-primary text-white' : 'bg-gray-50 dark:bg-zinc-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-zinc-700'}`}
               >
                 Bán chạy
               </button>
               <button 
                 onClick={() => updateFilter('sortBy', 'price_asc')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${sortByParam === 'price_asc' ? 'bg-shopee text-white' : 'bg-gray-50 dark:bg-zinc-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-zinc-700'}`}
+                className={`px-3 py-1.5 rounded-sm text-xs font-bold whitespace-nowrap transition-all ${sortByParam === 'price_asc' ? 'bg-primary text-white' : 'bg-gray-50 dark:bg-zinc-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-zinc-700'}`}
               >
                 Giá: Thấp đến Cao
               </button>
               <button 
                 onClick={() => updateFilter('sortBy', 'price_desc')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${sortByParam === 'price_desc' ? 'bg-shopee text-white' : 'bg-gray-50 dark:bg-zinc-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-zinc-700'}`}
+                className={`px-3 py-1.5 rounded-sm text-xs font-bold whitespace-nowrap transition-all ${sortByParam === 'price_desc' ? 'bg-primary text-white' : 'bg-gray-50 dark:bg-zinc-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-zinc-700'}`}
               >
                 Giá: Cao đến Thấp
               </button>
@@ -335,9 +335,9 @@ const SearchPage = () => {
             <div className="hidden lg:flex items-center">
               <button
                 onClick={() => updateFilter('flashSale', flashSaleParam ? null : 'true')}
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold border transition-all ${flashSaleParam ? 'bg-red-500 text-white border-red-500 shadow-xs' : 'border-gray-200 dark:border-zinc-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-zinc-800'}`}
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-sm text-xs font-bold border transition-all ${flashSaleParam ? 'bg-red-500 text-white border-red-500 shadow-xs' : 'border-gray-200 dark:border-zinc-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-zinc-800'}`}
               >
-                <Flame size={14} className={flashSaleParam ? 'fill-white text-white' : 'text-shopee fill-shopee'} />
+                <Flame size={14} className={flashSaleParam ? 'fill-white text-white' : 'text-primary fill-shopee'} />
                 Flash Sale
               </button>
             </div>
@@ -347,8 +347,8 @@ const SearchPage = () => {
           {loading ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 md:gap-4">
               {[...Array(12)].map((_, idx) => (
-                <div key={idx} className="bg-white dark:bg-zinc-900 rounded-xl p-3 border border-gray-50 dark:border-zinc-800 flex flex-col gap-3 animate-pulse">
-                  <div className="aspect-square bg-gray-200 dark:bg-zinc-800 rounded-lg" />
+                <div key={idx} className="bg-white dark:bg-zinc-900 rounded-sm p-3 border border-gray-50 dark:border-zinc-800 flex flex-col gap-3 animate-pulse">
+                  <div className="aspect-square bg-gray-200 dark:bg-zinc-800 rounded-sm" />
                   <div className="h-4 bg-gray-200 dark:bg-zinc-800 rounded-md w-3/4" />
                   <div className="h-4 bg-gray-200 dark:bg-zinc-800 rounded-md w-1/2" />
                   <div className="h-3 bg-gray-200 dark:bg-zinc-800 rounded-full mt-2 w-full" />
@@ -357,8 +357,8 @@ const SearchPage = () => {
             </div>
           ) : displayedProducts.length === 0 ? (
             /* Empty State */
-            <div className="bg-white dark:bg-zinc-900 rounded-xl border border-gray-100 dark:border-zinc-800 p-12 text-center flex flex-col items-center justify-center shadow-xs min-h-[350px]">
-              <div className="h-20 w-20 bg-orange-50 dark:bg-zinc-800 rounded-full flex items-center justify-center text-shopee mb-4 animate-bounce">
+            <div className="bg-white dark:bg-zinc-900 rounded-sm border border-gray-100 dark:border-zinc-800 p-12 text-center flex flex-col items-center justify-center shadow-xs min-h-[350px]">
+              <div className="h-20 w-20 bg-orange-50 dark:bg-zinc-800 rounded-full flex items-center justify-center text-primary mb-4 animate-bounce">
                 <Grid size={40} />
               </div>
               <h3 className="font-bold text-lg text-gray-950 dark:text-white mb-1.5">Không tìm thấy sản phẩm</h3>
@@ -367,7 +367,7 @@ const SearchPage = () => {
               </p>
               <button 
                 onClick={handleClearAllFilters}
-                className="bg-shopee hover:bg-shopee-hover text-white text-xs font-bold px-6 py-2.5 rounded-xl transition-all shadow-sm focus:outline-none"
+                className="bg-primary hover:bg-primary-hover text-white text-xs font-bold px-6 py-2.5 rounded-sm transition-all shadow-sm focus:outline-none"
               >
                 Xóa tất cả bộ lọc
               </button>
@@ -384,7 +384,7 @@ const SearchPage = () => {
                   <div 
                     key={p.id} 
                     onClick={() => navigate(`/products/${p.id}`)}
-                    className="group cursor-pointer bg-white dark:bg-zinc-800 rounded-xl overflow-hidden border border-gray-100 dark:border-zinc-700 hover:shadow-md hover:border-shopee/30 dark:hover:border-shopee/30 transition-all relative flex flex-col h-full"
+                    className="group cursor-pointer bg-white dark:bg-zinc-800 rounded-sm overflow-hidden border border-gray-100 dark:border-zinc-700 hover:shadow-md hover:border-primary/30 dark:hover:border-primary/30 transition-all relative flex flex-col h-full"
                   >
                     {/* Image & Badges */}
                     <div className="relative aspect-square bg-gray-50 flex items-center justify-center overflow-hidden border-b border-gray-50 dark:border-zinc-700">
@@ -409,7 +409,7 @@ const SearchPage = () => {
 
                       {/* Discount badge */}
                       {discountPercent !== null && (
-                        <div className="absolute top-0 right-0 bg-yellow-400 text-red-600 text-[9px] md:text-[10px] font-black px-1.5 py-0.5 rounded-bl">
+                        <div className="absolute top-0 right-0 bg-accent text-red-600 text-[9px] md:text-[10px] font-black px-1.5 py-0.5 rounded-bl">
                           {discountPercent}% GIẢM
                         </div>
                       )}
@@ -431,13 +431,13 @@ const SearchPage = () => {
                     <div className="p-2 md:p-3 flex flex-col gap-2 flex-grow justify-between">
                       <div>
                         {/* Title */}
-                        <h4 className="text-[11px] md:text-xs font-bold text-gray-800 dark:text-gray-200 line-clamp-2 leading-tight group-hover:text-shopee transition-colors">
+                        <h4 className="text-[11px] md:text-xs font-bold text-gray-800 dark:text-gray-200 line-clamp-2 leading-tight group-hover:text-primary transition-colors">
                           {p.name}
                         </h4>
                         
                         {/* Pricing */}
                         <div className="flex items-center gap-1.5 mt-2 flex-wrap">
-                          <span className="text-xs md:text-sm font-extrabold text-shopee">
+                          <span className="text-xs md:text-sm font-extrabold text-primary">
                             {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(activePrice)}
                           </span>
                           {discountPercent !== null && (
@@ -463,7 +463,7 @@ const SearchPage = () => {
                         {/* Add to Cart Quick Button */}
                         <button
                           onClick={(e) => handleAddToCart(e, p)}
-                          className="w-full bg-orange-50 dark:bg-orange-950/20 hover:bg-orange-100/50 text-shopee border border-shopee/10 text-[10px] font-bold py-1.5 rounded-lg flex items-center justify-center gap-1.5 transition-all focus:outline-none"
+                          className="w-full bg-orange-50 dark:bg-orange-950/20 hover:bg-orange-100/50 text-primary border border-primary/10 text-[10px] font-bold py-1.5 rounded-sm flex items-center justify-center gap-1.5 transition-all focus:outline-none"
                         >
                           <ShoppingCart size={12} />
                           <span>Thêm giỏ hàng</span>
@@ -488,10 +488,10 @@ const SearchPage = () => {
           />
           
           {/* Drawer content */}
-          <div className="relative flex flex-col w-80 max-w-[85vw] h-full bg-white dark:bg-zinc-950 text-gray-800 dark:text-gray-200 shadow-2xl transition-transform duration-300 transform translate-x-0 z-10 p-5 overflow-y-auto ml-auto">
+          <div className="relative flex flex-col w-80 max-w-[85vw] h-full bg-white dark:bg-zinc-950 text-gray-800 dark:text-gray-200 shadow-lg transition-transform duration-300 transform translate-x-0 z-10 p-5 overflow-y-auto ml-auto">
             <div className="flex justify-between items-center border-b border-gray-150 dark:border-zinc-800 pb-3 mb-4">
               <h2 className="text-sm font-black text-gray-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
-                <Filter size={16} className="text-shopee" />
+                <Filter size={16} className="text-primary" />
                 Bộ lọc tìm kiếm
               </h2>
               <button 
@@ -511,7 +511,7 @@ const SearchPage = () => {
                     updateFilter('categoryId', null);
                     setIsMobileFilterOpen(false);
                   }}
-                  className={`w-full text-left text-xs h-10 px-3 rounded-lg font-bold transition-all flex items-center ${!categoryIdParam ? 'bg-orange-50 dark:bg-orange-950/30 text-shopee' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-zinc-900'}`}
+                  className={`w-full text-left text-xs h-10 px-3 rounded-sm font-bold transition-all flex items-center ${!categoryIdParam ? 'bg-orange-50 dark:bg-orange-950/30 text-primary' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-zinc-900'}`}
                 >
                   <span>Tất cả sản phẩm</span>
                 </button>
@@ -522,7 +522,7 @@ const SearchPage = () => {
                       updateFilter('categoryId', cat.id.toString());
                       setIsMobileFilterOpen(false);
                     }}
-                    className={`w-full text-left text-xs h-10 px-3 rounded-lg font-bold transition-all flex items-center ${categoryIdParam === cat.id.toString() ? 'bg-orange-50 dark:bg-orange-950/30 text-shopee' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-zinc-900'}`}
+                    className={`w-full text-left text-xs h-10 px-3 rounded-sm font-bold transition-all flex items-center ${categoryIdParam === cat.id.toString() ? 'bg-orange-50 dark:bg-orange-950/30 text-primary' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-zinc-900'}`}
                   >
                     <span className="truncate">{cat.name}</span>
                   </button>
@@ -540,7 +540,7 @@ const SearchPage = () => {
                     placeholder="Từ" 
                     value={localMinPrice}
                     onChange={(e) => setLocalMinPrice(e.target.value)}
-                    className="w-full text-xs px-3 py-2 border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 rounded-lg focus:outline-none focus:border-shopee"
+                    className="w-full text-xs px-3 py-2 border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 rounded-sm focus:outline-none focus:border-primary"
                   />
                   <span className="text-gray-400">-</span>
                   <input 
@@ -548,12 +548,12 @@ const SearchPage = () => {
                     placeholder="Đến" 
                     value={localMaxPrice}
                     onChange={(e) => setLocalMaxPrice(e.target.value)}
-                    className="w-full text-xs px-3 py-2 border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 rounded-lg focus:outline-none focus:border-shopee"
+                    className="w-full text-xs px-3 py-2 border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 rounded-sm focus:outline-none focus:border-primary"
                   />
                 </div>
                 <button 
                   type="submit"
-                  className="w-full bg-shopee hover:bg-shopee-hover text-white text-xs font-bold py-2.5 rounded-lg shadow-sm transition-all"
+                  className="w-full bg-primary hover:bg-primary-hover text-white text-xs font-bold py-2.5 rounded-sm shadow-sm transition-all"
                 >
                   Áp dụng
                 </button>
@@ -571,10 +571,10 @@ const SearchPage = () => {
                   type="checkbox" 
                   checked={flashSaleParam}
                   onChange={(e) => updateFilter('flashSale', e.target.checked ? 'true' : null)}
-                  className="rounded border-gray-300 dark:border-zinc-700 text-shopee focus:ring-shopee h-4 w-4"
+                  className="rounded border-gray-300 dark:border-zinc-700 text-primary focus:ring-shopee h-4 w-4"
                 />
                 <span className="text-xs font-bold text-gray-700 dark:text-gray-300 flex items-center gap-1">
-                  <Flame size={13} className="text-shopee fill-shopee" />
+                  <Flame size={13} className="text-primary fill-shopee" />
                   Flash Sale / Giảm giá
                 </span>
               </label>
@@ -583,7 +583,7 @@ const SearchPage = () => {
             {/* Clear All button */}
             <button 
               onClick={handleClearAllFilters}
-              className="w-full text-center py-2.5 border border-red-200 dark:border-red-900/50 text-red-500 text-xs font-bold rounded-lg mt-auto"
+              className="w-full text-center py-2.5 border border-red-200 dark:border-red-900/50 text-red-500 text-xs font-bold rounded-sm mt-auto"
             >
               Xóa tất cả bộ lọc
             </button>

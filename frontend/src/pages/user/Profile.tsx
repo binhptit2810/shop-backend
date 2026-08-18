@@ -543,8 +543,8 @@ const Profile = () => {
         
         {/* Sidebar Navigation */}
         <div className="w-full md:w-1/4 flex flex-col gap-4">
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-5 border border-gray-100 dark:border-gray-700 shadow-xs flex items-center gap-3">
-            <div className="h-10 w-10 md:h-12 md:w-12 rounded-full bg-shopee text-white flex items-center justify-center font-bold text-base md:text-lg shadow select-none">
+          <div className="bg-white dark:bg-gray-800 rounded-sm p-4 md:p-5 border border-gray-100 dark:border-gray-700 shadow-xs flex items-center gap-3">
+            <div className="h-10 w-10 md:h-12 md:w-12 rounded-full bg-primary text-white flex items-center justify-center font-bold text-base md:text-lg shadow select-none">
               {user?.username.charAt(0).toUpperCase()}
             </div>
             <div className="min-w-0">
@@ -553,12 +553,12 @@ const Profile = () => {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-xs overflow-hidden text-xs flex flex-row md:flex-col">
+          <div className="bg-white dark:bg-gray-800 rounded-sm border border-gray-100 dark:border-gray-700 shadow-xs overflow-hidden text-xs flex flex-row md:flex-col">
             <button 
               onClick={() => setSearchParams({ tab: 'profile' })}
               className={`flex-1 md:flex-initial text-left px-4 py-3 flex items-center justify-center md:justify-start gap-2.5 transition-all border-b md:border-b-0 border-r md:border-r-0 md:border-b border-gray-100 dark:border-gray-700 focus:outline-none ${
                 activeTab === 'profile' 
-                  ? 'bg-orange-50/40 dark:bg-orange-950/20 text-shopee font-bold border-l-0 md:border-l-4 border-l-shopee' 
+                  ? 'bg-orange-50/40 dark:bg-orange-950/20 text-primary font-bold border-l-0 md:border-l-4 border-l-shopee' 
                   : 'hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200'
               }`}
             >
@@ -569,7 +569,7 @@ const Profile = () => {
               onClick={() => setSearchParams({ tab: 'orders' })}
               className={`flex-1 md:flex-initial text-left px-4 py-3 flex items-center justify-center md:justify-start gap-2.5 transition-all border-b md:border-b-0 border-r md:border-r-0 md:border-b border-gray-100 dark:border-gray-700 focus:outline-none ${
                 activeTab === 'orders' 
-                  ? 'bg-orange-50/40 dark:bg-orange-950/20 text-shopee font-bold border-l-0 md:border-l-4 border-l-shopee' 
+                  ? 'bg-orange-50/40 dark:bg-orange-950/20 text-primary font-bold border-l-0 md:border-l-4 border-l-shopee' 
                   : 'hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200'
               }`}
             >
@@ -580,7 +580,7 @@ const Profile = () => {
               onClick={() => setSearchParams({ tab: 'password' })}
               className={`flex-1 md:flex-initial text-left px-4 py-3 flex items-center justify-center md:justify-start gap-2.5 transition-all focus:outline-none ${
                 activeTab === 'password' 
-                  ? 'bg-orange-50/40 dark:bg-orange-950/20 text-shopee font-bold border-l-0 md:border-l-4 border-l-shopee' 
+                  ? 'bg-orange-50/40 dark:bg-orange-950/20 text-primary font-bold border-l-0 md:border-l-4 border-l-shopee' 
                   : 'hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200'
               }`}
             >
@@ -595,7 +595,7 @@ const Profile = () => {
           
           {/* TAB 1: PROFILE MANAGEMENT */}
           {activeTab === 'profile' && (
-            <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-4 md:p-8 shadow-xs animate-fade-in">
+            <div className="bg-white dark:bg-gray-800 rounded-sm border border-gray-100 dark:border-gray-700 p-4 md:p-8 shadow-xs animate-fade-in">
               <div className="border-b border-gray-105 dark:border-gray-700 pb-3 mb-6">
                 <h2 className="text-base md:text-lg font-black text-gray-900 dark:text-white">Hồ Sơ Của Tôi</h2>
                 <p className="text-[11px] text-gray-400 mt-1">Quản lý thông tin hồ sơ cá nhân để bảo mật tài khoản.</p>
@@ -611,7 +611,7 @@ const Profile = () => {
                         type="text" 
                         disabled
                         value={user?.username || ''}
-                        className="text-xs px-3.5 py-2.5 border border-gray-100 dark:border-gray-800 rounded-xl bg-gray-50 dark:bg-gray-900/50 text-gray-400 font-bold cursor-not-allowed"
+                        className="text-xs px-3.5 py-2.5 border border-gray-100 dark:border-gray-800 rounded-sm bg-gray-50 dark:bg-gray-900/50 text-gray-400 font-bold cursor-not-allowed"
                       />
                     </div>
                     <div className="flex flex-col gap-1.5">
@@ -620,7 +620,7 @@ const Profile = () => {
                         type="email" 
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="text-xs px-3.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 focus:outline-none focus:border-shopee"
+                        className="text-xs px-3.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-sm bg-white dark:bg-gray-900 focus:outline-none focus:border-primary"
                       />
                     </div>
                   </div>
@@ -632,7 +632,7 @@ const Profile = () => {
                         type="text" 
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
-                        className="text-xs px-3.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 focus:outline-none focus:border-shopee"
+                        className="text-xs px-3.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-sm bg-white dark:bg-gray-900 focus:outline-none focus:border-primary"
                       />
                     </div>
                     <div className="flex flex-col gap-1.5">
@@ -641,7 +641,7 @@ const Profile = () => {
                         type="text" 
                         disabled
                         value={user?.role || 'USER'}
-                        className="text-xs px-3.5 py-2.5 border border-gray-100 dark:border-gray-800 rounded-xl bg-gray-50 dark:bg-gray-900/50 text-gray-400 font-bold capitalize"
+                        className="text-xs px-3.5 py-2.5 border border-gray-100 dark:border-gray-800 rounded-sm bg-gray-50 dark:bg-gray-900/50 text-gray-400 font-bold capitalize"
                       />
                     </div>
                   </div>
@@ -652,7 +652,7 @@ const Profile = () => {
                       <button
                         type="button"
                         onClick={() => setShowMap(!showMap)}
-                        className="text-[10px] md:text-xs font-bold text-shopee bg-orange-50 dark:bg-orange-950/20 hover:bg-orange-100/70 font-bold px-2.5 py-1.5 rounded-lg border border-shopee/10 flex items-center gap-1 transition-all focus:outline-none"
+                        className="text-[10px] md:text-xs font-bold text-primary bg-orange-50 dark:bg-orange-950/20 hover:bg-orange-100/70 font-bold px-2.5 py-1.5 rounded-sm border border-primary/10 flex items-center gap-1 transition-all focus:outline-none"
                       >
                         📍 {showMap ? "Ẩn bản đồ" : "Chọn từ Bản đồ / Định vị GPS"}
                       </button>
@@ -662,11 +662,11 @@ const Profile = () => {
                       rows={3}
                       value={address}
                       onChange={(e) => setAddress(e.target.value)}
-                      className="text-xs px-3.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 focus:outline-none focus:border-shopee resize-y"
+                      className="text-xs px-3.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-sm bg-white dark:bg-gray-900 focus:outline-none focus:border-primary resize-y"
                     />
 
                     {showMap && (
-                      <div className="border border-gray-150 dark:border-gray-700 rounded-xl p-3 bg-gray-50 dark:bg-gray-900/50 flex flex-col gap-2.5 animate-fade-in mt-1">
+                      <div className="border border-gray-150 dark:border-gray-700 rounded-sm p-3 bg-gray-50 dark:bg-gray-900/50 flex flex-col gap-2.5 animate-fade-in mt-1">
                         {/* Search Bar for Map */}
                         <div className="flex gap-1.5">
                           <input 
@@ -674,7 +674,7 @@ const Profile = () => {
                             placeholder="Tìm địa điểm trên bản đồ (ví dụ: Nguyễn Trãi, Hà Nội)..."
                             value={mapSearch}
                             onChange={(e) => setMapSearch(e.target.value)}
-                            className="flex-1 text-xs px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 focus:outline-none"
+                            className="flex-1 text-xs px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-sm bg-white dark:bg-gray-900 focus:outline-none"
                             onKeyDown={(e) => {
                               if (e.key === 'Enter') {
                                 e.preventDefault();
@@ -686,19 +686,19 @@ const Profile = () => {
                             type="button"
                             onClick={handleMapSearch}
                             disabled={mapLoading}
-                            className="bg-shopee hover:bg-shopee-hover text-white text-xs font-bold px-4 rounded-lg focus:outline-none flex-shrink-0 py-2"
+                            className="bg-primary hover:bg-primary-hover text-white text-xs font-bold px-4 rounded-sm focus:outline-none flex-shrink-0 py-2"
                           >
                             {mapLoading ? 'Đang tìm...' : 'Tìm kiếm'}
                           </button>
                         </div>
 
                         {/* Map Container */}
-                        <div className="relative w-full h-[280px] rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 bg-gray-200 dark:bg-gray-800">
+                        <div className="relative w-full h-[280px] rounded-sm overflow-hidden border border-gray-200 dark:border-gray-700 bg-gray-200 dark:bg-gray-800">
                           <div id="profile-map" className="w-full h-full z-10" />
                           
                           {mapLoading && (
                             <div className="absolute inset-0 bg-white/60 dark:bg-black/60 flex items-center justify-center z-20">
-                              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-shopee" />
+                              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary" />
                             </div>
                           )}
                         </div>
@@ -712,7 +712,7 @@ const Profile = () => {
                   <button 
                     type="submit" 
                     disabled={savingProfile}
-                    className="bg-shopee hover:bg-shopee-hover text-white text-xs font-bold px-6 py-3 rounded-xl shadow-xs transition-all self-start mt-2 focus:outline-none"
+                    className="bg-primary hover:bg-primary-hover text-white text-xs font-bold px-6 py-3 rounded-sm shadow-xs transition-all self-start mt-2 focus:outline-none"
                   >
                     {savingProfile ? 'Đang cập nhật...' : 'Lưu thay đổi'}
                   </button>
@@ -747,7 +747,7 @@ const Profile = () => {
                     type="button" 
                     onClick={handleAvatarClick}
                     disabled={uploadingAvatar}
-                    className="border border-gray-250 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 px-4 py-2 text-[10px] font-bold rounded-xl shadow-xs transition-all bg-white dark:bg-gray-800 focus:outline-none"
+                    className="border border-gray-250 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 px-4 py-2 text-[10px] font-bold rounded-sm shadow-xs transition-all bg-white dark:bg-gray-800 focus:outline-none"
                   >
                     {uploadingAvatar ? 'Đang tải lên...' : 'Chọn ảnh đại diện'}
                   </button>
@@ -760,7 +760,7 @@ const Profile = () => {
               {/* OTP verification Modal for changing email */}
               {showOtpModal && (
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-[9999] p-4 animate-fade-in">
-                  <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-2xl p-6 md:p-8 max-w-md w-full animate-scale-in relative text-gray-800 dark:text-gray-200">
+                  <div className="bg-white dark:bg-gray-800 rounded-sm border border-gray-100 dark:border-gray-700 shadow-lg p-6 md:p-8 max-w-md w-full animate-scale-in relative text-gray-800 dark:text-gray-200">
                     <button 
                       type="button"
                       onClick={() => {
@@ -786,7 +786,7 @@ const Profile = () => {
                           maxLength={6}
                           value={emailOtp}
                           onChange={(e) => setEmailOtp(e.target.value)}
-                          className="text-xs px-3.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 focus:outline-none focus:border-shopee text-center font-bold tracking-widest"
+                          className="text-xs px-3.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-sm bg-white dark:bg-gray-900 focus:outline-none focus:border-primary text-center font-bold tracking-widest"
                           required
                         />
                       </div>
@@ -798,14 +798,14 @@ const Profile = () => {
                             setShowOtpModal(false);
                             setEmailOtp('');
                           }}
-                          className="flex-1 border border-gray-250 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-750 dark:text-gray-300 text-xs font-bold py-3 rounded-xl focus:outline-none"
+                          className="flex-1 border border-gray-250 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-750 dark:text-gray-300 text-xs font-bold py-3 rounded-sm focus:outline-none"
                         >
                           Hủy bỏ
                         </button>
                         <button 
                           type="submit" 
                           disabled={verifyingEmail}
-                          className="flex-1 bg-shopee hover:bg-shopee-hover text-white text-xs font-bold py-3 rounded-xl shadow-xs transition-all focus:outline-none"
+                          className="flex-1 bg-primary hover:bg-primary-hover text-white text-xs font-bold py-3 rounded-sm shadow-xs transition-all focus:outline-none"
                         >
                           {verifyingEmail ? 'Đang xác thực...' : 'Xác nhận'}
                         </button>
@@ -821,7 +821,7 @@ const Profile = () => {
           {activeTab === 'orders' && (
             <div className="flex flex-col gap-4 animate-fade-in">
               {/* Shopee-style Order Subtabs */}
-              <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-xs flex overflow-x-auto text-[11px] md:text-xs font-bold scrollbar-none">
+              <div className="bg-white dark:bg-gray-800 rounded-sm border border-gray-100 dark:border-gray-700 shadow-xs flex overflow-x-auto text-[11px] md:text-xs font-bold scrollbar-none">
                 {[
                   { key: 'ALL', label: 'Tất cả' },
                   { key: 'PENDING', label: 'Chờ xác nhận' },
@@ -835,8 +835,8 @@ const Profile = () => {
                     onClick={() => setOrderSubTab(subTab.key)}
                     className={`flex-1 min-w-[90px] md:min-w-[100px] text-center py-4 border-b-2 transition-all focus:outline-none whitespace-nowrap ${
                       orderSubTab === subTab.key 
-                        ? 'border-shopee text-shopee font-black' 
-                        : 'border-transparent text-gray-500 hover:text-shopee'
+                        ? 'border-primary text-primary font-black' 
+                        : 'border-transparent text-gray-500 hover:text-primary'
                     }`}
                   >
                     {subTab.label}
@@ -846,7 +846,7 @@ const Profile = () => {
 
               {/* KPI Total Purchase Summary Box */}
               {orderSubTab === 'ALL' && !loadingOrders && (
-                <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-xl p-4 md:p-5 text-white shadow-xs flex justify-between items-center animate-fade-in">
+                <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-sm p-4 md:p-5 text-white shadow-xs flex justify-between items-center animate-fade-in">
                   <div>
                     <span className="text-[9px] md:text-[10px] font-black opacity-90 uppercase tracking-wider">Tổng tích lũy mua sắm thành công</span>
                     <h2 className="text-xl md:text-2xl font-black mt-1">
@@ -861,11 +861,11 @@ const Profile = () => {
 
               {/* Order Items list */}
               {loadingOrders ? (
-                <div className="flex justify-center items-center h-48 bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700">
-                  <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-shopee"></div>
+                <div className="flex justify-center items-center h-48 bg-white dark:bg-gray-800 rounded-sm border border-gray-100 dark:border-gray-700">
+                  <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
                 </div>
               ) : activeOrders.length === 0 ? (
-                <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-12 text-center flex flex-col items-center justify-center shadow-xs">
+                <div className="bg-white dark:bg-gray-800 rounded-sm border border-gray-100 dark:border-gray-700 p-12 text-center flex flex-col items-center justify-center shadow-xs">
                   <FileText size={40} className="text-gray-300 dark:text-gray-600 mb-3" />
                   <span className="text-xs text-gray-400 font-bold">Không tìm thấy đơn hàng nào ở trạng thái này.</span>
                 </div>
@@ -878,7 +878,7 @@ const Profile = () => {
                     return (
                       <div 
                         key={order.id} 
-                        className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-xs overflow-hidden flex flex-col"
+                        className="bg-white dark:bg-gray-800 rounded-sm border border-gray-100 dark:border-gray-700 shadow-xs overflow-hidden flex flex-col"
                       >
                         {/* Order Header info */}
                         <div className="bg-gray-50/50 dark:bg-gray-900/20 px-4 md:px-5 py-3 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center text-[11px] md:text-xs flex-wrap gap-2">
@@ -891,7 +891,7 @@ const Profile = () => {
                             </span>
                           </div>
                           
-                          <span className={`px-2 py-0.5 rounded-lg border text-[9px] md:text-[10px] font-black flex items-center gap-1.5 ${statusInfo.class}`}>
+                          <span className={`px-2 py-0.5 rounded-sm border text-[9px] md:text-[10px] font-black flex items-center gap-1.5 ${statusInfo.class}`}>
                             <StatusIcon size={12} />
                             <span>{statusInfo.text}</span>
                           </span>
@@ -905,7 +905,7 @@ const Profile = () => {
                                 <img 
                                   src={getProductImageUrl(item.imageUrl)} 
                                   alt={item.productName} 
-                                  className="w-12 h-12 object-contain rounded-lg border border-gray-100 dark:border-gray-750 bg-gray-50 dark:bg-zinc-800 p-1 flex-shrink-0"
+                                  className="w-12 h-12 object-contain rounded-sm border border-gray-100 dark:border-gray-750 bg-gray-50 dark:bg-zinc-800 p-1 flex-shrink-0"
                                 />
                               )}
                               <div className="flex-1 min-w-0 pr-3">
@@ -931,7 +931,7 @@ const Profile = () => {
                           <div className="flex flex-col gap-2.5 items-end w-full md:w-auto">
                             <div className="flex items-baseline gap-1.5 text-gray-600 dark:text-gray-300">
                               <span className="font-bold text-[11px]">Thành tiền:</span>
-                              <span className="text-base md:text-lg font-black text-shopee">
+                              <span className="text-base md:text-lg font-black text-primary">
                                 {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.totalPrice)}
                               </span>
                             </div>
@@ -940,7 +940,7 @@ const Profile = () => {
                               {/* Print Invoice Button */}
                               <button 
                                 onClick={() => handlePrintInvoice(order)}
-                                className="flex-1 sm:flex-initial border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-750 dark:text-gray-300 px-3.5 py-2 rounded-xl flex items-center justify-center gap-1 font-bold transition-all focus:outline-none text-xs"
+                                className="flex-1 sm:flex-initial border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-750 dark:text-gray-300 px-3.5 py-2 rounded-sm flex items-center justify-center gap-1 font-bold transition-all focus:outline-none text-xs"
                               >
                                 <Printer size={13} />
                                 <span>In hóa đơn</span>
@@ -950,7 +950,7 @@ const Profile = () => {
                               {order.orderStatus === 'PENDING' && (
                                 <button 
                                   onClick={() => handleCancelOrder(order.id)}
-                                  className="flex-1 sm:flex-initial bg-red-50 hover:bg-red-100 dark:bg-red-950/20 dark:hover:bg-red-950/40 text-red-650 dark:text-red-400 border border-red-100 dark:border-red-900/30 px-3.5 py-2 rounded-xl flex items-center justify-center gap-1 font-bold transition-all focus:outline-none text-xs"
+                                  className="flex-1 sm:flex-initial bg-red-50 hover:bg-red-100 dark:bg-red-950/20 dark:hover:bg-red-950/40 text-red-650 dark:text-red-400 border border-red-100 dark:border-red-900/30 px-3.5 py-2 rounded-sm flex items-center justify-center gap-1 font-bold transition-all focus:outline-none text-xs"
                                 >
                                   <XCircle size={13} />
                                   <span>Hủy đơn</span>
@@ -969,7 +969,7 @@ const Profile = () => {
 
           {/* TAB 3: CHANGE PASSWORD */}
           {activeTab === 'password' && (
-            <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-4 md:p-8 shadow-xs animate-fade-in">
+            <div className="bg-white dark:bg-gray-800 rounded-sm border border-gray-100 dark:border-gray-700 p-4 md:p-8 shadow-xs animate-fade-in">
               <div className="border-b border-gray-105 dark:border-gray-700 pb-3 mb-6">
                 <h2 className="text-base md:text-lg font-black text-gray-900 dark:text-white">Đổi Mật Khẩu</h2>
                 <p className="text-[11px] text-gray-400 mt-1">Để bảo mật tài khoản, vui lòng không chia sẻ mật khẩu cho người khác.</p>
@@ -984,7 +984,7 @@ const Profile = () => {
                         type="button"
                         onClick={handleForgotCurrentPassword}
                         disabled={passwordLoading}
-                        className="text-[10px] text-shopee hover:underline focus:outline-none font-bold"
+                        className="text-[10px] text-primary hover:underline focus:outline-none font-bold"
                       >
                         Quên mật khẩu hiện tại?
                       </button>
@@ -994,7 +994,7 @@ const Profile = () => {
                       placeholder="Nhập mật khẩu hiện tại..."
                       value={currentPassword}
                       onChange={(e) => setCurrentPassword(e.target.value)}
-                      className="text-xs px-3.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 focus:outline-none focus:border-shopee"
+                      className="text-xs px-3.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-sm bg-white dark:bg-gray-900 focus:outline-none focus:border-primary"
                       required
                     />
                   </div>
@@ -1006,7 +1006,7 @@ const Profile = () => {
                       placeholder="Mật khẩu mới (tối thiểu 6 ký tự)..."
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
-                      className="text-xs px-3.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 focus:outline-none focus:border-shopee"
+                      className="text-xs px-3.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-sm bg-white dark:bg-gray-900 focus:outline-none focus:border-primary"
                       required
                     />
                   </div>
@@ -1018,7 +1018,7 @@ const Profile = () => {
                       placeholder="Nhập lại mật khẩu mới..."
                       value={confirmNewPassword}
                       onChange={(e) => setConfirmNewPassword(e.target.value)}
-                      className="text-xs px-3.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 focus:outline-none focus:border-shopee"
+                      className="text-xs px-3.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-sm bg-white dark:bg-gray-900 focus:outline-none focus:border-primary"
                       required
                     />
                   </div>
@@ -1026,7 +1026,7 @@ const Profile = () => {
                   <button 
                     type="submit" 
                     disabled={passwordLoading}
-                    className="bg-shopee hover:bg-shopee-hover text-white text-xs font-bold px-6 py-3 rounded-xl shadow-xs transition-all self-start mt-2 focus:outline-none"
+                    className="bg-primary hover:bg-primary-hover text-white text-xs font-bold px-6 py-3 rounded-sm shadow-xs transition-all self-start mt-2 focus:outline-none"
                   >
                     {passwordLoading ? 'Đang gửi OTP...' : 'Xác nhận đổi mật khẩu'}
                   </button>
@@ -1034,7 +1034,7 @@ const Profile = () => {
               ) : isForgotMode ? (
                 // Forgot password mode confirm form (requires no currentPassword)
                 <form onSubmit={handleForgotPasswordConfirm} className="max-w-md flex flex-col gap-4 animate-scale-in">
-                  <div className="bg-orange-50/50 dark:bg-orange-950/20 text-shopee border border-orange-100 dark:border-orange-900/30 rounded-xl p-4 text-xs leading-relaxed mb-2">
+                  <div className="bg-orange-50/50 dark:bg-orange-950/20 text-primary border border-orange-100 dark:border-orange-900/30 rounded-sm p-4 text-xs leading-relaxed mb-2">
                     Mã xác thực OTP khôi phục mật khẩu gồm 6 chữ số đã được gửi tới email của bạn: <strong>{user?.email}</strong>.
                   </div>
 
@@ -1045,7 +1045,7 @@ const Profile = () => {
                       placeholder="Mật khẩu mới (tối thiểu 6 ký tự)..."
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
-                      className="text-xs px-3.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 focus:outline-none focus:border-shopee"
+                      className="text-xs px-3.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-sm bg-white dark:bg-gray-900 focus:outline-none focus:border-primary"
                       required
                     />
                   </div>
@@ -1057,7 +1057,7 @@ const Profile = () => {
                       placeholder="Nhập lại mật khẩu mới..."
                       value={confirmNewPassword}
                       onChange={(e) => setConfirmNewPassword(e.target.value)}
-                      className="text-xs px-3.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 focus:outline-none focus:border-shopee"
+                      className="text-xs px-3.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-sm bg-white dark:bg-gray-900 focus:outline-none focus:border-primary"
                       required
                     />
                   </div>
@@ -1070,7 +1070,7 @@ const Profile = () => {
                       maxLength={6}
                       value={passwordOtp}
                       onChange={(e) => setPasswordOtp(e.target.value)}
-                      className="text-xs px-3.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 focus:outline-none focus:border-shopee text-center font-bold tracking-widest"
+                      className="text-xs px-3.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-sm bg-white dark:bg-gray-900 focus:outline-none focus:border-primary text-center font-bold tracking-widest"
                       required
                     />
                   </div>
@@ -1082,14 +1082,14 @@ const Profile = () => {
                         setIsForgotMode(false);
                         setPasswordStep(1);
                       }}
-                      className="border border-gray-250 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-750 dark:text-gray-300 text-xs font-bold px-6 py-3 rounded-xl focus:outline-none"
+                      className="border border-gray-250 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-750 dark:text-gray-300 text-xs font-bold px-6 py-3 rounded-sm focus:outline-none"
                     >
                       Quay lại
                     </button>
                     <button 
                       type="submit" 
                       disabled={passwordLoading}
-                      className="bg-shopee hover:bg-shopee-hover text-white text-xs font-bold px-6 py-3 rounded-xl shadow-xs transition-all focus:outline-none"
+                      className="bg-primary hover:bg-primary-hover text-white text-xs font-bold px-6 py-3 rounded-sm shadow-xs transition-all focus:outline-none"
                     >
                       {passwordLoading ? 'Đang đặt lại...' : 'Hoàn tất đặt lại mật khẩu'}
                     </button>
@@ -1098,7 +1098,7 @@ const Profile = () => {
               ) : (
                 // Normal change password mode confirm form
                 <form onSubmit={handleChangePasswordConfirm} className="max-w-md flex flex-col gap-4 animate-scale-in">
-                  <div className="bg-orange-50/50 dark:bg-orange-950/20 text-shopee border border-orange-100 dark:border-orange-900/30 rounded-xl p-4 text-xs leading-relaxed mb-2">
+                  <div className="bg-orange-50/50 dark:bg-orange-950/20 text-primary border border-orange-100 dark:border-orange-900/30 rounded-sm p-4 text-xs leading-relaxed mb-2">
                     Mã xác thực OTP gồm 6 chữ số đã được gửi tới email liên kết với tài khoản của bạn.
                   </div>
 
@@ -1110,7 +1110,7 @@ const Profile = () => {
                       maxLength={6}
                       value={passwordOtp}
                       onChange={(e) => setPasswordOtp(e.target.value)}
-                      className="text-xs px-3.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 focus:outline-none focus:border-shopee text-center font-bold tracking-widest"
+                      className="text-xs px-3.5 py-2.5 border border-gray-200 dark:border-gray-700 rounded-sm bg-white dark:bg-gray-900 focus:outline-none focus:border-primary text-center font-bold tracking-widest"
                       required
                     />
                   </div>
@@ -1119,14 +1119,14 @@ const Profile = () => {
                     <button 
                       type="button" 
                       onClick={() => setPasswordStep(1)}
-                      className="border border-gray-250 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-750 dark:text-gray-300 text-xs font-bold px-6 py-3 rounded-xl focus:outline-none"
+                      className="border border-gray-250 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-750 dark:text-gray-300 text-xs font-bold px-6 py-3 rounded-sm focus:outline-none"
                     >
                       Quay lại
                     </button>
                     <button 
                       type="submit" 
                       disabled={passwordLoading}
-                      className="bg-shopee hover:bg-shopee-hover text-white text-xs font-bold px-6 py-3 rounded-xl shadow-xs transition-all focus:outline-none"
+                      className="bg-primary hover:bg-primary-hover text-white text-xs font-bold px-6 py-3 rounded-sm shadow-xs transition-all focus:outline-none"
                     >
                       {passwordLoading ? 'Đang xác thực...' : 'Hoàn tất đổi mật khẩu'}
                     </button>

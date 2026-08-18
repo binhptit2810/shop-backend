@@ -180,7 +180,7 @@ const Navbar = () => {
       <header className={`sticky top-0 z-50 w-full transition-all duration-300 ${
         isScrolled 
           ? 'bg-[#4f46e5]/95 backdrop-blur-md shadow-lg py-2' 
-          : 'shopee-gradient py-3'
+          : 'bg-primary py-3'
       } text-white`}>
         
         {/* === DESKTOP ONLY HEADER (>= 768px) === */}
@@ -218,17 +218,17 @@ const Navbar = () => {
                   <Bell size={14} />
                   <span>Thông báo</span>
                   {unreadCount > 0 && (
-                    <span className="absolute -top-1.5 -right-2 bg-yellow-400 text-[#4f46e5] text-[9px] font-black rounded-full h-4 w-4 flex items-center justify-center border border-white scale-90 shadow-md">
+                    <span className="absolute -top-1.5 -right-2 bg-accent text-white text-[9px] font-black rounded-full h-4 w-4 flex items-center justify-center border border-white scale-90 shadow-md">
                       {unreadCount}
                     </span>
                   )}
                 </button>
 
                 {showNotifications && (
-                  <div className="absolute right-0 mt-3.5 w-80 bg-white text-gray-800 rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-50 animate-fade-in">
+                  <div className="absolute right-0 mt-3.5 w-80 bg-white text-gray-800 rounded-sm shadow-lg border border-gray-100 overflow-hidden z-50 animate-fade-in">
                     <div className="bg-gray-50 px-4 py-3 border-b border-gray-100 font-bold text-gray-500 flex justify-between items-center text-xs">
                       <span>Thông báo mới nhất</span>
-                      <span className="text-[10px] text-shopee">{unreadCount} tin chưa đọc</span>
+                      <span className="text-[10px] text-primary">{unreadCount} tin chưa đọc</span>
                     </div>
                     <div className="max-h-72 overflow-y-auto">
                       {notifications.length === 0 ? (
@@ -252,7 +252,7 @@ const Navbar = () => {
                         ))
                       )}
                     </div>
-                    <Link to="/profile?tab=orders" className="block text-center py-3 bg-gray-50 border-t border-gray-100 text-xs text-shopee hover:bg-gray-100 font-bold transition-colors">
+                    <Link to="/profile?tab=orders" className="block text-center py-3 bg-gray-50 border-t border-gray-100 text-xs text-primary hover:bg-gray-100 font-bold transition-colors">
                       Xem tất cả đơn hàng
                     </Link>
                   </div>
@@ -294,7 +294,7 @@ const Navbar = () => {
                   </span>
 
                   <div className="absolute right-0 top-full pt-2 w-48 hidden group-hover:block z-50">
-                    <div className="bg-white text-gray-800 rounded-2xl shadow-2xl border border-gray-150 py-2 animate-fade-in">
+                    <div className="bg-white text-gray-800 rounded-sm shadow-lg border border-gray-150 py-2 animate-fade-in">
                       <Link to="/profile" className="px-4 py-2.5 hover:bg-gray-50 text-xs font-semibold block transition-colors flex items-center gap-2">
                         <UserIcon size={14} className="text-gray-400" />
                         <span>Hồ sơ cá nhân</span>
@@ -308,7 +308,7 @@ const Navbar = () => {
                         <span>Sản phẩm yêu thích</span>
                       </Link>
                       {user.role === 'ADMIN' && (
-                        <Link to="/admin" className="px-4 py-2.5 hover:bg-orange-50 text-xs font-bold block transition-colors text-shopee border-t border-gray-100">
+                        <Link to="/admin" className="px-4 py-2.5 hover:bg-orange-50 text-xs font-bold block transition-colors text-primary border-t border-gray-100">
                           🛡️ Trang quản trị (Admin)
                         </Link>
                       )}
@@ -336,15 +336,15 @@ const Navbar = () => {
           <div className="flex justify-between items-center gap-8 py-1.5">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2 flex-shrink-0 select-none hover:scale-[1.02] transition-transform duration-250">
-              <div className="h-10 w-10 bg-white rounded-2xl flex items-center justify-center shadow-md">
-                <ShoppingCart className="h-6 w-6 text-[#4f46e5] fill-[#4f46e5]" />
+              <div className="h-10 w-10 bg-white rounded-sm flex items-center justify-center shadow-md">
+                <ShoppingCart className="h-6 w-6 text-primary fill-primary" />
               </div>
               <span className="text-2xl font-black tracking-tight text-white italic drop-shadow-md">BMart</span>
             </Link>
 
             {/* Search Bar with History Dropdown */}
             <div className="flex-1 max-w-3xl relative z-30" ref={suggestionsRef}>
-              <form onSubmit={handleSearchSubmit} className="flex bg-white p-1 rounded-xl shadow-lg border border-orange-500/10 focus-within:ring-2 focus-within:ring-yellow-400/50 transition-all duration-200">
+              <form onSubmit={handleSearchSubmit} className="flex bg-white p-1 rounded-sm shadow-lg border border-orange-500/10 focus-within:ring-2 focus-within:ring-primary/20 transition-all duration-200">
                 <input 
                   type="text" 
                   placeholder="Hôm nay bạn muốn mua gì? Tìm kiếm sản phẩm, thương hiệu..." 
@@ -355,7 +355,7 @@ const Navbar = () => {
                 />
                 <button 
                   type="submit" 
-                  className="bg-gradient-to-r from-[#4f46e5] to-[#6366f1] hover:brightness-105 text-white px-7 py-2.5 rounded-lg transition-all flex items-center justify-center shadow-md font-bold"
+                  className="bg-primary hover:brightness-105 text-white px-7 py-2.5 rounded-sm transition-all flex items-center justify-center shadow-md font-bold"
                 >
                   <Search size={18} />
                 </button>
@@ -363,7 +363,7 @@ const Navbar = () => {
 
               {/* Suggestions / History Popover */}
               {showSuggestions && (
-                <div className="absolute w-full mt-2 bg-white border border-gray-150 rounded-2xl shadow-2xl text-gray-850 z-50 overflow-hidden animate-fade-in">
+                <div className="absolute w-full mt-2 bg-white border border-gray-150 rounded-sm shadow-lg text-gray-850 z-50 overflow-hidden animate-fade-in">
                   
                   {/* Mode 1: Search Query Suggestion */}
                   {searchQuery.trim() !== '' && suggestions.length > 0 && (
@@ -390,7 +390,7 @@ const Navbar = () => {
                       <div className="flex justify-between items-center text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 px-1">
                         <span className="flex items-center gap-1.5"><History size={13} /> Lịch sử tìm kiếm</span>
                         {searchHistory.length > 0 && (
-                          <button onClick={clearAllHistory} className="text-shopee hover:underline normal-case">Xóa tất cả</button>
+                          <button onClick={clearAllHistory} className="text-primary hover:underline normal-case">Xóa tất cả</button>
                         )}
                       </div>
                       
@@ -431,7 +431,7 @@ const Navbar = () => {
               <Link to="/cart" className="relative p-2.5 block hover:scale-105 transition-transform">
                 <ShoppingCart size={28} className="text-white hover:text-amber-100" />
                 {cartCount > 0 && (
-                  <span className="absolute top-0 right-0 bg-yellow-400 text-[#4f46e5] text-[10px] font-black rounded-full h-5.5 w-5.5 flex items-center justify-center border-2 border-[#4f46e5] shadow-md">
+                  <span className="absolute top-0 right-0 bg-accent text-white text-[10px] font-black rounded-full h-5.5 w-5.5 flex items-center justify-center border-2 border-primary shadow-md">
                     {cartCount}
                   </span>
                 )}
@@ -446,15 +446,15 @@ const Navbar = () => {
           <div className="flex items-center justify-between w-full">
             <button
               onClick={() => setIsDrawerOpen(true)}
-              className="p-1.5 -ml-1 text-white hover:bg-white/10 rounded-xl transition-colors focus:outline-none"
+              className="p-1.5 -ml-1 text-white hover:bg-white/10 rounded-sm transition-colors focus:outline-none"
               aria-label="Menu"
             >
               <Menu size={22} />
             </button>
             
             <Link to="/" className="flex items-center gap-1.5 select-none">
-              <div className="h-7 w-7 bg-white rounded-lg flex items-center justify-center shadow-sm">
-                <ShoppingCart className="h-4 w-4 text-[#4f46e5] fill-[#4f46e5]" />
+              <div className="h-7 w-7 bg-white rounded-sm flex items-center justify-center shadow-sm">
+                <ShoppingCart className="h-4 w-4 text-primary fill-primary" />
               </div>
               <span className="text-lg font-black tracking-tight italic">BMart</span>
             </Link>
@@ -462,16 +462,16 @@ const Navbar = () => {
             <div className="flex items-center gap-1">
               <button
                 onClick={toggleDarkMode}
-                className="p-2 text-white hover:bg-white/10 rounded-xl transition-colors focus:outline-none"
+                className="p-2 text-white hover:bg-white/10 rounded-sm transition-colors focus:outline-none"
                 title="Thay đổi màu nền"
               >
                 {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
               </button>
               
-              <Link to="/cart" className="relative p-2 text-white hover:bg-white/10 rounded-xl transition-colors">
+              <Link to="/cart" className="relative p-2 text-white hover:bg-white/10 rounded-sm transition-colors">
                 <ShoppingCart size={20} />
                 {cartCount > 0 && (
-                  <span className="absolute top-0.5 right-0.5 bg-yellow-400 text-[#4f46e5] text-[8px] font-black rounded-full h-4 w-4 flex items-center justify-center border border-[#4f46e5] shadow-sm">
+                  <span className="absolute top-0.5 right-0.5 bg-accent text-white text-[8px] font-black rounded-full h-4 w-4 flex items-center justify-center border border-primary shadow-sm">
                     {cartCount}
                   </span>
                 )}
@@ -481,7 +481,7 @@ const Navbar = () => {
 
           {/* Row 2: Search Input */}
           <div className="w-full relative" ref={suggestionsRefMobile}>
-            <form onSubmit={handleSearchSubmit} className="flex bg-white p-1 rounded-xl shadow-md border border-orange-500/10 focus-within:ring-2 focus-within:ring-yellow-400/40">
+            <form onSubmit={handleSearchSubmit} className="flex bg-white p-1 rounded-sm shadow-md border border-orange-500/10 focus-within:ring-2 focus-within:ring-primary/20">
               <input 
                 type="text" 
                 placeholder="Tìm kiếm sản phẩm, thương hiệu..." 
@@ -492,7 +492,7 @@ const Navbar = () => {
               />
               <button 
                 type="submit" 
-                className="bg-gradient-to-r from-[#4f46e5] to-[#6366f1] text-white px-4 py-1.5 rounded-lg transition-all flex items-center justify-center focus:outline-none"
+                className="bg-primary text-white px-4 py-1.5 rounded-sm transition-all flex items-center justify-center focus:outline-none"
               >
                 <Search size={14} />
               </button>
@@ -500,7 +500,7 @@ const Navbar = () => {
 
             {/* Mobile Suggestions/History popup */}
             {showSuggestionsMobile && (
-              <div className="absolute w-full mt-1.5 bg-white border border-gray-150 rounded-2xl shadow-xl text-gray-850 z-50 overflow-hidden">
+              <div className="absolute w-full mt-1.5 bg-white border border-gray-150 rounded-sm shadow-xl text-gray-850 z-50 overflow-hidden">
                 {searchQuery.trim() !== '' && suggestions.length > 0 && (
                   <div className="py-1">
                     {suggestions.map((item, idx) => (
@@ -521,7 +521,7 @@ const Navbar = () => {
                     <div className="flex justify-between items-center text-[10px] font-bold text-gray-400 uppercase mb-2">
                       <span>Lịch sử tìm kiếm</span>
                       {searchHistory.length > 0 && (
-                        <button onClick={clearAllHistory} className="text-shopee normal-case">Xóa</button>
+                        <button onClick={clearAllHistory} className="text-primary normal-case">Xóa</button>
                       )}
                     </div>
                     {searchHistory.length === 0 ? (
@@ -557,10 +557,10 @@ const Navbar = () => {
             className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity duration-300"
             onClick={() => setIsDrawerOpen(false)}
           />
-          <div className="relative flex flex-col w-72 max-w-[80vw] h-full bg-white dark:bg-zinc-900 text-gray-800 dark:text-gray-200 shadow-2xl transition-transform duration-300 transform translate-x-0 z-10">
+          <div className="relative flex flex-col w-72 max-w-[80vw] h-full bg-white dark:bg-zinc-900 text-gray-800 dark:text-gray-200 shadow-lg transition-transform duration-300 transform translate-x-0 z-10">
             
             {/* Header */}
-            <div className="shopee-gradient p-5 text-white flex flex-col gap-3 relative">
+            <div className="bg-primary p-5 text-white flex flex-col gap-3 relative">
               <button 
                 onClick={() => setIsDrawerOpen(false)}
                 className="absolute top-4 right-4 p-1 hover:bg-white/10 rounded-full text-white transition-colors"
@@ -574,10 +574,10 @@ const Navbar = () => {
                     <img 
                       src={getProductImageUrl(user.avatarUrl)} 
                       alt={user.username} 
-                      className="h-11 w-11 rounded-2xl object-cover border border-white/30 shadow-sm" 
+                      className="h-11 w-11 rounded-sm object-cover border border-white/30 shadow-sm" 
                     />
                   ) : (
-                    <div className="h-11 w-11 bg-white/20 rounded-2xl flex items-center justify-center border border-white/30 text-white text-base font-bold uppercase shadow-sm">
+                    <div className="h-11 w-11 bg-white/20 rounded-sm flex items-center justify-center border border-white/30 text-white text-base font-bold uppercase shadow-sm">
                       {user.username.charAt(0)}
                     </div>
                   )}
@@ -593,14 +593,14 @@ const Navbar = () => {
                     <Link 
                       to="/login" 
                       onClick={() => setIsDrawerOpen(false)}
-                      className="flex-1 text-center py-1.5 bg-white text-[#4f46e5] font-bold rounded-lg text-xs shadow-xs"
+                      className="flex-1 text-center py-1.5 bg-white text-primary font-bold rounded-sm text-xs shadow-xs"
                     >
                       Đăng nhập
                     </Link>
                     <Link 
                       to="/register" 
                       onClick={() => setIsDrawerOpen(false)}
-                      className="flex-1 text-center py-1.5 bg-white/25 text-white font-bold rounded-lg text-xs border border-white/25"
+                      className="flex-1 text-center py-1.5 bg-white/25 text-white font-bold rounded-sm text-xs border border-white/25"
                     >
                       Đăng ký
                     </Link>
@@ -616,7 +616,7 @@ const Navbar = () => {
                 <Link 
                   to="/" 
                   onClick={() => setIsDrawerOpen(false)}
-                  className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-800 text-xs font-bold transition-colors"
+                  className="flex items-center gap-3 px-3.5 py-2.5 rounded-sm hover:bg-gray-50 dark:hover:bg-zinc-800 text-xs font-bold transition-colors"
                 >
                   <Home size={16} className="text-gray-500" />
                   <span>Trang chủ</span>
@@ -626,7 +626,7 @@ const Navbar = () => {
                     <Link 
                       to="/profile" 
                       onClick={() => setIsDrawerOpen(false)}
-                      className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-800 text-xs font-bold transition-colors"
+                      className="flex items-center gap-3 px-3.5 py-2.5 rounded-sm hover:bg-gray-50 dark:hover:bg-zinc-800 text-xs font-bold transition-colors"
                     >
                       <UserIcon size={16} className="text-gray-500" />
                       <span>Hồ sơ cá nhân</span>
@@ -634,7 +634,7 @@ const Navbar = () => {
                     <Link 
                       to="/profile?tab=orders" 
                       onClick={() => setIsDrawerOpen(false)}
-                      className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-800 text-xs font-bold transition-colors"
+                      className="flex items-center gap-3 px-3.5 py-2.5 rounded-sm hover:bg-gray-50 dark:hover:bg-zinc-800 text-xs font-bold transition-colors"
                     >
                       <Package size={16} className="text-gray-500" />
                       <span>Quản lý đơn mua</span>
@@ -642,7 +642,7 @@ const Navbar = () => {
                     <Link 
                       to="/wishlist" 
                       onClick={() => setIsDrawerOpen(false)}
-                      className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-800 text-xs font-bold transition-colors text-red-500"
+                      className="flex items-center gap-3 px-3.5 py-2.5 rounded-sm hover:bg-gray-50 dark:hover:bg-zinc-800 text-xs font-bold transition-colors text-red-500"
                     >
                       <Heart size={16} className="fill-current text-red-500" />
                       <span>Sản phẩm yêu thích</span>
@@ -660,7 +660,7 @@ const Navbar = () => {
                     toggleDarkMode();
                     setIsDrawerOpen(false);
                   }}
-                  className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-800 text-xs font-bold text-left transition-colors"
+                  className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-sm hover:bg-gray-50 dark:hover:bg-zinc-800 text-xs font-bold text-left transition-colors"
                 >
                   {isDarkMode ? (
                     <>
@@ -683,7 +683,7 @@ const Navbar = () => {
                 <Link 
                   to="/admin" 
                   onClick={() => setIsDrawerOpen(false)}
-                  className="w-full text-center py-2 bg-orange-100 dark:bg-orange-950/40 text-[#4f46e5] dark:text-orange-400 font-bold rounded-lg text-xs shadow-xs"
+                  className="w-full text-center py-2 bg-orange-100 dark:bg-orange-950/40 text-primary dark:text-orange-400 font-bold rounded-sm text-xs shadow-xs"
                 >
                   Trang quản trị (Admin)
                 </Link>
@@ -694,7 +694,7 @@ const Navbar = () => {
                     setIsDrawerOpen(false);
                     handleLogout();
                   }}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 bg-red-50 hover:bg-red-100 dark:bg-red-950/20 text-red-600 dark:text-red-400 font-bold rounded-xl text-xs transition-colors border border-red-100/30"
+                  className="w-full flex items-center justify-center gap-2 py-2.5 bg-red-50 hover:bg-red-100 dark:bg-red-950/20 text-red-600 dark:text-red-400 font-bold rounded-sm text-xs transition-colors border border-red-100/30"
                 >
                   <LogOut size={14} />
                   <span>Đăng xuất</span>
@@ -710,7 +710,7 @@ const Navbar = () => {
         <Link 
           to="/" 
           className={`flex flex-col items-center justify-center flex-1 py-1 gap-1 transition-all ${
-            location.pathname === '/' ? 'text-[#4f46e5] scale-105' : 'text-gray-500 dark:text-gray-400'
+            location.pathname === '/' ? 'text-primary scale-105' : 'text-gray-500 dark:text-gray-400'
           }`}
         >
           <Home size={18} className={location.pathname === '/' ? 'stroke-[2.5px]' : 'stroke-[1.8px]'} />
@@ -720,7 +720,7 @@ const Navbar = () => {
         <Link 
           to="/search?categoryId=all" 
           className={`flex flex-col items-center justify-center flex-1 py-1 gap-1 transition-all ${
-            location.pathname === '/search' ? 'text-[#4f46e5] scale-105' : 'text-gray-500 dark:text-gray-400'
+            location.pathname === '/search' ? 'text-primary scale-105' : 'text-gray-500 dark:text-gray-400'
           }`}
         >
           <Compass size={18} className={location.pathname === '/search' ? 'stroke-[2.5px]' : 'stroke-[1.8px]'} />
@@ -730,12 +730,12 @@ const Navbar = () => {
         <Link 
           to="/cart" 
           className={`flex flex-col items-center justify-center flex-1 py-1 gap-1 relative transition-all ${
-            location.pathname === '/cart' ? 'text-[#4f46e5] scale-105' : 'text-gray-500 dark:text-gray-400'
+            location.pathname === '/cart' ? 'text-primary scale-105' : 'text-gray-500 dark:text-gray-400'
           }`}
         >
           <ShoppingCart size={18} className={location.pathname === '/cart' ? 'stroke-[2.5px]' : 'stroke-[1.8px]'} />
           {cartCount > 0 && (
-            <span className="absolute top-0.5 right-4 bg-yellow-400 text-[#4f46e5] text-[8px] font-black rounded-full h-4 w-4 flex items-center justify-center border border-white">
+            <span className="absolute top-0.5 right-4 bg-accent text-white text-[8px] font-black rounded-full h-4 w-4 flex items-center justify-center border border-white">
               {cartCount}
             </span>
           )}
@@ -745,7 +745,7 @@ const Navbar = () => {
         <Link 
           to="/wishlist" 
           className={`flex flex-col items-center justify-center flex-1 py-1 gap-1 transition-all ${
-            location.pathname === '/wishlist' ? 'text-[#4f46e5] scale-105' : 'text-gray-500 dark:text-gray-400'
+            location.pathname === '/wishlist' ? 'text-primary scale-105' : 'text-gray-500 dark:text-gray-400'
           }`}
         >
           <Heart size={18} className={location.pathname === '/wishlist' ? 'stroke-[2.5px] fill-current text-red-500' : 'stroke-[1.8px]'} />
@@ -755,7 +755,7 @@ const Navbar = () => {
         <Link 
           to="/profile" 
           className={`flex flex-col items-center justify-center flex-1 py-1 gap-1 transition-all ${
-            location.pathname === '/profile' ? 'text-[#4f46e5] scale-105' : 'text-gray-500 dark:text-gray-400'
+            location.pathname === '/profile' ? 'text-primary scale-105' : 'text-gray-500 dark:text-gray-400'
           }`}
         >
           <UserIcon size={18} className={location.pathname === '/profile' ? 'stroke-[2.5px]' : 'stroke-[1.8px]'} />

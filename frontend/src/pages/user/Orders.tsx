@@ -126,7 +126,7 @@ const Orders = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-96">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-shopee"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -141,7 +141,7 @@ const Orders = () => {
       </div>
 
       {/* Tabs Filter (Shopee Style) */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-xs flex overflow-x-auto text-[11px] md:text-xs font-bold scrollbar-none">
+      <div className="bg-white dark:bg-gray-800 rounded-sm border border-gray-100 dark:border-gray-700 shadow-xs flex overflow-x-auto text-[11px] md:text-xs font-bold scrollbar-none">
         {[
           { key: 'ALL', label: 'Tất cả' },
           { key: 'PENDING', label: 'Chờ xác nhận' },
@@ -155,8 +155,8 @@ const Orders = () => {
             onClick={() => setActiveTab(tab.key)}
             className={`flex-1 min-w-[90px] md:min-w-[100px] text-center py-4 border-b-2 transition-all focus:outline-none whitespace-nowrap ${
               activeTab === tab.key 
-                ? 'border-shopee text-shopee font-black' 
-                : 'border-transparent text-gray-500 hover:text-shopee'
+                ? 'border-primary text-primary font-black' 
+                : 'border-transparent text-gray-500 hover:text-primary'
             }`}
           >
             {tab.label}
@@ -166,7 +166,7 @@ const Orders = () => {
 
       {/* Orders List */}
       {filteredOrders.length === 0 ? (
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-12 md:p-16 text-center flex flex-col items-center justify-center shadow-xs">
+        <div className="bg-white dark:bg-gray-800 rounded-sm border border-gray-100 dark:border-gray-700 p-12 md:p-16 text-center flex flex-col items-center justify-center shadow-xs">
           <Package size={40} className="text-gray-300 dark:text-gray-600 mb-3" />
           <span className="text-xs text-gray-400 font-semibold">Không tìm thấy đơn hàng nào tương ứng.</span>
         </div>
@@ -179,7 +179,7 @@ const Orders = () => {
             return (
               <div 
                 key={order.id} 
-                className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-xs overflow-hidden flex flex-col"
+                className="bg-white dark:bg-gray-800 rounded-sm border border-gray-100 dark:border-gray-700 shadow-xs overflow-hidden flex flex-col"
               >
                 {/* Header */}
                 <div className="bg-gray-50/50 dark:bg-gray-900/20 px-4 md:px-5 py-3 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center text-[11px] md:text-xs flex-wrap gap-2">
@@ -192,7 +192,7 @@ const Orders = () => {
                     </span>
                   </div>
                   
-                  <span className={`px-2 py-0.5 rounded-lg border text-[9px] md:text-[10px] font-black flex items-center gap-1.5 ${statusInfo.class}`}>
+                  <span className={`px-2 py-0.5 rounded-sm border text-[9px] md:text-[10px] font-black flex items-center gap-1.5 ${statusInfo.class}`}>
                     <StatusIcon size={12} />
                     <span>{statusInfo.text}</span>
                   </span>
@@ -206,7 +206,7 @@ const Orders = () => {
                         <img 
                           src={getProductImageUrl(item.imageUrl)} 
                           alt={item.productName} 
-                          className="w-12 h-12 object-contain rounded-lg border border-gray-100 dark:border-gray-750 bg-gray-50 dark:bg-zinc-800 p-1 flex-shrink-0"
+                          className="w-12 h-12 object-contain rounded-sm border border-gray-100 dark:border-gray-750 bg-gray-50 dark:bg-zinc-800 p-1 flex-shrink-0"
                         />
                       )}
                       <div className="flex-1 min-w-0 pr-3">
@@ -230,7 +230,7 @@ const Orders = () => {
                   <div className="flex flex-col gap-2.5 items-end w-full md:w-auto">
                     <div className="flex items-baseline gap-1.5 text-gray-600 dark:text-gray-300">
                       <span className="font-bold text-[11px]">Thành tiền:</span>
-                      <span className="text-base md:text-lg font-black text-shopee">
+                      <span className="text-base md:text-lg font-black text-primary">
                         {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.totalPrice)}
                       </span>
                     </div>
@@ -238,7 +238,7 @@ const Orders = () => {
                     <div className="flex gap-2 w-full sm:w-auto justify-end flex-wrap">
                       <button 
                         onClick={() => handlePrintInvoice(order)}
-                        className="flex-1 sm:flex-initial border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-750 dark:text-gray-300 px-3.5 py-2 rounded-xl flex items-center justify-center gap-1 font-bold transition-all focus:outline-none text-xs"
+                        className="flex-1 sm:flex-initial border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-750 dark:text-gray-300 px-3.5 py-2 rounded-sm flex items-center justify-center gap-1 font-bold transition-all focus:outline-none text-xs"
                       >
                         <Printer size={13} />
                         <span>In hóa đơn</span>
@@ -247,7 +247,7 @@ const Orders = () => {
                       {order.orderStatus === 'PENDING' && (
                         <button 
                           onClick={() => handleCancelOrder(order.id)}
-                          className="flex-1 sm:flex-initial bg-red-50 hover:bg-red-100 dark:bg-red-950/20 dark:hover:bg-red-950/40 text-red-650 dark:text-red-400 border border-red-100 dark:border-red-900/30 px-3.5 py-2 rounded-xl flex items-center justify-center gap-1 font-bold transition-all focus:outline-none text-xs"
+                          className="flex-1 sm:flex-initial bg-red-50 hover:bg-red-100 dark:bg-red-950/20 dark:hover:bg-red-950/40 text-red-650 dark:text-red-400 border border-red-100 dark:border-red-900/30 px-3.5 py-2 rounded-sm flex items-center justify-center gap-1 font-bold transition-all focus:outline-none text-xs"
                         >
                           <XCircle size={13} />
                           <span>Hủy đơn</span>
@@ -260,7 +260,7 @@ const Orders = () => {
                         return firstSellerItem ? (
                           <button
                             onClick={() => setChatInfo({ orderId: order.id, receiverId: firstSellerItem.sellerId, receiverName: firstSellerItem.sellerName || 'Người bán' })}
-                            className="flex-1 sm:flex-initial bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/20 dark:hover:bg-blue-950/40 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/30 px-3.5 py-2 rounded-xl flex items-center justify-center gap-1 font-bold transition-all focus:outline-none text-xs"
+                            className="flex-1 sm:flex-initial bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/20 dark:hover:bg-blue-950/40 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-900/30 px-3.5 py-2 rounded-sm flex items-center justify-center gap-1 font-bold transition-all focus:outline-none text-xs"
                           >
                             <span>💬</span>
                             <span>Nhắn tin với người bán</span>

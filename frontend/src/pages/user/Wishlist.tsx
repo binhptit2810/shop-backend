@@ -35,7 +35,7 @@ const Wishlist = () => {
   if (loading && items.length === 0) {
     return (
       <div className="flex justify-center items-center h-96">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-shopee"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -47,19 +47,19 @@ const Wishlist = () => {
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Sản phẩm yêu thích của bạn</h1>
           <p className="text-xs text-gray-400 mt-1">Danh sách sản phẩm bạn đã lưu và quan tâm mua sắm.</p>
         </div>
-        <Link to="/" className="text-xs font-semibold text-shopee hover:underline">
+        <Link to="/" className="text-xs font-semibold text-primary hover:underline">
           Tiếp tục xem sản phẩm khác
         </Link>
       </div>
 
       {items.length === 0 ? (
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700 p-12 text-center flex flex-col items-center justify-center shadow-sm">
+        <div className="bg-white dark:bg-gray-800 rounded-sm border border-gray-100 dark:border-gray-700 p-12 text-center flex flex-col items-center justify-center shadow-sm">
           <div className="h-20 w-20 bg-red-50 dark:bg-gray-900 rounded-full flex items-center justify-center text-red-500 mb-4 animate-bounce">
             <Heart size={40} className="fill-red-500" />
           </div>
           <h3 className="font-bold text-lg text-gray-950 dark:text-white mb-1">Danh sách yêu thích trống</h3>
           <p className="text-xs text-gray-400 mb-6">Bạn chưa lưu bất kỳ sản phẩm nào. Bấm vào nút hình trái tim ở trang chi tiết sản phẩm để lưu lại nhé!</p>
-          <Link to="/" className="bg-shopee hover:bg-shopee-hover text-white text-xs font-semibold px-6 py-2.5 rounded-md transition-all shadow-sm">
+          <Link to="/" className="bg-primary hover:bg-primary-hover text-white text-xs font-semibold px-6 py-2.5 rounded-md transition-all shadow-sm">
             Khám phá mua sắm ngay
           </Link>
         </div>
@@ -71,7 +71,7 @@ const Wishlist = () => {
             return (
               <div 
                 key={item.id} 
-                className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden border border-gray-100 dark:border-gray-700 hover:shadow-md transition-all duration-300 flex flex-col group"
+                className="bg-white dark:bg-gray-800 rounded-sm overflow-hidden border border-gray-100 dark:border-gray-700 hover:shadow-md transition-all duration-300 flex flex-col group"
               >
                 {/* Product Image */}
                 <Link to={`/products/${item.productId}`} className="relative block aspect-square bg-gray-50 overflow-hidden border-b border-gray-50 dark:border-gray-700">
@@ -81,7 +81,7 @@ const Wishlist = () => {
                     className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300 p-2" 
                   />
                   {item.productDiscountPrice && (
-                    <span className="absolute top-2 left-2 bg-shopee text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow">
+                    <span className="absolute top-2 left-2 bg-primary text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow">
                       SALE
                     </span>
                   )}
@@ -90,7 +90,7 @@ const Wishlist = () => {
                 {/* Content */}
                 <div className="p-3.5 flex-1 flex flex-col justify-between gap-3">
                   <div>
-                    <h3 className="font-semibold text-[11px] md:text-xs text-gray-800 dark:text-gray-200 line-clamp-2 leading-tight hover:text-shopee cursor-pointer">
+                    <h3 className="font-semibold text-[11px] md:text-xs text-gray-800 dark:text-gray-200 line-clamp-2 leading-tight hover:text-primary cursor-pointer">
                       <Link to={`/products/${item.productId}`}>{item.productName}</Link>
                     </h3>
 
@@ -98,7 +98,7 @@ const Wishlist = () => {
                     <div className="flex items-center gap-1.5 mt-2 flex-wrap">
                       {item.productDiscountPrice ? (
                         <>
-                          <span className="font-extrabold text-[11px] md:text-xs text-shopee">
+                          <span className="font-extrabold text-[11px] md:text-xs text-primary">
                             {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.productDiscountPrice)}
                           </span>
                           <span className="text-[10px] text-gray-400 line-through">
@@ -106,7 +106,7 @@ const Wishlist = () => {
                           </span>
                         </>
                       ) : (
-                        <span className="font-bold text-[11px] md:text-xs text-shopee">
+                        <span className="font-bold text-[11px] md:text-xs text-primary">
                           {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.productPrice)}
                         </span>
                       )}
@@ -117,7 +117,7 @@ const Wishlist = () => {
                   <div className="flex gap-2 border-t border-gray-50 dark:border-gray-700 pt-2.5 mt-auto">
                     <button 
                       onClick={() => handleAddToCart(item.productId, item.productName)}
-                      className="flex-1 bg-orange-50 dark:bg-orange-950/20 hover:bg-orange-100/50 text-shopee border border-shopee/10 text-[10px] font-bold py-1.5 rounded flex items-center justify-center gap-1 transition-all"
+                      className="flex-1 bg-orange-50 dark:bg-orange-950/20 hover:bg-orange-100/50 text-primary border border-primary/10 text-[10px] font-bold py-1.5 rounded flex items-center justify-center gap-1 transition-all"
                     >
                       <ShoppingCart size={12} />
                       <span>Thêm giỏ</span>
