@@ -15,7 +15,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 @Service
+@ConditionalOnProperty(name = "app.storage.type", havingValue = "local", matchIfMissing = true)
 public class LocalFileStorageServiceImpl implements FileStorageService {
 
     private final String uploadDir;
@@ -30,7 +33,7 @@ public class LocalFileStorageServiceImpl implements FileStorageService {
     }
 
     @Override
-    public String storeFile(MultipartFile file) {
+    public com.shop.service.FileStorageResult storeFile(MultipartFile file) {
         // 1. Kiểm tra file rỗng
         if (file == null || file.isEmpty()) {
             throw new BadRequestException("Tệp tin tải lên trống hoặc không hợp lệ");
@@ -61,8 +64,8 @@ public class LocalFileStorageServiceImpl implements FileStorageService {
             Path targetLocation = uploadPath.resolve(fileName);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
-            // 6. Trả về đường dẫn truy cập tương đối qua URL tĩnh
-            return "/uploads/" + fileName;
+            // 6. Trả về đường dẫn truy cập tương đối qua URL tĩnh và publicId là null
+            return new com.shop.service.FileStorageResult("/uploads/" + fileName, null);
 
         } catch (IOException ex) {
             throw new BadRequestException("Không thể lưu trữ tệp tin. Vui lòng thử lại! Chi tiết: " + ex.getMessage());

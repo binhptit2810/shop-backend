@@ -67,8 +67,13 @@ export const getImageBaseUrl = () => {
 
 export const getProductImageUrl = (url) => {
   if (!url) return 'https://images.unsplash.com/photo-1542496658-e33a6d0d50f6?w=200';
-  // If there are multiple images separated by a semicolon, take the first one
-  const actualUrl = url.includes(';') ? url.split(';')[0] : url;
+  
+  let actualUrl = url;
+  // Don't split base64 strings by semicolon
+  if (!url.startsWith('data:image') && url.includes(';')) {
+    actualUrl = url.split(';')[0];
+  }
+  
   if (!actualUrl) return 'https://images.unsplash.com/photo-1542496658-e33a6d0d50f6?w=200';
 
   if (actualUrl.startsWith('http') || actualUrl.startsWith('data:')) {

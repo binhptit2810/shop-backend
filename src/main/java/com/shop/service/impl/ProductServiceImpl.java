@@ -92,7 +92,7 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy sản phẩm với ID: " + id));
         
         // Nếu sản phẩm đã có ảnh, tiến hành xóa tệp tin ảnh trên đĩa cứng
-        if (product.getImageUrl() != null) {
+        if (product.getImageUrl() != null && !product.getImageUrl().startsWith("data:")) {
             fileStorageService.deleteFile(product.getImageUrl());
         }
         
@@ -109,23 +109,24 @@ public class ProductServiceImpl implements ProductService {
             throw new BadRequestException("Tệp tin tải lên trống");
         }
 
-        try {
-            byte[] fileBytes = file.getBytes();
-            String base64Content = Base64.getEncoder().encodeToString(fileBytes);
-            String contentType = file.getContentType();
-            if (contentType == null) {
-                contentType = "image/png";
+        // Store new image file
+        com.shop.service.FileStorageResult storageResult = fileStorageService.storeFile(file);
+        String newImageUrl = storageResult.getFileUrl();
+
+        // Delete old image file if it exists
+        String oldImageUrl = product.getImageUrl();
+        if (oldImageUrl != null && !oldImageUrl.trim().isEmpty()) {
+            if (!oldImageUrl.startsWith("data:")) { // Don't try to delete base64 strings as files
+                fileStorageService.deleteFile(oldImageUrl);
             }
-            String imageUrl = "data:" + contentType + ";base64," + base64Content;
-
-            // Cập nhật URL ảnh mới
-            product.setImageUrl(imageUrl);
-            Product updatedProduct = productRepository.save(product);
-
-            return ProductMapper.toResponse(updatedProduct);
-        } catch (IOException e) {
-            throw new BadRequestException("Không thể lưu trữ tệp tin. Vui lòng thử lại! Chi tiết: " + e.getMessage());
         }
+
+        // Update image URL and Public ID in DB
+        product.setImageUrl(newImageUrl);
+        product.setImagePublicId(storageResult.getPublicId());
+        Product updatedProduct = productRepository.save(product);
+
+        return ProductMapper.toResponse(updatedProduct);
     }
 
     @Override
@@ -221,7 +222,7 @@ public class ProductServiceImpl implements ProductService {
             throw new com.shop.exception.BadRequestException("Bạn không có quyền xóa sản phẩm này");
         }
 
-        if (product.getImageUrl() != null) {
+        if (product.getImageUrl() != null && !product.getImageUrl().startsWith("data:")) {
             fileStorageService.deleteFile(product.getImageUrl());
         }
 

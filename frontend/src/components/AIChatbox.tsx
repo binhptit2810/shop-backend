@@ -9,6 +9,9 @@ interface ChatMessage {
   sender: 'AI' | 'USER';
   text: string;
   products?: Product[];
+  orders?: any[];
+  vouchers?: any[];
+  redirectUrl?: string;
 }
 
 const AIChatbox = () => {
@@ -47,15 +50,27 @@ const AIChatbox = () => {
     setLoading(true);
 
     try {
-      const response = await API.post('/ai/chat', { message: userMessage });
+      // Map conversation history for backend context
+      const historyPayload = messages.map(m => ({
+        sender: m.sender,
+        text: m.text
+      }));
+
+      const response = await API.post('/ai/chat', { 
+        message: userMessage,
+        history: historyPayload
+      });
       
       setMessages([
         ...newMessages,
         {
           id: (Date.now() + 1).toString(),
           sender: 'AI',
-          text: response.data.message,
-          products: response.data.products
+          text: response.data.reply || response.data.message,
+          products: response.data.products,
+          orders: response.data.orders,
+          vouchers: response.data.vouchers,
+          redirectUrl: response.data.redirectUrl
         }
       ]);
     } catch (error) {
@@ -151,6 +166,74 @@ const AIChatbox = () => {
                       );
                     })}
                   </div>
+                )}
+
+                {/* Render Orders if AI returns them */}
+                {msg.orders && msg.orders.length > 0 && (
+                  <div className="mt-3 flex flex-col gap-2 w-full">
+                    {msg.orders.map(order => (
+                      <div 
+                        key={order.id}
+                        className="p-3 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-sm text-xs flex flex-col gap-1 shadow-sm"
+                      >
+                        <div className="flex justify-between items-center font-bold">
+                          <span className="text-gray-800 dark:text-gray-200">Đơn hàng #{order.id}</span>
+                          <span className="text-indigo-600 dark:text-indigo-400">{order.status || order.orderStatus}</span>
+                        </div>
+                        <div className="text-gray-500 flex justify-between">
+                          <span>Tổng tiền:</span>
+                          <span className="font-semibold text-gray-700 dark:text-gray-300">
+                            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.totalPrice)}
+                          </span>
+                        </div>
+                        <div className="text-[10px] text-gray-400">
+                          Ngày đặt: {new Date(order.createdAt).toLocaleDateString('vi-VN')}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Render Vouchers if AI returns them */}
+                {msg.vouchers && msg.vouchers.length > 0 && (
+                  <div className="mt-3 flex flex-col gap-2 w-full">
+                    {msg.vouchers.map(voucher => (
+                      <div 
+                        key={voucher.id}
+                        className="p-3 bg-indigo-50/50 dark:bg-indigo-950/20 border border-dashed border-indigo-300 dark:border-indigo-800 rounded-sm text-xs flex justify-between items-center shadow-sm"
+                      >
+                        <div>
+                          <div className="font-bold text-indigo-700 dark:text-indigo-300 text-sm">{voucher.code}</div>
+                          <div className="text-gray-500 text-[10px] mt-0.5">
+                            Giảm {new Intl.NumberFormat('vi-VN').format(voucher.discountAmount)}
+                            {voucher.discountType === 'PERCENTAGE' ? '%' : 'đ'} (Đơn tối thiểu {new Intl.NumberFormat('vi-VN').format(voucher.minOrderValue)}đ)
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => {
+                            navigator.clipboard.writeText(voucher.code);
+                            alert('Đã copy mã voucher: ' + voucher.code);
+                          }}
+                          className="px-2 py-1 bg-indigo-600 text-white rounded-sm text-[10px] font-bold hover:bg-indigo-700 transition-colors"
+                        >
+                          Lấy mã
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Render Redirect Button if AI returns redirectUrl */}
+                {msg.redirectUrl && (
+                  <button
+                    onClick={() => {
+                      setIsOpen(false);
+                      navigate(msg.redirectUrl || '');
+                    }}
+                    className="mt-2 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-sm shadow-sm transition-colors w-full"
+                  >
+                    {msg.redirectUrl === '/login' ? 'Đăng nhập ngay' : 'Đi tới trang liên kết'}
+                  </button>
                 )}
               </div>
             ))}

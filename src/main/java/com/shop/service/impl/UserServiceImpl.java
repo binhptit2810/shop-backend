@@ -247,16 +247,18 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new BadRequestException("Người dùng không tồn tại!"));
 
         // Store new avatar file
-        String newAvatarUrl = fileStorageService.storeFile(file);
+        com.shop.service.FileStorageResult storageResult = fileStorageService.storeFile(file);
+        String newAvatarUrl = storageResult.getFileUrl();
 
         // Delete old avatar file if it exists
         String oldAvatarUrl = user.getAvatarUrl();
         if (oldAvatarUrl != null && !oldAvatarUrl.trim().isEmpty()) {
-            fileStorageService.deleteFile(oldAvatarUrl);
+            fileStorageService.deleteFile(oldAvatarUrl); // Delete old local file if necessary
         }
 
-        // Update avatar URL in DB
+        // Update avatar URL and Public ID in DB
         user.setAvatarUrl(newAvatarUrl);
+        user.setAvatarPublicId(storageResult.getPublicId());
         User updatedUser = userRepository.save(user);
 
         // Gửi email thông báo
